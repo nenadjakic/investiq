@@ -1,0 +1,195 @@
+package com.github.nenadjakic.investiq.importer.service
+
+import com.github.nenadjakic.investiq.data.entity.asset.AssetAlias
+import com.github.nenadjakic.investiq.data.entity.core.Currency
+import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
+import com.github.nenadjakic.investiq.data.enum.Platform
+import com.github.nenadjakic.investiq.data.repository.AssetAliasRepository
+import com.github.nenadjakic.investiq.data.repository.CurrencyRepository
+import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
+import com.github.nenadjakic.investiq.importer.enum.Trading212Action
+import com.github.nenadjakic.investiq.importer.model.ImportError
+import com.github.nenadjakic.investiq.importer.model.ImportResult
+import com.github.nenadjakic.investiq.importer.model.ImportSummary
+import com.github.nenadjakic.investiq.importer.model.RowResult
+import com.github.nenadjakic.investiq.importer.model.RowStatus
+import com.github.nenadjakic.investiq.importer.model.Trading212Trade
+import com.github.nenadjakic.investiq.importer.model.ValidationResult
+import com.github.nenadjakic.investiq.importer.model.toStagingTransactions
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVParser
+import org.apache.commons.csv.CSVRecord
+import org.springframework.stereotype.Service
+import java.io.InputStream
+import java.nio.charset.StandardCharsets
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.text.isNotBlank
+
+@Service
+class Trading212ImporterService(
+    private val assetAliasRepository: AssetAliasRepository,
+    private val currencyRepository: CurrencyRepository,
+    private val stagingTransactionRepository: StagingTransactionRepository
+): ImporterService<Trading212Trade> {
+    companion object {
+        val REQUIRED_HEADERS = listOf(
+            "Action",
+            "Time",
+            "ISIN",
+            "Ticker",
+            "Name",
+            "Notes",
+            "ID",
+            "No. of shares",
+            "Price / share",
+            "Currency (Price / share)",
+            "Exchange rate",
+            "Currency (Result)",
+            "Total",
+            "Currency (Total)",
+            "Withholding tax",
+            "Currency (Withholding tax)",
+            "Stamp duty reserve tax",
+            "Currency (Stamp duty reserve tax)",
+            "Currency conversion fee",
+            "Currency (Currency conversion fee)",
+            "French transaction tax",
+            "Currency (French transaction tax)"
+        )
+    }
+
+    override fun validateHeaders(input: InputStream): ValidationResult {
+        TODO("Not yet implemented")
+    }
+
+    override fun import(input: InputStream): ImportResult<Trading212Trade> {
+        val format = CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).setTrim(true)
+            .setIgnoreSurroundingSpaces(true).get()
+
+        CSVParser.parse(input, StandardCharsets.UTF_8, format).use { parser ->
+            val headerKeys = parser.headerMap.keys.map { it.trim() }.toSet()
+            val missing = REQUIRED_HEADERS.filterNot(headerKeys::contains)
+
+            if (missing.isNotEmpty()) {
+                return ImportResult(
+                    summary = ImportSummary(0, 0, 0), errors = listOf(
+                        ImportError(
+                            rowIndex = null, message = "Missing headers: ${missing.joinToString()}"
+                        )
+                    )
+                )
+            }
+
+            val errors = mutableListOf<ImportError>()
+            val rowResults = mutableListOf<RowResult<Trading212Trade>>()
+
+            var total = 0
+            var success = 0
+            var failed = 0
+
+            for ((i, record) in parser.records.withIndex()) {
+                val rowIndex = i + 1
+                total++
+
+                try {
+                    val mapped = mapRecord(record)
+                    rowResults.add(RowResult(rowIndex, RowStatus.SUCCESS, mapped))
+                    success++
+                } catch (e: Exception) {
+                    rowResults.add(RowResult(rowIndex, RowStatus.FAILED))
+                    errors.add(ImportError(rowIndex, message = e.message ?: "Unknown error"))
+                    failed++
+                }
+            }
+
+            addToStaging(rowResults)
+
+            return ImportResult<Trading212Trade>(
+                summary = ImportSummary(totalRows = total, successfulRows = success, failedRows = failed),
+                rowResults = rowResults,
+                errors = errors
+            )
+        }
+    }
+
+    private fun mapRecord(record: CSVRecord): Trading212Trade {
+
+        fun get(name: String): String =
+            record.get(name) ?: throw IllegalArgumentException("Missing required field: $name")
+
+        fun getLocalDateTime(name: String): LocalDateTime {
+            val value = get(name).trim()
+            if (value.isEmpty()) throw IllegalArgumentException("Missing required date field: $name")
+
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            return LocalDateTime.parse(value, formatter)
+        }
+
+        fun getDouble(name: String): Double {
+            val value = get(name).trim()
+            if (value.isEmpty()) return 0.0
+            val normalized = value.replace(",", ".")
+            return normalized.toDoubleOrNull()
+                ?: throw IllegalArgumentException("Invalid number in field: $name, value: '$value'")
+        }
+
+        return Trading212Trade(
+            action = Trading212Action.fromValue(get("Action")),
+            time = getLocalDateTime("Time"),
+            isin = get("ISIN"),
+            ticker = get("Ticker"),
+            name = get("Name"),
+            notes = record.get("Notes")?.takeIf { it.isNotBlank() },
+            id = get("ID"),
+            numberOfShares = getDouble("No. of shares"),
+            pricePerShare = getDouble("Price / share"),
+            currencyPricePerShare = get("Currency (Price / share)"),
+            exchangeRate = getDouble("Exchange rate"),
+            currencyResult = get("Currency (Result)"),
+            total = getDouble("Total"),
+            currencyTotal = get("Currency (Total)"),
+            withholdingTax = getDouble("Withholding tax"),
+            withholdingCurrency = get("Currency (Withholding tax)"),
+            stampDuty = getDouble("Stamp duty reserve tax"),
+            stampCurrency = get("Currency (Stamp duty reserve tax)"),
+            fxFee = getDouble("Currency conversion fee"),
+            fxFeeCurrency = get("Currency (Currency conversion fee)"),
+            frTax = getDouble("French transaction tax"),
+            frTaxCurrency = get("Currency (French transaction tax)")
+        )
+    }
+
+    private fun addToStaging(rowResults: MutableList<RowResult<Trading212Trade>>) {
+        //val portfolio: Portfolio
+        val assetAliases = mutableListOf<AssetAlias>()
+        val currencies = mutableMapOf<String, Currency>()
+        try {
+            //portfolio = entityManager.getReference(
+             //   Portfolio::class.java, "Trading212"
+            //)
+
+            assetAliases.addAll(
+                assetAliasRepository.findAllByPlatform(Platform.TRADING212)
+            )
+
+            currencies.putAll(
+                currencyRepository.findAll().associateBy { it.code!! })
+
+        } catch (ex: Exception) {
+            throw RuntimeException("Failed to load account for importing Trading 212 transactions.", ex)
+
+        }
+
+        val stagingTransactions = mutableListOf<StagingTransaction>()
+
+        for (rowResult in rowResults) {
+            if (rowResult.status == RowStatus.SUCCESS) {
+                stagingTransactions.addAll(
+                    rowResult.mappedObjectInfo!!.toStagingTransactions(assetAliases))
+            }
+        }
+        stagingTransactionRepository.saveAll(stagingTransactions)
+    }
+
+}

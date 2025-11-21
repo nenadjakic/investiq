@@ -1,5 +1,6 @@
-package com.github.nenadjakic.investiq.data.entity
+package com.github.nenadjakic.investiq.data.entity.asset
 
+import com.github.nenadjakic.investiq.data.entity.core.Company
 import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
 import jakarta.persistence.JoinColumn

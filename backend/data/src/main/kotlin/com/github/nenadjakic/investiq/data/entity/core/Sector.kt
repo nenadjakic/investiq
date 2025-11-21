@@ -1,4 +1,4 @@
-package com.github.nenadjakic.investiq.data.entity
+package com.github.nenadjakic.investiq.data.entity.core
 
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column

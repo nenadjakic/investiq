@@ -1,0 +1,18 @@
+INSERT INTO currencies (code, name, symbol, parent_code, to_parent_factor) VALUES
+('EUR', 'Euro', '€', NULL, 1.0),
+('CHF', 'Swiss Franc', 'CHF', NULL, 1.0),
+('USD', 'US Dollar', '$', NULL, 1.0),
+('GBP', 'British Pound', '£', NULL, 1.0),
+('SEK', 'Swedish Krona', 'kr', NULL, 1.0),
+('JPY', 'Japanese Yen', '¥', NULL, 1.0),
+('GBX', 'Penny', 'p', 'GBP', 0.01),
+('AUD', 'Australian Dollar', 'A$', NULL, 1.0),
+('CAD', 'Canadian Dollar', 'C$', NULL, 1.0),
+('NZD', 'New Zealand Dollar', 'NZ$', NULL, 1.0),
+('CNY', 'Chinese Yuan', '¥', NULL, 1.0),
+('HKD', 'Hong Kong Dollar', 'HK$', NULL, 1.0),
+('SGD', 'Singapore Dollar', 'S$', NULL, 1.0),
+('INR', 'Indian Rupee', '₹', NULL, 1.0),
+('BRL', 'Brazilian Real', 'R$', NULL, 1.0),
+('ZAR', 'South African Rand', 'R', NULL, 1.0),
+('KRW', 'South Korean Won', '₩', NULL, 1.0);

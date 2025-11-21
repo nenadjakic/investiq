@@ -1,5 +1,6 @@
-package com.github.nenadjakic.investiq.data.entity
+package com.github.nenadjakic.investiq.data.entity.asset
 
+import com.github.nenadjakic.investiq.data.entity.core.Exchange
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
@@ -9,7 +10,7 @@ import jakarta.persistence.MappedSuperclass
  * Abstract base class for assets that are always listed on an exchange,
  * such as stocks, ETFs, and bonds.
  *
- * Inherits from [Asset] and adds mandatory references to [Exchange] and [Currency].
+ * Inherits from [Asset] and adds mandatory references to [Exchange] and [com.github.nenadjakic.investiq.data.entity.core.Currency].
  * Used to separate listed assets from those that are not necessarily tied to an exchange,
  * such as cryptocurrencies.
  */

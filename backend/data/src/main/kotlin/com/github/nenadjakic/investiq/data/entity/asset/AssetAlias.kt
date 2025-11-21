@@ -1,4 +1,4 @@
-package com.github.nenadjakic.investiq.data.entity
+package com.github.nenadjakic.investiq.data.entity.asset
 
 import com.github.nenadjakic.investiq.data.enum.Platform
 import jakarta.persistence.Column
