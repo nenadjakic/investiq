@@ -41,7 +41,6 @@ abstract class Transaction {
      * Primary key for the transaction.
      */
     @Id
-    @Column(name = "id", nullable = false)
     var id: UUID? = null
 
     /**
@@ -72,4 +71,7 @@ abstract class Transaction {
 
     @Column(name = "description", length = 500)
     var description: String? = null
+
+    @Column(name = "external_id", length = 100)
+    var externalId: String? = null
 }

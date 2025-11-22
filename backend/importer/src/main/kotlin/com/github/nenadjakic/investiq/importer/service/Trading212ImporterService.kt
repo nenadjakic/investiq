@@ -2,6 +2,7 @@ package com.github.nenadjakic.investiq.importer.service
 
 import com.github.nenadjakic.investiq.data.entity.asset.AssetAlias
 import com.github.nenadjakic.investiq.data.entity.core.Currency
+import com.github.nenadjakic.investiq.data.entity.core.Tag
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.AssetAliasRepository
@@ -156,7 +157,7 @@ class Trading212ImporterService(
             fxFee = getDouble("Currency conversion fee"),
             fxFeeCurrency = get("Currency (Currency conversion fee)"),
             frTax = getDouble("French transaction tax"),
-            frTaxCurrency = get("Currency (French transaction tax)")
+            frTaxCurrency = get("Currency (French transaction tax)"),
         )
     }
 
@@ -164,6 +165,7 @@ class Trading212ImporterService(
         //val portfolio: Portfolio
         val assetAliases = mutableListOf<AssetAlias>()
         val currencies = mutableMapOf<String, Currency>()
+        val tags = mutableMapOf<String, Tag>()
         try {
             //portfolio = entityManager.getReference(
              //   Portfolio::class.java, "Trading212"
@@ -186,7 +188,7 @@ class Trading212ImporterService(
         for (rowResult in rowResults) {
             if (rowResult.status == RowStatus.SUCCESS) {
                 stagingTransactions.addAll(
-                    rowResult.mappedObjectInfo!!.toStagingTransactions(assetAliases))
+                    rowResult.mappedObjectInfo!!.toStagingTransactions(assetAliases, currencies, tags))
             }
         }
         stagingTransactionRepository.saveAll(stagingTransactions)

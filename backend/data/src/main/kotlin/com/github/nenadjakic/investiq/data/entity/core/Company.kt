@@ -19,7 +19,7 @@ data class Company(
      * The primary key identifier for the company.
      */
     @Id
-    @Column(name = "company_id", nullable = false)
+    @Column(name = "id", nullable = false)
     val companyId: UUID? = null,
 
     /**

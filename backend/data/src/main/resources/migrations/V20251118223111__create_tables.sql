@@ -32,22 +32,22 @@ CREATE TABLE industries (
 );
 
 CREATE TABLE exchanges (
-	exchange_id uuid NOT NULL,
+	id uuid NOT NULL,
 	acronym varchar(10) NULL,
 	mic varchar(10) NOT NULL,
 	"name" varchar(100) NOT NULL,
 	country_iso2_code varchar(2) NOT NULL,
-	CONSTRAINT pk_exchanges PRIMARY KEY (exchange_id),
+	CONSTRAINT pk_exchanges PRIMARY KEY (id),
 	CONSTRAINT uq_exchanges_mic UNIQUE (mic),
 	CONSTRAINT fk_exchanges_countries FOREIGN KEY (country_iso2_code) REFERENCES countries(iso2_code)
 );
 
 CREATE TABLE companies (
-	company_id uuid NOT NULL,
+	id uuid NOT NULL,
 	"name" varchar(100) NOT NULL,
 	country_code varchar(2) NOT NULL,
 	industry_id uuid NOT NULL,
-	CONSTRAINT pk_companies PRIMARY KEY (company_id),
+	CONSTRAINT pk_companies PRIMARY KEY (id),
 	CONSTRAINT fk_companies_countries FOREIGN KEY (country_code) REFERENCES countries(iso2_code),
 	CONSTRAINT fk_companies_industries FOREIGN KEY (industry_id) REFERENCES industries(id)
 );
@@ -64,17 +64,17 @@ CREATE TABLE assets (
 	CONSTRAINT ch_assets_asset_type CHECK (((asset_type)::text = ANY ((ARRAY['ETF'::character varying, 'STOCK'::character varying])::text[]))),
 	CONSTRAINT pk_assets PRIMARY KEY (id),
 	CONSTRAINT uq_assets_symbol_exchange_id UNIQUE (symbol, exchange_id),
-	CONSTRAINT fk_assets_companies FOREIGN KEY (company_id) REFERENCES companies(company_id),
+	CONSTRAINT fk_assets_companies FOREIGN KEY (company_id) REFERENCES companies(id),
 	CONSTRAINT fk_assets_currencies FOREIGN KEY (currency_code) REFERENCES currencies(code),
-	CONSTRAINT fk_assets_exchanges FOREIGN KEY (exchange_id) REFERENCES exchanges(exchange_id)
+	CONSTRAINT fk_assets_exchanges FOREIGN KEY (exchange_id) REFERENCES exchanges(id)
 );
 
 CREATE TABLE asset_aliases (
-	asset_alias_id uuid NOT NULL,
+	id uuid NOT NULL,
 	external_symbol varchar(50) NOT NULL,
 	platform varchar(20) NOT NULL,
 	asset_id uuid NOT NULL,
-	CONSTRAINT pk_asset_aliases PRIMARY KEY (asset_alias_id),
+	CONSTRAINT pk_asset_aliases PRIMARY KEY (id),
 	CONSTRAINT ch_asset_aliases_platform CHECK (((platform)::text = ANY ((ARRAY['TRADING212'::character varying, 'ETORO'::character varying, 'IBKR'::character varying])::text[]))),
 	CONSTRAINT fk_asset_aliases_assets FOREIGN KEY (asset_id) REFERENCES assets(id)
 );
@@ -88,13 +88,48 @@ CREATE TABLE tags (
 
 CREATE TABLE transactions (
 	transaction_type varchar(20) NOT NULL,
-	id uuid NOT NULL,
-	transaction_date timestamptz(6) NOT NULL,
-	description varchar(500) NULL,
-	price numeric(20, 6) NULL,
-	quantity numeric(20, 6) NULL,
-	asset_id uuid NOT NULL,
+    id uuid NOT NULL,
+    transaction_date timestamptz(6) NOT NULL,
+    description varchar(500) NULL,
+    external_id varchar(100) NULL,
+    price numeric(20, 6) NULL,
+    quantity numeric(20, 6) NULL,
+    amount numeric(20, 6) NULL,
+    gross_amount numeric(20, 6) NULL,
+    tax_amount numeric(20, 6) NULL,
+    tax_percentage numeric(10, 4) NULL,
+    price_amount numeric(20, 6) NULL,
+    asset_id uuid NOT NULL,
+    related_transaction_id uuid NULL,
 	CONSTRAINT pk_transactions PRIMARY KEY (id),
-	CONSTRAINT ch_transactions_transaction_type CHECK (((transaction_type)::text = 'OPEN_POSITION'::text)),
-	CONSTRAINT fk_transactions_assets FOREIGN KEY (asset_id) REFERENCES assets(id)
+	CONSTRAINT ch_transactions_transaction_type CHECK (((transaction_type)::text =  ANY ((ARRAY['BUY'::character varying, 'FEE'::character varying, 'SELL'::character varying, 'DEPOSIT'::character varying, 'WITHDRAWAL'::character varying, 'DIVIDEND'::character varying, 'DIVIDEND_ADJUSTMENT'::character varying, 'UNKNOWN'::character varying])::text[]))),
+	CONSTRAINT fk_transactions_assets FOREIGN KEY (asset_id) REFERENCES assets(id),
+	CONSTRAINT fk_transactions_transactions FOREIGN KEY (related_transaction_id) REFERENCES transactions(id)
+);
+
+CREATE TABLE staging_transactions (
+	id uuid NOT NULL,
+    description varchar(255) NULL,
+    external_id varchar(100) NULL,
+    external_symbol varchar(255) NULL,
+    gross_amount float8 NULL,
+    import_status varchar(255) NOT NULL,
+    notes varchar(255) NULL,
+    price float8 NULL,
+    amount float8 NULL,
+    quantity float8 NULL,
+    resolution_note varchar(255) NULL,
+    tax_amount float8 NULL,
+    tax_percentage float8 NULL,
+    transaction_date timestamptz(6) NOT NULL,
+    transaction_type varchar(255) NOT NULL,
+    currency_code varchar(3) NULL,
+    related_staging_transaction_id uuid NULL,
+    resolved_asset_id uuid NULL,
+	CONSTRAINT ch_staging_transactions_import_status CHECK (((import_status)::text = ANY ((ARRAY['PENDING'::character varying, 'VALIDATED'::character varying, 'FAILED'::character varying, 'IMPORTED'::character varying])::text[]))),
+	CONSTRAINT pk_staging_transactions PRIMARY KEY (id),
+	CONSTRAINT ch_staging_transactions_transaction_type CHECK (((transaction_type)::text = ANY ((ARRAY['BUY'::character varying, 'FEE'::character varying, 'SELL'::character varying, 'DEPOSIT'::character varying, 'WITHDRAWAL'::character varying, 'DIVIDEND'::character varying, 'DIVIDEND_ADJUSTMENT'::character varying, 'UNKNOWN'::character varying])::text[]))),
+	CONSTRAINT fk_staging_transactions_assets FOREIGN KEY (resolved_asset_id) REFERENCES assets(id),
+	CONSTRAINT fk_staging_transactions_currencies FOREIGN KEY (currency_code) REFERENCES currencies(code),
+    CONSTRAINT fk_staging_transactions_staging_transactions FOREIGN KEY (related_staging_transaction_id) REFERENCES staging_transactions(id)
 );

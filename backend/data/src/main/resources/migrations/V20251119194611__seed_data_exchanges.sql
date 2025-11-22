@@ -1,4 +1,4 @@
-INSERT INTO public.exchanges (exchange_id, "name", mic, acronym, country_iso2_code)
+INSERT INTO public.exchanges (id, "name", mic, acronym, country_iso2_code)
 VALUES
   (gen_random_uuid(), 'New York Stock Exchange', 'XNYS', 'NYSE', 'US'),
   (gen_random_uuid(), 'NASDAQ Stock Market', 'XNAS', 'NASDAQ', 'US'),

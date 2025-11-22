@@ -3,6 +3,7 @@ package com.github.nenadjakic.investiq.importer.command
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.importer.model.Trading212Trade
 import com.github.nenadjakic.investiq.importer.service.ImporterService
+import com.github.nenadjakic.investiq.importer.util.PrettyPrinter
 import org.slf4j.LoggerFactory
 import org.springframework.shell.standard.ShellCommandGroup
 import org.springframework.shell.standard.ShellComponent
@@ -14,6 +15,7 @@ import java.nio.file.Paths
 @ShellCommandGroup("Importer commands")
 @ShellComponent
 class ImporterCommand(
+    private val prettyPrinter: PrettyPrinter,
     private val importerService: ImporterService<Trading212Trade>
 ) {
     companion object {
@@ -37,6 +39,11 @@ class ImporterCommand(
                             "${result.summary.successfulRows} successful, " +
                             "${result.summary.failedRows} failed"
                 )
+            }
+            .also { result ->
+                result.errors.forEach { error ->
+                    prettyPrinter.error("Row ${error.rowIndex} error: ${error.message}")
+                }
             }
     }
 }

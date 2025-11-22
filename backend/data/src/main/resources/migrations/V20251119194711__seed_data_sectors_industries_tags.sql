@@ -1,3 +1,13 @@
+INSERT INTO tags (id, "name")
+VALUES
+  (gen_random_uuid(), 'Trading212'),
+  (gen_random_uuid(), 'IBKR'),
+  (gen_random_uuid(), 'eToro');,
+  (gen_random_uuid(), 'Revolut'),
+  (gen_random_uuid(), 'Stamp duty reserve tax'),
+  (gen_random_uuid(), 'Conversation fee'),
+  (gen_random_uuid(), 'French transaction tax'),
+
 INSERT INTO sectors (id, "name")
 VALUES
   ('e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e', 'Technology'),
@@ -14,7 +24,7 @@ VALUES
 
 INSERT INTO public.industries (id, "name", sector_id)
 VALUES
--- Information Technology
+-- Technology
   (gen_random_uuid(), 'Information Technology Services', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e'), -- OK
   (gen_random_uuid(), 'Software', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e'),
   (gen_random_uuid(), 'Hardware', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e'),

@@ -33,7 +33,6 @@ data class AssetAlias(
      * Primary key identifier for the asset alias.
      */
     @Id
-    @Column(name = "asset_alias_id", nullable = false)
     var id: UUID?,
 
     /**

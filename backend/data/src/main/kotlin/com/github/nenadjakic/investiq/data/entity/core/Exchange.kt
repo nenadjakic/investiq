@@ -25,7 +25,7 @@ data class Exchange(
      * The primary key identifier for the exchange.
      */
     @Id
-    @Column(name = "exchange_id", nullable = false)
+    @Column(name = "id", nullable = false)
     var id: UUID?,
 
     /**

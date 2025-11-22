@@ -6,7 +6,9 @@ enum class Trading212Action(private val csvAction: String) {
     DIVIDEND("Dividend (Dividend)"),
     DEPOSIT("Deposit"),
     BUY("Market buy"),
-    SELL("");
+    SELL("Market sell"),
+    DIVIDEND_ADJUSTMENT("Dividend Adjustment"),
+    WITHDRAWAL("Withdrawal");
 
     companion object {
         fun fromValue(value: String): Trading212Action =

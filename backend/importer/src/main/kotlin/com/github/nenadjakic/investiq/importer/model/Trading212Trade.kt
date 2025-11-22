@@ -2,9 +2,12 @@ package com.github.nenadjakic.investiq.importer.model
 
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.asset.AssetAlias
+import com.github.nenadjakic.investiq.data.entity.core.Currency
+import com.github.nenadjakic.investiq.data.entity.core.Tag
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
+import com.github.nenadjakic.investiq.data.enum.TransactionType
 import com.github.nenadjakic.investiq.importer.enum.Trading212Action
 import com.github.nenadjakic.investiq.importer.enum.toTransactionType
 import java.time.LocalDateTime
@@ -35,57 +38,164 @@ data class Trading212Trade(
     val frTaxCurrency: String
 )
 
-fun Trading212Trade.toStagingTransactions(assetAliases: Collection<AssetAlias>): Collection<StagingTransaction> {
+fun Trading212Trade.toStagingTransactions(
+    assetAliases: Collection<AssetAlias>,
+    currencies: Map<String, Currency>,
+    tags: MutableMap<String, Tag>,
+
+    ): Collection<StagingTransaction> {
+
+    fun getFeeTransactions(
+        parentStagingTransaction: StagingTransaction,
+    ): Collection<StagingTransaction> {
+        var fees = mutableListOf<StagingTransaction>()
+        if (this.fxFee != 0.0) {
+            fees.add(
+                StagingTransaction(
+                    transactionType = TransactionType.FEE,
+                    externalId = this.id,
+                    importStatus = ImportStatus.PENDING,
+                    transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                    currency = currencies[this.fxFeeCurrency],
+                    amount = this.fxFee,
+                    notes = this.notes,
+                    relatedStagingTransaction = parentStagingTransaction
+                ).also { tags["Conversation fee"]?.let { element -> it.tags.add(element) }}
+            )
+        }
+        if (this.stampDuty != 0.0) {
+            fees.add(
+                StagingTransaction(
+                    transactionType = TransactionType.FEE,
+                    externalId = this.id,
+                    importStatus = ImportStatus.PENDING,
+                    transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                    currency = currencies[this.stampCurrency],
+                    amount = this.stampDuty,
+                    notes = this.notes,
+                    relatedStagingTransaction = parentStagingTransaction
+                ).also { tags["Stamp duty reserve tax"]?.let { element -> it.tags.add(element) }}
+            )
+        }
+
+        if (this.frTax != 0.0) {
+            fees.add(
+                StagingTransaction(
+                    transactionType = TransactionType.FEE,
+                    externalId = this.id,
+                    importStatus = ImportStatus.PENDING,
+                    transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                    currency = currencies[this.frTaxCurrency],
+                    amount = this.frTax,
+                    notes = this.notes,
+                    relatedStagingTransaction = parentStagingTransaction
+                ).also { tags["French transaction tax"]?.let { element -> it.tags.add(element) }}
+            )
+        }
+        return fees
+    }
+
     var stagingTransactions = mutableListOf<StagingTransaction>()
 
     val asset: Asset?
     val assets = assetAliases.filter {
         it.platform == Platform.TRADING212 && it.externalSymbol.equals(
-            this.ticker,
-            ignoreCase = true
+            this.ticker, ignoreCase = true
         )
     }
 
-    if (!assets.isEmpty()) {
-        asset = assets.first().asset
+    asset = if (!assets.isEmpty()) {
+        assets.first().asset
     } else {
-        asset = null
+        null
     }
 
     when (this.action) {
-        Trading212Action.BUY -> {
-            stagingTransactions.add(StagingTransaction(
-                id = null,
-                transactionType = this.action.toTransactionType(),
+        Trading212Action.DEPOSIT -> {
+            var deposit = StagingTransaction(
+                transactionType = TransactionType.DEPOSIT,
+                externalId = this.id,
+                importStatus = ImportStatus.PENDING,
                 transactionDate = this.time.atOffset(ZoneOffset.UTC),
-                description = null,
+                currency = currencies[this.currencyTotal],
+                amount = this.total,
+                notes = this.notes,
+            )
+            stagingTransactions.add(deposit)
+            stagingTransactions.addAll(getFeeTransactions(deposit))
+        }
+        Trading212Action.BUY -> {
+            var buy = StagingTransaction(
+                transactionType = TransactionType.BUY,
+                externalId = this.id,
+                importStatus = ImportStatus.PENDING,
+                transactionDate = this.time.atOffset(ZoneOffset.UTC),
                 price = this.pricePerShare,
                 quantity = this.numberOfShares,
-                notes = null,
                 externalSymbol = this.ticker,
                 resolvedAsset = asset,
-                resolutionNote = null,
-                importStatus = ImportStatus.PENDING
-            ))
+            )
+            stagingTransactions.add(buy)
+            stagingTransactions.addAll(getFeeTransactions(buy))
         }
-        Trading212Action.DEPOSIT -> {
-
+        Trading212Action.SELL -> {
+            var buy = StagingTransaction(
+                transactionType = TransactionType.SELL,
+                externalId = this.id,
+                importStatus = ImportStatus.PENDING,
+                transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                price = this.pricePerShare,
+                quantity = this.numberOfShares,
+                externalSymbol = this.ticker,
+                resolvedAsset = asset,
+            )
+            stagingTransactions.add(buy)
+            stagingTransactions.addAll(getFeeTransactions(buy))
         }
-        else -> {
+        Trading212Action.DIVIDEND -> {
             stagingTransactions.add(
                 StagingTransaction(
-                    id = null,
-                    transactionType = this.action.toTransactionType(),
+                    transactionType = TransactionType.DIVIDEND,
+                    externalId = this.id,
+                    importStatus = ImportStatus.PENDING,
+                    transactionDate = this.time.atOffset(ZoneOffset.UTC),
                     quantity = this.numberOfShares,
                     price = this.pricePerShare,
-                    transactionDate = this.time.atOffset(ZoneOffset.UTC),
-                    notes = null,
                     externalSymbol = this.ticker,
                     resolvedAsset = asset,
                     resolutionNote = null,
-                    importStatus = ImportStatus.PENDING
+                    grossAmount = this.total,
+                    taxAmount = this.withholdingTax,
+                    currency = currencies[this.currencyTotal],
                 )
             )
+        }
+        Trading212Action.DIVIDEND_ADJUSTMENT -> {
+            stagingTransactions.add(
+                StagingTransaction(
+                    transactionType = TransactionType.DIVIDEND_ADJUSTMENT,
+                    externalId = this.id,
+                    importStatus = ImportStatus.PENDING,
+                    transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                    grossAmount = this.total,
+                    currency = currencies[this.currencyTotal],
+                )
+            )
+        }
+        else -> {
+            var unknown = StagingTransaction(
+                id = null,
+                transactionType = TransactionType.UNKNOWN,
+                quantity = this.numberOfShares,
+                price = this.pricePerShare,
+                transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                externalSymbol = this.ticker,
+                resolvedAsset = asset,
+                importStatus = ImportStatus.PENDING,
+                externalId = this.id
+            )
+            stagingTransactions.add(unknown)
+            stagingTransactions.addAll(getFeeTransactions(unknown))
         }
     }
     return stagingTransactions
