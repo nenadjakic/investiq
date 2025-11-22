@@ -108,7 +108,7 @@ class Trading212ImporterService(
 
             addToStaging(rowResults)
 
-            return ImportResult<Trading212Trade>(
+            return ImportResult(
                 summary = ImportSummary(totalRows = total, successfulRows = success, failedRows = failed),
                 rowResults = rowResults,
                 errors = errors
@@ -209,5 +209,4 @@ class Trading212ImporterService(
         }
         stagingTransactionRepository.saveAll(stagingTransactions)
     }
-
 }

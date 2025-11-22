@@ -1,46 +1,50 @@
-INSERT INTO companies (id, name, country_code, industry_id) VALUES
-(gen_random_uuid(), 'Johnson & Johnson', 'US', (SELECT id FROM industries WHERE name = 'Drug Manufacturers - General')),
-(gen_random_uuid(), 'IBM', 'US', (SELECT id FROM industries WHERE name = 'Information Technology Services'));
+INSERT INTO companies (id, name, country_code, industry_id)
+VALUES
+    ('6e1fd695-45ed-40c0-a918-f5691ae8f732', 'Johnson & Johnson', 'US', '048553a5-89b4-4de5-b9af-8865c5a3fac5'),
+    ('df19bf92-3041-4191-b994-c54315f34ebc', 'International Business Machines Corporation', 'US', 'a73a7e1e-5523-4751-8ace-837949841b2b'),
+    ('61b9d9e8-0b43-475e-9e8b-ef095ed23f01', 'Roche Holding Ltd', 'CH','048553a5-89b4-4de5-b9af-8865c5a3fac5'),
+    ('7ffd69e8-30e5-4e51-8ec8-8eb2b8c57b91', 'HSBC Holdings PLC', 'GB', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
+    ('c1a5f4e2-3d6b-4f5e-9c1d-2e5f6c3d7a8d', 'Banco Santander, S.A.', 'ES', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
+    ('fb5a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8e', 'Airbus SE', 'US', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
+    ('d2b2c3d4-e5f6-7890-abcd-ef0123456789', 'Siemens Aktiengesellschaft', 'DE', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
+    ('3f4e5d6c-7b8a-9c0d-e1f2-a3b4c5d6e7f8', 'Deutsche Bank', 'DE', '1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f').
+    ('eb4b8383-a5ee-4161-afe9-22f48a4f1521', 'SAP SE', 'DE', 'a73a7e1e-5523-4751-8ace-837949841b2b'),
+    ('fdc12345-6789-4abc-def0-1234567890ab', 'Unilever PLC', 'GB', '7e543bad-189b-42f0-b7dd-7e0a627db227')
+;
 
 INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
-VALUES (
-    gen_random_uuid(),
-    'STOCK',
-    'Johnson & Johnson',
-    'JNJ',
-    NULL,
-    'USD',
-    (SELECT id FROM exchanges WHERE acronym = 'NYSE'),
-    (SELECT id FROM companies WHERE name = 'Johnson & Johnson')
-);
-
-INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
-VALUES (
-    gen_random_uuid(),
-    'STOCK',
-    'International Business Machines Corporation',
-    'IBM',
-    NULL,
-    'USD',
-    (SELECT id FROM exchanges WHERE acronym = 'NYSE'),
-    (SELECT id FROM companies WHERE name = 'Johnson & Johnson')
-);
+VALUES
+    ('a2e818c7-416b-4561-b25b-af8cf2307578', 'STOCK', 'Johnson & Johnson', 'JNJ', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '6e1fd695-45ed-40c0-a918-f5691ae8f732'),
+    ('3e367f20-5253-42ea-8598-2280a9630704', 'STOCK', 'International Business Machines Corporation', 'IBM', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '6e1fd695-45ed-40c0-a918-f5691ae8f732'),
+    ('2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'STOCK', 'Roche Holding Ltd', 'ROG.SW', NULL, 'CHF', '6dcc99d9-8812-40f4-a439-ae0db1034388', '61b9d9e8-0b43-475e-9e8b-ef095ed23f01'),
+    ('9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8c', 'STOCK', 'HSBC Holdings plc', 'HSBA.L', NULL, 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', '7ffd69e8-30e5-4e51-8ec8-8eb2b8c57b91'),
+    ('80835d4f-47db-4756-a6b4-b216404c7706', 'STOCK', 'Banco Santander, S.A.', 'SAN.MC', NULL, 'EUR', 'fccfc161-8c41-40af-b340-41bf77f6c483', 'c1a5f4e2-3d6b-4f5e-9c1d-2e5f6c3d7a8d'),
+    ('d4f5e6a7-b8c9-0d1e-2f3a-4b5c6d7e8f90', 'STOCK', 'Airbus SE', 'AIR.PA', NULL, 'EUR', '258de74f-06ce-480b-85c5-2834e05cd7ac', 'fb5a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8e'),
+    ('df295f45-2d9a-4bd1-98fd-a43df868f7d7', 'STOCK', 'Airbus SE', 'AIR.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'fb5a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8e'),
+    ('c3b4d5e6-f7a8-9b0c-d1e2-f3a4b5c6d7e8', 'STOCK', 'Siemens Aktiengesellschaft', 'SIE.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'd2b2c3d4-e5f6-7890-abcd-ef0123456789'),
+    ('111c1ded-f1b2-41a9-aecc-5dd25dc4ad31', 'STOCK', 'Deutsche Bank', 'DBK.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', '3f4e5d6c-7b8a-9c0d-e1f2-a3b4c5d6e7f8'),
+    ('9f1e2d3c-4b5a-6c7d-8e9f-0a1b2c3d4e5f', 'STOCK', 'Deutsche Bank', 'DB', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '3f4e5d6c-7b8a-9c0d-e1f2-a3b4c5d6e7f8'),
+    ('2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'STOCK', 'SAP SE', 'SAP.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'eb4b8383-a5ee-4161-afe9-22f48a4f1521'),
+    ('fdc12345-6789-4abc-def0-1234567890ab', 'STOCK', 'Unilever PLC', 'ULVR.L', NULL, 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', 'fdc12345-6789-4abc-def0-1234567890ab')
+;
 
 INSERT INTO asset_aliases (id, asset_id, platform, external_symbol)
-VALUES (
-	gen_random_uuid(),
-	(SELECT id FROM assets WHERE symbol = 'JNJ' AND exchange_id = (SELECT id FROM exchanges WHERE acronym = 'NYSE')),
-    'TRADING212',
-    'JNJ'
-    ),
-    (
-    gen_random_uuid(),
-    (SELECT id FROM assets WHERE symbol = 'IBM' AND exchange_id = (SELECT id FROM exchanges WHERE acronym = 'NYSE')),
-    'TRADING212',
-    'IBM'
-    ),
-    (gen_random_uuid(),
-    (SELECT id FROM assets WHERE symbol = 'IBM' AND exchange_id = (SELECT id FROM exchanges WHERE acronym = 'NYSE')),
-    'ETORO',
-    'IBM'
-    );
+VALUES
+    ('0643eeb3-061f-4a1b-91c2-7015e53def28', 'a2e818c7-416b-4561-b25b-af8cf2307578', 'TRADING212', 'JNJ'),
+    ('4c0f8228-78ea-4f18-8f8b-5b3e1f83fc63', '3e367f20-5253-42ea-8598-2280a9630704', 'TRADING212', 'IBM'),
+    ('5f5e1c3a-9d4b-4e2e-8f4b-2e5f6c3d7a8b', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'TRADING212', 'ROG'),
+    ('80a0ae28-d38e-4dd6-b452-f97e98676314', '9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8c', 'TRADING212', 'HSBA'),
+    ('57a1943e-91c3-44a8-a36b-bc644e23253d', '80835d4f-47db-4756-a6b4-b216404c7706', 'TRADING212', 'SAN'),
+    ('1b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e', 'd4f5e6a7-b8c9-0d1e-2f3a-4b5c6d7e8f90', 'TRADING212', 'AIR'),
+    ('42ea2c64-9ee0-4731-afee-941c28547f22', 'c3b4d5e6-f7a8-9b0c-d1e2-f3a4b5c6d7e8', 'TRADING212', 'SIE'),
+    ('91966245-4129-470e-b075-680f0623b476', '111c1ded-f1b2-41a9-aecc-5dd25dc4ad31', 'TRADING212', 'DBK'),
+    ('d1f2e3d4-c5b6-a7b8-9c0d-e1f2a3b4c5d6', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'TRADING212', 'SAP'),
+    ('e5f6a7b8-c9d0-e1f2-a3b4-c5d6e7f8091a', 'fdc12345-6789-4abc-def0-1234567890ab', 'TRADING212', 'ULVR'),
+
+    ('dca31bb9-743c-4345-83ea-416991b757ea', '3e367f20-5253-42ea-8598-2280a9630704', 'ETORO', 'IBM'),
+    ('4fe5a662-9d2b-4bcf-b07f-72c45b8f504b', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'ROG.ZU'),
+    ('21993b85-8cb4-4308-8cf9-0ccd70169da3', 'd4f5e6a7-b8c9-0d1e-2f3a-4b5c6d7e8f90', 'ETORO', 'AIR'),
+    ('b9d2d4cb-f73c-46d1-9048-8b35328b3beb', 'c3b4d5e6-f7a8-9b0c-d1e2-f3a4b5c6d7e8', 'ETORO', 'SIE.DE'),
+    ('91966245-4129-470e-b075-680f0623b476', '9f1e2d3c-4b5a-6c7d-8e9f-0a1b2c3d4e5f', 'ETORO', 'DB'),
+    ('d1f2e3d4-c5b6-a7b8-9c0d-e1f2a3b4c5d6', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'SAP.DE'),
+;
