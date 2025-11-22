@@ -8,6 +8,7 @@ import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.AssetAliasRepository
 import com.github.nenadjakic.investiq.data.repository.CurrencyRepository
 import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
+import com.github.nenadjakic.investiq.data.repository.TagRepository
 import com.github.nenadjakic.investiq.importer.enum.Trading212Action
 import com.github.nenadjakic.investiq.importer.model.ImportError
 import com.github.nenadjakic.investiq.importer.model.ImportResult
@@ -31,7 +32,8 @@ import kotlin.text.isNotBlank
 class Trading212ImporterService(
     private val assetAliasRepository: AssetAliasRepository,
     private val currencyRepository: CurrencyRepository,
-    private val stagingTransactionRepository: StagingTransactionRepository
+    private val stagingTransactionRepository: StagingTransactionRepository,
+    private val tagRepository: TagRepository
 ): ImporterService<Trading212Trade> {
     companion object {
         val REQUIRED_HEADERS = listOf(
@@ -51,12 +53,12 @@ class Trading212ImporterService(
             "Currency (Total)",
             "Withholding tax",
             "Currency (Withholding tax)",
-            "Stamp duty reserve tax",
-            "Currency (Stamp duty reserve tax)",
-            "Currency conversion fee",
-            "Currency (Currency conversion fee)",
-            "French transaction tax",
-            "Currency (French transaction tax)"
+            //"Stamp duty reserve tax",
+            //"Currency (Stamp duty reserve tax)",
+            //"Currency conversion fee",
+            //"Currency (Currency conversion fee)",
+            //"French transaction tax",
+            //"Currency (French transaction tax)"
         )
     }
 
@@ -135,6 +137,17 @@ class Trading212ImporterService(
                 ?: throw IllegalArgumentException("Invalid number in field: $name, value: '$value'")
         }
 
+        fun getDoubleOrDefault(name: String, default: Double = 0.0): Double {
+            val value = try { record.get(name)?.trim() } catch (e: Exception) { null }
+            if (value.isNullOrEmpty()) return default
+            val normalized = value.replace(",", ".")
+            return normalized.toDoubleOrNull() ?: default
+        }
+
+        fun getOrDefault(name: String, default: String? = null): String? =
+            try { record.get(name)?.takeIf { it.isNotBlank() } } catch (e: Exception) { null }
+                ?: default
+
         return Trading212Trade(
             action = Trading212Action.fromValue(get("Action")),
             time = getLocalDateTime("Time"),
@@ -150,14 +163,14 @@ class Trading212ImporterService(
             currencyResult = get("Currency (Result)"),
             total = getDouble("Total"),
             currencyTotal = get("Currency (Total)"),
-            withholdingTax = getDouble("Withholding tax"),
-            withholdingCurrency = get("Currency (Withholding tax)"),
-            stampDuty = getDouble("Stamp duty reserve tax"),
-            stampCurrency = get("Currency (Stamp duty reserve tax)"),
-            fxFee = getDouble("Currency conversion fee"),
-            fxFeeCurrency = get("Currency (Currency conversion fee)"),
-            frTax = getDouble("French transaction tax"),
-            frTaxCurrency = get("Currency (French transaction tax)"),
+            withholdingTax = getDoubleOrDefault("Withholding tax"),
+            withholdingCurrency = getOrDefault("Currency (Withholding tax)"),
+            stampDuty = getDoubleOrDefault("Stamp duty reserve tax"),
+            stampCurrency = getOrDefault("Currency (Stamp duty reserve tax)"),
+            fxFee = getDoubleOrDefault("Currency conversion fee"),
+            fxFeeCurrency = getOrDefault("Currency (Currency conversion fee)"),
+            frTax = getDoubleOrDefault("French transaction tax"),
+            frTaxCurrency = getOrDefault("Currency (French transaction tax)"),
         )
     }
 
@@ -178,9 +191,12 @@ class Trading212ImporterService(
             currencies.putAll(
                 currencyRepository.findAll().associateBy { it.code!! })
 
+            tags.putAll(
+                tagRepository.findAll().associateBy { it.name }
+            )
+
         } catch (ex: Exception) {
             throw RuntimeException("Failed to load account for importing Trading 212 transactions.", ex)
-
         }
 
         val stagingTransactions = mutableListOf<StagingTransaction>()

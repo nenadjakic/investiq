@@ -38,4 +38,22 @@ class PrettyPrinter @Autowired constructor(@Lazy private val terminal: Terminal)
         terminal.writer().println(toPrint)
         terminal.flush()
     }
+
+    fun print(message: String?, messageType: MessageType) {
+        val toPrint = when (messageType) {
+            MessageType.INFO -> info(message)
+            MessageType.SUCCESS -> success(message)
+            MessageType.WARNING -> warning(message)
+            MessageType.ERROR -> error(message)
+        }
+        terminal.writer().println(toPrint)
+        terminal.flush()
+    }
+}
+
+enum class MessageType {
+    INFO,
+    SUCCESS,
+    WARNING,
+    ERROR
 }

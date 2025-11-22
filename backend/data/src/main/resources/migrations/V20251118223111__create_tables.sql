@@ -133,3 +133,11 @@ CREATE TABLE staging_transactions (
 	CONSTRAINT fk_staging_transactions_currencies FOREIGN KEY (currency_code) REFERENCES currencies(code),
     CONSTRAINT fk_staging_transactions_staging_transactions FOREIGN KEY (related_staging_transaction_id) REFERENCES staging_transactions(id)
 );
+
+CREATE TABLE staging_transaction_tags (
+	staging_transaction_id uuid NOT NULL,
+	tag_id uuid NOT NULL,
+	CONSTRAINT pk_staging_transaction_tags PRIMARY KEY (staging_transaction_id, tag_id),
+	CONSTRAINT fk_staging_transaction_tags_staging_transactions FOREIGN KEY (staging_transaction_id) REFERENCES staging_transactions(id),
+	CONSTRAINT fk_staging_transaction_tags_tags FOREIGN KEY (tag_id) REFERENCES tags(id)
+);

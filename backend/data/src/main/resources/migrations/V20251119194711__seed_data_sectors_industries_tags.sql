@@ -2,11 +2,11 @@ INSERT INTO tags (id, "name")
 VALUES
   (gen_random_uuid(), 'Trading212'),
   (gen_random_uuid(), 'IBKR'),
-  (gen_random_uuid(), 'eToro');,
+  (gen_random_uuid(), 'eToro'),
   (gen_random_uuid(), 'Revolut'),
   (gen_random_uuid(), 'Stamp duty reserve tax'),
   (gen_random_uuid(), 'Conversation fee'),
-  (gen_random_uuid(), 'French transaction tax'),
+  (gen_random_uuid(), 'French transaction tax');
 
 INSERT INTO sectors (id, "name")
 VALUES

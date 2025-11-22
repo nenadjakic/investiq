@@ -29,13 +29,13 @@ data class Trading212Trade(
     val total: Double,
     val currencyTotal: String,
     val withholdingTax: Double,
-    val withholdingCurrency: String,
+    val withholdingCurrency: String?,
     val stampDuty: Double,
-    val stampCurrency: String,
+    val stampCurrency: String?,
     val fxFee: Double,
-    val fxFeeCurrency: String,
+    val fxFeeCurrency: String?,
     val frTax: Double,
-    val frTaxCurrency: String
+    val frTaxCurrency: String?
 )
 
 fun Trading212Trade.toStagingTransactions(
@@ -60,7 +60,10 @@ fun Trading212Trade.toStagingTransactions(
                     amount = this.fxFee,
                     notes = this.notes,
                     relatedStagingTransaction = parentStagingTransaction
-                ).also { tags["Conversation fee"]?.let { element -> it.tags.add(element) }}
+                ).also {
+                    tags["Trading212"]?.let { element -> it.tags.add(element) }
+                    tags["Conversation fee"]?.let { element -> it.tags.add(element) }
+                }
             )
         }
         if (this.stampDuty != 0.0) {
@@ -74,7 +77,10 @@ fun Trading212Trade.toStagingTransactions(
                     amount = this.stampDuty,
                     notes = this.notes,
                     relatedStagingTransaction = parentStagingTransaction
-                ).also { tags["Stamp duty reserve tax"]?.let { element -> it.tags.add(element) }}
+                ).also {
+                    tags["Trading212"]?.let { element -> it.tags.add(element) }
+                    tags["Stamp duty reserve tax"]?.let { element -> it.tags.add(element) }
+                }
             )
         }
 
@@ -89,7 +95,10 @@ fun Trading212Trade.toStagingTransactions(
                     amount = this.frTax,
                     notes = this.notes,
                     relatedStagingTransaction = parentStagingTransaction
-                ).also { tags["French transaction tax"]?.let { element -> it.tags.add(element) }}
+                ).also {
+                    tags["Trading212"]?.let { element -> it.tags.add(element) }
+                    tags["French transaction tax"]?.let { element -> it.tags.add(element) }
+                }
             )
         }
         return fees
@@ -120,7 +129,7 @@ fun Trading212Trade.toStagingTransactions(
                 currency = currencies[this.currencyTotal],
                 amount = this.total,
                 notes = this.notes,
-            )
+            ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
             stagingTransactions.add(deposit)
             stagingTransactions.addAll(getFeeTransactions(deposit))
         }
@@ -134,7 +143,7 @@ fun Trading212Trade.toStagingTransactions(
                 quantity = this.numberOfShares,
                 externalSymbol = this.ticker,
                 resolvedAsset = asset,
-            )
+            ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
             stagingTransactions.add(buy)
             stagingTransactions.addAll(getFeeTransactions(buy))
         }
@@ -148,7 +157,7 @@ fun Trading212Trade.toStagingTransactions(
                 quantity = this.numberOfShares,
                 externalSymbol = this.ticker,
                 resolvedAsset = asset,
-            )
+            ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
             stagingTransactions.add(buy)
             stagingTransactions.addAll(getFeeTransactions(buy))
         }
@@ -167,7 +176,7 @@ fun Trading212Trade.toStagingTransactions(
                     grossAmount = this.total,
                     taxAmount = this.withholdingTax,
                     currency = currencies[this.currencyTotal],
-                )
+                ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
             )
         }
         Trading212Action.DIVIDEND_ADJUSTMENT -> {
@@ -179,7 +188,7 @@ fun Trading212Trade.toStagingTransactions(
                     transactionDate = this.time.atOffset(ZoneOffset.UTC),
                     grossAmount = this.total,
                     currency = currencies[this.currencyTotal],
-                )
+                ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
             )
         }
         else -> {
@@ -193,7 +202,7 @@ fun Trading212Trade.toStagingTransactions(
                 resolvedAsset = asset,
                 importStatus = ImportStatus.PENDING,
                 externalId = this.id
-            )
+            ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
             stagingTransactions.add(unknown)
             stagingTransactions.addAll(getFeeTransactions(unknown))
         }

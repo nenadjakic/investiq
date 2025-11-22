@@ -3,6 +3,7 @@ package com.github.nenadjakic.investiq.importer.command
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.importer.model.Trading212Trade
 import com.github.nenadjakic.investiq.importer.service.ImporterService
+import com.github.nenadjakic.investiq.importer.util.MessageType
 import com.github.nenadjakic.investiq.importer.util.PrettyPrinter
 import org.slf4j.LoggerFactory
 import org.springframework.shell.standard.ShellCommandGroup
@@ -32,17 +33,18 @@ class ImporterCommand(
             log.error("File not found at path: $path")
             return
         }
+
         importerService.import(Files.newInputStream(filePath))
             .also { result ->
-                log.info(
+                prettyPrinter.print(
                     "Import finished for platform   : $platform — " +
                             "${result.summary.successfulRows} successful, " +
-                            "${result.summary.failedRows} failed"
+                            "${result.summary.failedRows} failed", MessageType.INFO
                 )
             }
             .also { result ->
                 result.errors.forEach { error ->
-                    prettyPrinter.error("Row ${error.rowIndex} error: ${error.message}")
+                    prettyPrinter.print("Row ${error.rowIndex} error: ${error.message}", MessageType.ERROR)
                 }
             }
     }
