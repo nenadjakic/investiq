@@ -13,7 +13,9 @@ VALUES
     ('6ab6457e-c14e-4a6d-8ccf-a21b24370aea', 'Novartis AG', 'CH', '048553a5-89b4-4de5-b9af-8865c5a3fac5'),
     ('c8452227-612e-433c-8774-0b3d316a90a6', 'Allianz SE', 'DE', 'e5c5bc46-ca43-467e-9395-e54e3bfa6704'),
     ('fb2a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8f', 'Apple Inc.', 'US', 'c4d5e6f7-8a9b-0c1d-2e3f-4a5b6c7d8e9f'),
-    ('c1234567-89ab-4cde-f012-3456789abcde', 'Meta Platforms, Inc', 'US', '048553a5-89b4-4de5-b9af-8865c5a3fac5')
+    ('c1234567-89ab-4cde-f012-3456789abcde', 'Meta Platforms, Inc', 'US', '048553a5-89b4-4de5-b9af-8865c5a3fac5'),
+    ('92b660af-fee2-4027-a7d2-35c05cbe3156', 'MARA Holdings, Inc.', 'US', '3b8e21a7-d3ff-4609-a9fe-8804a28f0c0a'),
+    ('0be15e0c-9eb2-4bad-a867-c3052d0a9d1c', 'Broadcom Inc.', 'US', '75cff663-9ad5-4e30-97cd-6837b47b270f')
 ;
 
 INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
@@ -33,7 +35,9 @@ VALUES
     ('a3b2c1d4-e5f6-7890-abcd-ef0123456789', 'STOCK', 'Novartis AG', 'NOVN.SW', NULL, 'CHF', '6dcc99d9-8812-40f4-a439-ae0db1034388', '6ab6457e-c14e-4a6d-8ccf-a21b24370aea'),
     ('36a4699c-c185-4399-912d-35a17b8f22f6', 'STOCK', 'Allianz SE', 'ALV.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'c8452227-612e-433c-8774-0b3d316a90a6'),
     ('ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'STOCK', 'Apple Inc.', 'AAPL', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'fb2a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8f'),
-    ('9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8d', 'STOCK', 'Meta Platforms, Inc.', 'META', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'c1234567-89ab-4cde-f012-3456789abcde')
+    ('9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8d', 'STOCK', 'Meta Platforms, Inc.', 'META', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'c1234567-89ab-4cde-f012-3456789abcde'),
+    ('1c46d982-868f-4565-a8a1-4e2f29f54d8b', 'STOCK', 'MARA Holdings, Inc.', 'MARA', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '92b660af-fee2-4027-a7d2-35c05cbe3156'),
+    ('0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'STOCK', 'Broadcom Inc.', 'AVGO', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '0be15e0c-9eb2-4bad-a867-c3052d0a9d1c')
 ;
 
 INSERT INTO asset_aliases (id, asset_id, platform, external_symbol)
@@ -52,6 +56,9 @@ VALUES
     ('ab12cd34-ef56-7890-abcd-ef0123456789', '36a4699c-c185-4399-912d-35a17b8f22f6', 'TRADING212', 'ALV'),
     ('bc23de45-f678-90ab-cdef-0123456789ab', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'TRADING212', 'AAPL'),
     ('cd34ef56-7890-abcd-ef01-23456789abcd', '9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8d', 'TRADING212', 'META'),
+    ('ed21382f-2fb8-4f17-935d-7d1b21e9baf9', '1c46d982-868f-4565-a8a1-4e2f29f54d8b', 'TRADING212', 'MARA'),
+    ('b201ddb0-0598-4631-8ba0-aed6d4693fbf', '0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'TRADING212', 'AVGO'),
+
 
     ('dca31bb9-743c-4345-83ea-416991b757ea', '3e367f20-5253-42ea-8598-2280a9630704', 'ETORO', 'IBM'),
     ('4fe5a662-9d2b-4bcf-b07f-72c45b8f504b', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'ROG.ZU'),
@@ -61,6 +68,7 @@ VALUES
     ('c859a4cc-c922-4c18-b9bb-cdaaded486da', '91966245-4129-470e-b075-680f0623b476', 'ETORO', 'SAP.DE'),
     ('4861b90a-0027-4d65-99a4-73700c25a1b2', '9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8d', 'ETORO', 'META'),
 
-    ('3662a0a0-66c1-407f-93d7-92fea293aece', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'IBKR', 'AAPL')
+    ('3662a0a0-66c1-407f-93d7-92fea293aece', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'IBKR', 'AAPL'),
+    ('6e08e85f-7b74-4dd3-bf73-afd80c270462', '0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'IBKR', 'AVGO')
 
 ;

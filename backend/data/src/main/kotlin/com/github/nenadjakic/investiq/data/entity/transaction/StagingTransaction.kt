@@ -62,7 +62,7 @@ data class StagingTransaction(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resolved_asset_id")
-    val resolvedAsset: Asset? = null,
+    var resolvedAsset: Asset? = null,
 
     @ManyToOne
     @JoinColumn(name = "currency_code")

@@ -71,6 +71,16 @@ class PrettyPrinter @Autowired constructor(@Lazy private val terminal: Terminal)
         terminal.writer().println(toPrint)
         terminal.flush()
     }
+
+    fun print(message: String?, foreground: Int? = null, background: Int? = null,) {
+        val toPrint = getColored(
+            message = message,
+            foreground = foreground,
+            background = background
+        )
+        terminal.writer().println(toPrint)
+        terminal.flush()
+    }
 }
 
 enum class MessageType {
