@@ -138,14 +138,14 @@ class Trading212ImporterService(
         }
 
         fun getDoubleOrDefault(name: String, default: Double = 0.0): Double {
-            val value = try { record.get(name)?.trim() } catch (e: Exception) { null }
+            val value = try { record.get(name)?.trim() } catch (_: Exception) { null }
             if (value.isNullOrEmpty()) return default
             val normalized = value.replace(",", ".")
             return normalized.toDoubleOrNull() ?: default
         }
 
         fun getOrDefault(name: String, default: String? = null): String? =
-            try { record.get(name)?.takeIf { it.isNotBlank() } } catch (e: Exception) { null }
+            try { record.get(name)?.takeIf { it.isNotBlank() } } catch (_: Exception) { null }
                 ?: default
 
         return Trading212Trade(

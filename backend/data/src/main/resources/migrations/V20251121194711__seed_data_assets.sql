@@ -7,9 +7,12 @@ VALUES
     ('c1a5f4e2-3d6b-4f5e-9c1d-2e5f6c3d7a8d', 'Banco Santander, S.A.', 'ES', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
     ('fb5a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8e', 'Airbus SE', 'US', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
     ('d2b2c3d4-e5f6-7890-abcd-ef0123456789', 'Siemens Aktiengesellschaft', 'DE', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
-    ('3f4e5d6c-7b8a-9c0d-e1f2-a3b4c5d6e7f8', 'Deutsche Bank', 'DE', '1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f').
+    ('3f4e5d6c-7b8a-9c0d-e1f2-a3b4c5d6e7f8', 'Deutsche Bank', 'DE', '1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
     ('eb4b8383-a5ee-4161-afe9-22f48a4f1521', 'SAP SE', 'DE', 'a73a7e1e-5523-4751-8ace-837949841b2b'),
-    ('fdc12345-6789-4abc-def0-1234567890ab', 'Unilever PLC', 'GB', '7e543bad-189b-42f0-b7dd-7e0a627db227')
+    ('fdc12345-6789-4abc-def0-1234567890ab', 'Unilever PLC', 'GB', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
+    ('6ab6457e-c14e-4a6d-8ccf-a21b24370aea', 'Novartis AG', 'CH', '048553a5-89b4-4de5-b9af-8865c5a3fac5'),
+    ('c8452227-612e-433c-8774-0b3d316a90a6', 'Allianz SE', 'DE', 'e5c5bc46-ca43-467e-9395-e54e3bfa6704'),
+    ('fb2a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8f', 'Apple Inc.', 'US', 'c4d5e6f7-8a9b-0c1d-2e3f-4a5b6c7d8e9f')
 ;
 
 INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
@@ -24,8 +27,11 @@ VALUES
     ('c3b4d5e6-f7a8-9b0c-d1e2-f3a4b5c6d7e8', 'STOCK', 'Siemens Aktiengesellschaft', 'SIE.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'd2b2c3d4-e5f6-7890-abcd-ef0123456789'),
     ('111c1ded-f1b2-41a9-aecc-5dd25dc4ad31', 'STOCK', 'Deutsche Bank', 'DBK.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', '3f4e5d6c-7b8a-9c0d-e1f2-a3b4c5d6e7f8'),
     ('9f1e2d3c-4b5a-6c7d-8e9f-0a1b2c3d4e5f', 'STOCK', 'Deutsche Bank', 'DB', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '3f4e5d6c-7b8a-9c0d-e1f2-a3b4c5d6e7f8'),
-    ('2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'STOCK', 'SAP SE', 'SAP.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'eb4b8383-a5ee-4161-afe9-22f48a4f1521'),
-    ('fdc12345-6789-4abc-def0-1234567890ab', 'STOCK', 'Unilever PLC', 'ULVR.L', NULL, 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', 'fdc12345-6789-4abc-def0-1234567890ab')
+    ('91966245-4129-470e-b075-680f0623b476', 'STOCK', 'SAP SE', 'SAP.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'eb4b8383-a5ee-4161-afe9-22f48a4f1521'),
+    ('94fb39b3-0464-4244-ba39-b0e343d78318', 'STOCK', 'Unilever PLC', 'ULVR.L', NULL, 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', 'fdc12345-6789-4abc-def0-1234567890ab'),
+    ('a3b2c1d4-e5f6-7890-abcd-ef0123456789', 'STOCK', 'Novartis AG', 'NOVN.SW', NULL, 'CHF', '6dcc99d9-8812-40f4-a439-ae0db1034388', '6ab6457e-c14e-4a6d-8ccf-a21b24370aea'),
+    ('36a4699c-c185-4399-912d-35a17b8f22f6', 'STOCK', 'Allianz SE', 'ALV.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'c8452227-612e-433c-8774-0b3d316a90a6'),
+    ('ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'STOCK', 'Apple Inc.', 'AAPL', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'fb2a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8f')
 ;
 
 INSERT INTO asset_aliases (id, asset_id, platform, external_symbol)
@@ -37,14 +43,19 @@ VALUES
     ('57a1943e-91c3-44a8-a36b-bc644e23253d', '80835d4f-47db-4756-a6b4-b216404c7706', 'TRADING212', 'SAN'),
     ('1b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e', 'd4f5e6a7-b8c9-0d1e-2f3a-4b5c6d7e8f90', 'TRADING212', 'AIR'),
     ('42ea2c64-9ee0-4731-afee-941c28547f22', 'c3b4d5e6-f7a8-9b0c-d1e2-f3a4b5c6d7e8', 'TRADING212', 'SIE'),
-    ('91966245-4129-470e-b075-680f0623b476', '111c1ded-f1b2-41a9-aecc-5dd25dc4ad31', 'TRADING212', 'DBK'),
-    ('d1f2e3d4-c5b6-a7b8-9c0d-e1f2a3b4c5d6', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'TRADING212', 'SAP'),
-    ('e5f6a7b8-c9d0-e1f2-a3b4-c5d6e7f8091a', 'fdc12345-6789-4abc-def0-1234567890ab', 'TRADING212', 'ULVR'),
+    ('5e292511-6ed4-4ed8-9624-5a8701c46f88', '111c1ded-f1b2-41a9-aecc-5dd25dc4ad31', 'TRADING212', 'DBK'),
+    ('d1f2e3d4-c5b6-a7b8-9c0d-e1f2a3b4c5d6', '91966245-4129-470e-b075-680f0623b476', 'TRADING212', 'SAP'),
+    ('e5f6a7b8-c9d0-e1f2-a3b4-c5d6e7f8091a', '94fb39b3-0464-4244-ba39-b0e343d78318', 'TRADING212', 'ULVR'),
+    ('f1b2c3d4-e5f6-7890-abcd-ef0123456789', 'a3b2c1d4-e5f6-7890-abcd-ef0123456789', 'TRADING212', 'NOVN'),
+    ('ab12cd34-ef56-7890-abcd-ef0123456789', '36a4699c-c185-4399-912d-35a17b8f22f6', 'TRADING212', 'ALV'),
+    ('bc23de45-f678-90ab-cdef-0123456789ab', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'TRADING212', 'AAPL'),
 
     ('dca31bb9-743c-4345-83ea-416991b757ea', '3e367f20-5253-42ea-8598-2280a9630704', 'ETORO', 'IBM'),
     ('4fe5a662-9d2b-4bcf-b07f-72c45b8f504b', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'ROG.ZU'),
     ('21993b85-8cb4-4308-8cf9-0ccd70169da3', 'd4f5e6a7-b8c9-0d1e-2f3a-4b5c6d7e8f90', 'ETORO', 'AIR'),
     ('b9d2d4cb-f73c-46d1-9048-8b35328b3beb', 'c3b4d5e6-f7a8-9b0c-d1e2-f3a4b5c6d7e8', 'ETORO', 'SIE.DE'),
     ('91966245-4129-470e-b075-680f0623b476', '9f1e2d3c-4b5a-6c7d-8e9f-0a1b2c3d4e5f', 'ETORO', 'DB'),
-    ('d1f2e3d4-c5b6-a7b8-9c0d-e1f2a3b4c5d6', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'SAP.DE'),
+    ('c859a4cc-c922-4c18-b9bb-cdaaded486da', '91966245-4129-470e-b075-680f0623b476', 'ETORO', 'SAP.DE'),
+
+    ('3662a0a0-66c1-407f-93d7-92fea293aece', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'IBKR', 'AAPL')
 ;
