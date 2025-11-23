@@ -20,7 +20,16 @@ VALUES
     ('bca178e9-73af-4ca3-91c9-5a213d9d897f', 'Bank of America Corporation', 'US', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
     ('15956ad0-2943-4c87-aa91-a04b79e93408', 'Oracle Corporation', 'US', 'f7bb2487-c840-4496-bf6e-0f00aa49638f'),
     ('1b55b265-b5a1-469c-a24e-25af962afb71', 'Rolls-Royce Holdings PLC', 'GB', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
-    ('94641f4d-b7d6-4cd4-bcc6-958020d8a386', 'Barclays PLC', 'GB', '7e543bad-189b-42f0-b7dd-7e0a627db227')
+    ('94641f4d-b7d6-4cd4-bcc6-958020d8a386', 'Barclays PLC', 'GB', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
+    ('bcdce1c8-c4b2-4560-8584-1c3bc6353ce1', 'Interactive Brokers Group, Inc.', 'US', '7b93dbff-fca1-48a6-ba84-2560a3b84654'),
+    ('9df1d68a-9881-49b1-b589-db25ef5aae5b', 'Salesforce, Inc.', 'US', 'bbf4c8e1-3d2a-4f5e-9c1d-2e5f6c3d7a8a'),
+    ('f56d7516-d3ee-4dc1-ad17-11e2c7f3790f', 'The Coca-Cola Company', 'US', '131d737e-862e-47ef-9de1-15a38ba41b9b'),
+    ('368bcf8c-78a9-493d-8384-2c0e119c9ad3', 'Plus500 Ltd.', 'GB', '3b8e21a7-d3ff-4609-a9fe-8804a28f0c0a'),
+    ('1ad7b9e3-20f2-4a5d-a11b-4f4d49473d12', 'The Procter & Gamble Company', 'US', '042ea834-ccce-4627-82e6-a63339a0f343'),
+    ('2db22bc5-036e-4be3-a47c-503dff4c86ae', 'Novo Nordisk A/S', 'DK', '048553a5-89b4-4de5-b9af-8865c5a3fac5'),
+    ('0cf6cb92-ac8e-49b2-afcb-670ac10f463d', 'Samsung Electronics Co., Ltd.', 'KR', 'c4d5e6f7-8a9b-0c1d-2e3f-4a5b6c7d8e9f'),
+    ('97e5c399-e67e-44a6-83ba-c702a1e2930f', 'QUALCOMM Incorporated', 'US', '75cff663-9ad5-4e30-97cd-6837b47b270f'),
+    ('b16db3e3-e654-4c95-a58b-6afad208eec3', 'SoundHound AI, Inc.', 'US', 'bbf4c8e1-3d2a-4f5e-9c1d-2e5f6c3d7a8a')
 ;
 
 INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
@@ -48,7 +57,18 @@ VALUES
     ('a77c55a5-28fa-4895-b85b-1a57c4451ad3', 'STOCK', 'Bank of America Corporation', 'BAC', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', 'bca178e9-73af-4ca3-91c9-5a213d9d897f'),
     ('4129fee0-7a1a-4ee3-b5a1-9a1ea8875886', 'STOCK', 'Oracle Corporation', 'ORCL', 'NULL', 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '15956ad0-2943-4c87-aa91-a04b79e93408'),
     ('2ac726b1-bdb9-4d4e-873c-806958ff80a8', 'STOCK', 'Rolls-Royce Holdings plc', 'RR.L', 'NULL', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', '1b55b265-b5a1-469c-a24e-25af962afb71'),
-    ('134c251f-f7dd-4c45-9f9e-0983ee088d09', 'STOCK', 'Barclays PLC', 'BARC.L', 'NULL', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', '94641f4d-b7d6-4cd4-bcc6-958020d8a386')
+    ('134c251f-f7dd-4c45-9f9e-0983ee088d09', 'STOCK', 'Barclays PLC', 'BARC.L', 'NULL', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', '94641f4d-b7d6-4cd4-bcc6-958020d8a386'),
+    ('80590abb-8c9d-46ae-b76a-51acfbcbe422', 'STOCK', 'Interactive Brokers Group, Inc.', 'IBKR', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'bcdce1c8-c4b2-4560-8584-1c3bc6353ce1'),
+    ('d38008ec-21a0-4498-a224-5e9c48cb9a82', 'STOCK', 'Salesforce, Inc.', 'CRM', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '9df1d68a-9881-49b1-b589-db25ef5aae5b'),
+    ('aa491ae0-a832-41f2-9354-6d158c23e399', 'ETF', 'iShares MSCI Japan ESG Enhanced CTB UCITS ETF USD Inc (Dist)', 'EEJG.L', 'iShares', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('d993242f-7074-4fd1-8081-ef2a56338970', 'STOCK', 'The Coca-Cola Company', 'KO', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', 'f56d7516-d3ee-4dc1-ad17-11e2c7f3790f'),
+    ('8571c932-dd11-4d38-9545-41fa6c0ee2ab', 'ETF', 'iShares S&P 500 Information Technology Sector UCITS ETF USD (Acc)', 'IITU.L', 'iShares', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('b93460cc-263c-401c-8a03-5f798deb2746', 'STOCK', 'Plus500 Ltd.', 'PLUS.L', NULL, 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', '368bcf8c-78a9-493d-8384-2c0e119c9ad3'),
+    ('b10c1dbf-6497-41b1-92f5-8f2d0e292dc7', 'STOCK', 'The Procter & Gamble Company', 'PG', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '1ad7b9e3-20f2-4a5d-a11b-4f4d49473d12'),
+    ('8c6f483b-398f-4f19-9290-7d566a40ba98', 'STOCK', 'Novo Nordisk A/S', 'NVO', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '2db22bc5-036e-4be3-a47c-503dff4c86ae'),
+    ('ebe535d7-32f2-4c19-91de-4eb1b2af04a0', 'STOCK', 'Samsung Electronics Co., Ltd.', 'SMSN.IL', NULL, 'USD', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', '0cf6cb92-ac8e-49b2-afcb-670ac10f463d'),
+    ('779e9c90-9622-4e70-8d9c-8e18ac1c39ec', 'STOCK', 'QUALCOMM Incorporated', 'QCOM', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '97e5c399-e67e-44a6-83ba-c702a1e2930f'),
+    ('4acdf8a8-c39e-42ad-a0c5-7a556b0df54b', 'STOCK', 'SoundHound AI, Inc.', 'SOUN', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'b16db3e3-e654-4c95-a58b-6afad208eec3')
 ;
 
 INSERT INTO asset_aliases (id, asset_id, platform, external_symbol)
@@ -75,6 +95,17 @@ VALUES
     ('c811d3f4-4f61-4e06-9b54-d6098d8e2249', '4129fee0-7a1a-4ee3-b5a1-9a1ea8875886', 'TRADING212', 'ORCL'),
     ('33ab2867-825a-4ae9-8e8f-250f6a9545e5', '2ac726b1-bdb9-4d4e-873c-806958ff80a8', 'TRADING212', 'RR'),
     ('89657cb4-8aed-4fd7-a893-a4c6e137c3db', '134c251f-f7dd-4c45-9f9e-0983ee088d09', 'TRADING212', 'BARC'),
+    ('f4f2463d-494f-42eb-9cbc-9093e8848f25', '80590abb-8c9d-46ae-b76a-51acfbcbe422', 'TRADING212', 'IBKR'),
+    ('e99a787e-c5f5-4bc8-bfa0-0197e44c4416', 'd38008ec-21a0-4498-a224-5e9c48cb9a82', 'TRADING212', 'CRM'),
+    ('a02271e3-27b2-4055-9d77-3ec088312efb', 'aa491ae0-a832-41f2-9354-6d158c23e399', 'TRADING212', 'EEJG'),
+    ('9f399f58-1cbf-4f8a-a178-6e831a896474', 'd993242f-7074-4fd1-8081-ef2a56338970', 'TRADING212', 'KO'),
+    ('8d1db88e-c360-407a-8f8f-b1c2ccf95f04', '8571c932-dd11-4d38-9545-41fa6c0ee2ab', 'TRADING212', 'IITU'),
+    ('1a6ea632-0bfc-434b-8c8a-b9996570fc57', 'b93460cc-263c-401c-8a03-5f798deb2746', 'TRADING212', 'PLUS'),
+    ('d05f0571-68e9-4013-9bae-70289a65dcad', 'b10c1dbf-6497-41b1-92f5-8f2d0e292dc7', 'TRADING212', 'PG'),
+    ('f8823fba-57f4-41f9-831e-fd35cc625253', '8c6f483b-398f-4f19-9290-7d566a40ba98', 'TRADING212', 'NVO'),
+    ('44ba300a-0257-4959-8f08-8e05268d8730', 'ebe535d7-32f2-4c19-91de-4eb1b2af04a0', 'TRADING212', 'SMSN'),
+    ('f0b70bb5-899e-4c1c-ac9a-249ce7e4d7f0', '779e9c90-9622-4e70-8d9c-8e18ac1c39ec', 'TRADING212', 'QCOM'),
+    ('3a5b44c0-b138-4955-bc00-63622a1835b4', '4acdf8a8-c39e-42ad-a0c5-7a556b0df54b', 'TRADING212', 'SOUN'),
 
     ('dca31bb9-743c-4345-83ea-416991b757ea', '3e367f20-5253-42ea-8598-2280a9630704', 'ETORO', 'IBM'),
     ('4fe5a662-9d2b-4bcf-b07f-72c45b8f504b', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'ROG.ZU'),
@@ -88,5 +119,6 @@ VALUES
 
     ('3662a0a0-66c1-407f-93d7-92fea293aece', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'IBKR', 'AAPL'),
     ('6e08e85f-7b74-4dd3-bf73-afd80c270462', '0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'IBKR', 'AVGO'),
-    ('2d657d07-b136-4d51-9bca-fad682fa31ac', '99d7f31a-0c82-4636-ae02-fd117ac1875d', 'IBKR', 'MSFT')
+    ('2d657d07-b136-4d51-9bca-fad682fa31ac', '99d7f31a-0c82-4636-ae02-fd117ac1875d', 'IBKR', 'MSFT'),
+    ('2b599799-75ca-4b10-8577-ec3bdec82f38', '80590abb-8c9d-46ae-b76a-51acfbcbe422', 'IBKR', 'IBKR')
 ;

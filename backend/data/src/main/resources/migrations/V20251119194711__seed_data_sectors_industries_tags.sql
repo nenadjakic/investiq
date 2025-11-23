@@ -13,7 +13,8 @@ VALUES
   ('e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e', 'Technology'),
   ('75536f22-aa7f-4bb3-95c9-c7ae66295a13', 'Healthcare'),
   ('a45f3a5a-0319-4dcb-86e1-9478b16adfa4', 'Financial Services'),
-  ('f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f', 'Industrials')
+  ('f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f', 'Industrials'),
+  ('134d7ecb-7480-44f9-a6b5-8e9211212f1c', 'Consumer Defensive')
  ;
 
 INSERT INTO public.industries (id, "name", sector_id)
@@ -34,8 +35,14 @@ VALUES
   ('1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f', 'Banks - Regional', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
   ('e5c5bc46-ca43-467e-9395-e54e3bfa6704', 'Insurance - Diversified', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
   ('3b8e21a7-d3ff-4609-a9fe-8804a28f0c0a', 'Financial - Capital Markets', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
+  ('7b93dbff-fca1-48a6-ba84-2560a3b84654', 'Investment - Banking & Investment Services', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
 
 -- Industrials
   ('a1b2c3d4-e5f6-7890-abcd-ef0123456789', 'Aerospace & Defense', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
-  ('2a042a16-c2e5-4d53-95fb-2d09362207b8', 'Industrial - Machinery', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f')
+  ('2a042a16-c2e5-4d53-95fb-2d09362207b8', 'Industrial - Machinery', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
+
+-- Consumer Defensive
+   ('131d737e-862e-47ef-9de1-15a38ba41b9b', 'Beverages - Non-Alcoholic', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
+   ('042ea834-ccce-4627-82e6-a63339a0f343', 'Household & Personal Products', '134d7ecb-7480-44f9-a6b5-8e9211212f1c')
+
  ;
