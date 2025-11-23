@@ -33,7 +33,7 @@ class StagingTransactionCommand(
     ) {
         val stagingTransactions = stagingTransactionService.listStagingTransactions(unresolved, platform, limit)
         if (stagingTransactions.isEmpty()) {
-            println("no staging trans")
+            prettyPrinter.print("No staging transaction for given parameters", AttributedStyle.YELLOW)
             return
         }
         printStagingHeader()
@@ -75,29 +75,11 @@ class StagingTransactionCommand(
     @ShellMethod("Assign an existing asset to the current staging transaction by Asset UUID", key = [ "staging-transaction-assign-asset" ])
     @ShellMethodAvailability("isStagingSelected")
     fun assignAsset(assetId: UUID) {
-        val staging = currentStaging ?: run {
-            prettyPrinter.print("No staging transaction selected!", MessageType.ERROR)
-            return
-        }
-
         val asset = assetService.findById(assetId)
         if (asset == null) {
             prettyPrinter.print("Asset with ID $assetId not found.", MessageType.ERROR)
             return
         }
-/*
-        staging.resolvedAsset = asset
-        staging.importStatus = ImportStatus.VALIDATED
-        stagingTransactionService.save(staging.toEntity())
-
-        prettyPrinter.print(
-            "Assigned asset ${asset.symbol} ${asset.currency} @${asset.exchange} to staging transaction ${staging.id}",
-            MessageType.SUCCESS
-        )
-
-
- */
-
     }
 
     @ShellMethod("Confirm and finish the current review")

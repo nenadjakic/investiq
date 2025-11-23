@@ -15,7 +15,12 @@ VALUES
     ('fb2a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8f', 'Apple Inc.', 'US', 'c4d5e6f7-8a9b-0c1d-2e3f-4a5b6c7d8e9f'),
     ('c1234567-89ab-4cde-f012-3456789abcde', 'Meta Platforms, Inc', 'US', '048553a5-89b4-4de5-b9af-8865c5a3fac5'),
     ('92b660af-fee2-4027-a7d2-35c05cbe3156', 'MARA Holdings, Inc.', 'US', '3b8e21a7-d3ff-4609-a9fe-8804a28f0c0a'),
-    ('0be15e0c-9eb2-4bad-a867-c3052d0a9d1c', 'Broadcom Inc.', 'US', '75cff663-9ad5-4e30-97cd-6837b47b270f')
+    ('0be15e0c-9eb2-4bad-a867-c3052d0a9d1c', 'Broadcom Inc.', 'US', '75cff663-9ad5-4e30-97cd-6837b47b270f'),
+    ('01eea122-acd7-421e-a61e-1b510a1a2743', 'Microsoft Corporation', 'US', 'f7bb2487-c840-4496-bf6e-0f00aa49638f'),
+    ('bca178e9-73af-4ca3-91c9-5a213d9d897f', 'Bank of America Corporation', 'US', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
+    ('15956ad0-2943-4c87-aa91-a04b79e93408', 'Oracle Corporation', 'US', 'f7bb2487-c840-4496-bf6e-0f00aa49638f'),
+    ('1b55b265-b5a1-469c-a24e-25af962afb71', 'Rolls-Royce Holdings PLC', 'GB', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
+    ('94641f4d-b7d6-4cd4-bcc6-958020d8a386', 'Barclays PLC', 'GB', '7e543bad-189b-42f0-b7dd-7e0a627db227')
 ;
 
 INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
@@ -37,7 +42,13 @@ VALUES
     ('ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'STOCK', 'Apple Inc.', 'AAPL', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'fb2a1c2e-3c4d-4f5e-9c1d-2e5f6c3d7a8f'),
     ('9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8d', 'STOCK', 'Meta Platforms, Inc.', 'META', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'c1234567-89ab-4cde-f012-3456789abcde'),
     ('1c46d982-868f-4565-a8a1-4e2f29f54d8b', 'STOCK', 'MARA Holdings, Inc.', 'MARA', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '92b660af-fee2-4027-a7d2-35c05cbe3156'),
-    ('0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'STOCK', 'Broadcom Inc.', 'AVGO', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '0be15e0c-9eb2-4bad-a867-c3052d0a9d1c')
+    ('0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'STOCK', 'Broadcom Inc.', 'AVGO', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '0be15e0c-9eb2-4bad-a867-c3052d0a9d1c'),
+    ('3156dcad-1744-4991-9698-409b0e2bb4ee', 'ETF', 'Invesco NASDAQ-100 Swap UCITS ETF Acc', 'EQSG.L', 'Invesco', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('99d7f31a-0c82-4636-ae02-fd117ac1875d', 'STOCK', 'Microsoft Corporation', 'MSFT', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '01eea122-acd7-421e-a61e-1b510a1a2743'),
+    ('a77c55a5-28fa-4895-b85b-1a57c4451ad3', 'STOCK', 'Bank of America Corporation', 'BAC', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', 'bca178e9-73af-4ca3-91c9-5a213d9d897f'),
+    ('4129fee0-7a1a-4ee3-b5a1-9a1ea8875886', 'STOCK', 'Oracle Corporation', 'ORCL', 'NULL', 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '15956ad0-2943-4c87-aa91-a04b79e93408'),
+    ('2ac726b1-bdb9-4d4e-873c-806958ff80a8', 'STOCK', 'Rolls-Royce Holdings plc', 'RR.L', 'NULL', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', '1b55b265-b5a1-469c-a24e-25af962afb71'),
+    ('134c251f-f7dd-4c45-9f9e-0983ee088d09', 'STOCK', 'Barclays PLC', 'BARC.L', 'NULL', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', '94641f4d-b7d6-4cd4-bcc6-958020d8a386')
 ;
 
 INSERT INTO asset_aliases (id, asset_id, platform, external_symbol)
@@ -58,7 +69,12 @@ VALUES
     ('cd34ef56-7890-abcd-ef01-23456789abcd', '9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8d', 'TRADING212', 'META'),
     ('ed21382f-2fb8-4f17-935d-7d1b21e9baf9', '1c46d982-868f-4565-a8a1-4e2f29f54d8b', 'TRADING212', 'MARA'),
     ('b201ddb0-0598-4631-8ba0-aed6d4693fbf', '0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'TRADING212', 'AVGO'),
-
+    ('77ab473e-1459-49b7-a9cf-d4986a911307', '3156dcad-1744-4991-9698-409b0e2bb4ee', 'TRADING212', 'EQSG'),
+    ('0e7fce64-eb7c-463c-acef-0913dab89f5a', '99d7f31a-0c82-4636-ae02-fd117ac1875d', 'TRADING212', 'MSFT'),
+    ('d472bdff-c4b8-4893-b3ff-5fd2aa6404d9', 'a77c55a5-28fa-4895-b85b-1a57c4451ad3', 'TRADING212', 'BAC'),
+    ('c811d3f4-4f61-4e06-9b54-d6098d8e2249', '4129fee0-7a1a-4ee3-b5a1-9a1ea8875886', 'TRADING212', 'ORCL'),
+    ('33ab2867-825a-4ae9-8e8f-250f6a9545e5', '2ac726b1-bdb9-4d4e-873c-806958ff80a8', 'TRADING212', 'RR'),
+    ('89657cb4-8aed-4fd7-a893-a4c6e137c3db', '134c251f-f7dd-4c45-9f9e-0983ee088d09', 'TRADING212', 'BARC'),
 
     ('dca31bb9-743c-4345-83ea-416991b757ea', '3e367f20-5253-42ea-8598-2280a9630704', 'ETORO', 'IBM'),
     ('4fe5a662-9d2b-4bcf-b07f-72c45b8f504b', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'ROG.ZU'),
@@ -67,8 +83,10 @@ VALUES
     ('91966245-4129-470e-b075-680f0623b476', '9f1e2d3c-4b5a-6c7d-8e9f-0a1b2c3d4e5f', 'ETORO', 'DB'),
     ('c859a4cc-c922-4c18-b9bb-cdaaded486da', '91966245-4129-470e-b075-680f0623b476', 'ETORO', 'SAP.DE'),
     ('4861b90a-0027-4d65-99a4-73700c25a1b2', '9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8d', 'ETORO', 'META'),
+    ('7b6eff16-e0d2-4f33-a870-2edcb5b49888', '2ac726b1-bdb9-4d4e-873c-806958ff80a8', 'ETORO', 'RR.L'),
+    ('510cb7df-cbe3-4c31-a882-15ffcd84438f', '134c251f-f7dd-4c45-9f9e-0983ee088d09', 'ETORO', 'BARC.L'),
 
     ('3662a0a0-66c1-407f-93d7-92fea293aece', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'IBKR', 'AAPL'),
-    ('6e08e85f-7b74-4dd3-bf73-afd80c270462', '0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'IBKR', 'AVGO')
-
+    ('6e08e85f-7b74-4dd3-bf73-afd80c270462', '0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'IBKR', 'AVGO'),
+    ('2d657d07-b136-4d51-9bca-fad682fa31ac', '99d7f31a-0c82-4636-ae02-fd117ac1875d', 'IBKR', 'MSFT')
 ;

@@ -16,12 +16,18 @@ class AssetService(
     private val assetRepository: AssetRepository
 ) {
     @Transactional
-    fun findAll(symbol: String, currency: String?, exchange: String?): List<AssetResponse> {
+    fun findAll(symbol: String?, currency: String?, exchange: String?): List<AssetResponse> {
         val spec = Specification<Asset> { root, query, cb ->
-            var predicate = cb.like(
-                cb.lower(root.get("symbol")),
-                "${symbol.lowercase()}%"
-            )
+            var predicate = cb.conjunction()
+            if (!symbol.isNullOrBlank()) {
+                predicate = cb.and(
+                    predicate,
+                    cb.like(
+                        cb.lower(root.get("symbol")),
+                        "${symbol.lowercase()}%"
+                    )
+                )
+            }
 
             if (!currency.isNullOrBlank()) {
                 predicate = cb.and(

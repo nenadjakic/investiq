@@ -3,6 +3,7 @@ package com.github.nenadjakic.investiq.importer.command
 import com.github.nenadjakic.investiq.importer.service.AssetService
 import com.github.nenadjakic.investiq.importer.util.MessageType
 import com.github.nenadjakic.investiq.importer.util.PrettyPrinter
+import org.jline.utils.AttributedStyle
 import org.springframework.shell.standard.ShellCommandGroup
 import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
@@ -17,13 +18,13 @@ class AssetCommand(
 
     @ShellMethod("List assets filtered by symbol, optionally by currency and exchange", key = ["asset-filter"])
     fun listAssets(
-        @ShellOption(value = ["--symbol", "-s"], help = "Ticker symbol") symbol: String,
+        @ShellOption(value = ["--symbol", "-s"], help = "Ticker symbol", defaultValue = ShellOption.NULL) symbol: String?,
         @ShellOption(value = ["--currency", "-c"], help = "Currency code", defaultValue = ShellOption.NULL) currency: String?,
         @ShellOption(value = ["--exchange", "-e"], help = "Exchange code (acronym)", defaultValue = ShellOption.NULL) exchange: String?
     ) {
         val assets = assetService.findAll(symbol, currency, exchange)
         if (assets.isEmpty()) {
-            println("no assets")
+            prettyPrinter.print("No assets for given parameters", AttributedStyle.YELLOW)
             return
         }
 
@@ -45,6 +46,5 @@ class AssetCommand(
             )
             prettyPrinter.print(line, MessageType.INFO)
         }
-
     }
 }
