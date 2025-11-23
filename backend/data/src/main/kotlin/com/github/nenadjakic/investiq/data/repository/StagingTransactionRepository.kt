@@ -15,6 +15,7 @@ interface StagingTransactionRepository: JpaRepository<StagingTransaction, UUID> 
         LEFT JOIN st.resolvedAsset ra
         WHERE tag.name = :platformTag
           AND (:importStatus IS NULL OR st.importStatus = :importStatus)
+          AND st.relatedStagingTransaction IS NULL
         ORDER BY st.transactionDate ASC
     """)
     fun findByPlatformAndResolvedStatus(

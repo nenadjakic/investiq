@@ -24,7 +24,7 @@ class StagingTransactionService(private val stagingTransactionRepository: Stagin
             .map { stagingTransaction ->
                 StagingTransactionResponse(
                     id = stagingTransaction.id!!,
-                    date = stagingTransaction.transactionDate.toString(),
+                    date = stagingTransaction.transactionDate,
                     type = stagingTransaction.transactionType,
                     symbol = stagingTransaction.externalSymbol,
                     quantity = stagingTransaction.quantity,
@@ -41,7 +41,7 @@ class StagingTransactionService(private val stagingTransactionRepository: Stagin
             .let { stagingTransaction ->
                 StagingTransactionResponse(
                     id = stagingTransaction.id!!,
-                    date = stagingTransaction.transactionDate.toString(),
+                    date = stagingTransaction.transactionDate,
                     type = stagingTransaction.transactionType,
                     symbol = stagingTransaction.externalSymbol,
                     quantity = stagingTransaction.quantity,

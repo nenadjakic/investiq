@@ -36,6 +36,9 @@ dependencies {
     testImplementation(libs.spring.boot.starter.test)
 }
 
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+    standardInput = System.`in`
+}
 tasks.test {
     useJUnitPlatform()
 }

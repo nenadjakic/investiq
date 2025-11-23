@@ -10,6 +10,28 @@ import org.springframework.stereotype.Component
 
 @Component
 class PrettyPrinter @Autowired constructor(@Lazy private val terminal: Terminal) {
+
+    fun getColored(
+        message: String?,
+        foreground: Int? = null,
+        background: Int? = null,
+        bold: Boolean = false,
+        blink: Boolean = false,
+        underline: Boolean = false
+    ): String {
+        var style = AttributedStyle.DEFAULT
+
+        foreground?.let { style = style.foreground(it) }
+        background?.let { style = style.background(it) }
+        if (bold) style = style.bold()
+        if (blink) style = style.blink()
+        if (underline) style = style.underline()
+
+        return AttributedStringBuilder()
+            .append(message, style)
+            .toAnsi()
+    }
+
     fun getColored(message: String?, attributedStyle: Int): String {
         return (AttributedStringBuilder())
             .append(message, AttributedStyle.DEFAULT.foreground(attributedStyle))
@@ -17,7 +39,7 @@ class PrettyPrinter @Autowired constructor(@Lazy private val terminal: Terminal)
     }
 
     fun info(message: String?): String {
-        return getColored(message, AttributedStyle.BLACK)
+        return getColored(message)
     }
 
     fun success(message: String?): String {
