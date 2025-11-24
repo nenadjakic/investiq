@@ -9,27 +9,32 @@ import com.github.nenadjakic.investiq.importer.util.MessageType
 import com.github.nenadjakic.investiq.importer.util.PrettyPrinter
 import org.jline.utils.AttributedStyle
 import org.springframework.shell.Availability
-import org.springframework.shell.standard.ShellCommandGroup
-import org.springframework.shell.standard.ShellComponent
-import org.springframework.shell.standard.ShellMethod
-import org.springframework.shell.standard.ShellMethodAvailability
-import org.springframework.shell.standard.ShellOption
-import java.util.UUID
+import org.springframework.shell.standard.*
+import java.util.*
 
 @ShellCommandGroup("Staging transaction commands")
 @ShellComponent
 class StagingTransactionCommand(
     private val prettyPrinter: PrettyPrinter,
     private val stagingTransactionService: StagingTransactionService,
-    private val assetService: AssetService) {
+    private val assetService: AssetService
+) {
 
     private var currentStaging: StagingTransactionResponse? = null
 
-    @ShellMethod(value = "List staging transactions", key = [ "staging-transaction-list" ])
+    @ShellMethod(value = "List staging transactions", key = ["staging-transaction-list"])
     fun listStagings(
-        @ShellOption(value = ["--unresolved-only", "-u"], defaultValue = "true", help = "Filter by unresolved status") unresolved: Boolean,
+        @ShellOption(
+            value = ["--unresolved-only", "-u"],
+            defaultValue = "true",
+            help = "Filter by unresolved status"
+        ) unresolved: Boolean,
         @ShellOption(value = ["--platform", "-t"], help = "Type of platform (e.g., TRADING212)") platform: Platform,
-        @ShellOption(value = ["--limit", "-l"], defaultValue = "25", help = "Limit number of results") limit: Int? = null
+        @ShellOption(
+            value = ["--limit", "-l"],
+            defaultValue = "25",
+            help = "Limit number of results"
+        ) limit: Int? = null
     ) {
         val stagingTransactions = stagingTransactionService.listStagingTransactions(unresolved, platform, limit)
         if (stagingTransactions.isEmpty()) {
@@ -50,7 +55,7 @@ class StagingTransactionCommand(
         }
     }
 
-    @ShellMethod("Review a staging transaction by ID and set as current", key = [ "staging-transaction-review" ])
+    @ShellMethod("Review a staging transaction by ID and set as current", key = ["staging-transaction-review"])
     @ShellMethodAvailability("!isStagingSelected")
     fun review(@ShellOption(value = ["--id", "-i"], help = "Staging transaction id") stagingId: UUID) {
         runCatching {
@@ -59,11 +64,10 @@ class StagingTransactionCommand(
             printStaging(currentStaging!!, AttributedStyle.BLUE)
         }.onFailure {
             prettyPrinter.print(it.message, MessageType.ERROR)
-        }.onSuccess {
-        }
+        }.onSuccess {}
     }
 
-    @ShellMethod("Show the currently selected staging transaction", key = [ "staging-transaction-current" ])
+    @ShellMethod("Show the currently selected staging transaction", key = ["staging-transaction-current"])
     @ShellMethodAvailability("isStagingSelected")
     fun current() {
         prettyPrinter.print("Current staging transaction:", AttributedStyle.BLUE)
@@ -72,7 +76,10 @@ class StagingTransactionCommand(
     }
 
 
-    @ShellMethod("Assign an existing asset to the current staging transaction by Asset UUID", key = [ "staging-transaction-assign-asset" ])
+    @ShellMethod(
+        "Assign an existing asset to the current staging transaction by Asset UUID",
+        key = ["staging-transaction-assign-asset"]
+    )
     @ShellMethodAvailability("isStagingSelected")
     fun assignAsset(assetId: UUID) {
         val asset = assetService.findById(assetId)
@@ -82,12 +89,11 @@ class StagingTransactionCommand(
         }
     }
 
-    @ShellMethod("Confirm and finish the current review")
+    @ShellMethod("Confirm and finish the current review", key = ["staging-transaction-confirm"])
     @ShellMethodAvailability("isStagingSelected")
     fun confirmReview() {
         prettyPrinter.print(
-            "Review finished for staging transaction ${currentStaging!!.id}",
-            MessageType.SUCCESS
+            "Review finished for staging transaction ${currentStaging!!.id}", MessageType.SUCCESS
         )
 
         runCatching {
@@ -95,6 +101,28 @@ class StagingTransactionCommand(
         }.onFailure {
             prettyPrinter.print(it.message, MessageType.ERROR)
         }.onSuccess { currentStaging = null }
+    }
+
+    @ShellMethod(
+        "Confirm and finish review for multiple staging transactions", key = ["staging-transaction-confirm-list"]
+    )
+    fun confirmReviewList(
+        @ShellOption(value = ["--ids", "-i"], help = "List of staging transaction IDs. Max 10 element") ids: Array<UUID>
+    ) {
+        if (ids.isEmpty()) {
+            prettyPrinter.print("No IDs provided.", MessageType.ERROR)
+            return
+        }
+
+        prettyPrinter.print("Batch updating ${ids.size} staging transactions...", AttributedStyle.BLUE)
+
+        runCatching {
+            stagingTransactionService.updateStatuses(ids.toList(), ImportStatus.VALIDATED)
+
+            prettyPrinter.print("Batch operation completed.", AttributedStyle.BLUE)
+        }.onFailure {
+            prettyPrinter.print(it.message, MessageType.ERROR)
+        }
     }
 
     fun isStagingSelected(): Availability {
@@ -107,15 +135,18 @@ class StagingTransactionCommand(
 
     private fun printStagingHeader(foregroundStyle: Int? = null, backgroundStyle: Int? = null) {
         val header = String.format(
-            "%-36s %-20s %-10s %-8s %-25s %-10s",
-            "ID", "Date", "Type", "Symbol", "Resolved Asset", "Status"
+            "%-36s %-20s %-10s %-8s %-25s %-10s", "ID", "Date", "Type", "Symbol", "Resolved Asset", "Status"
         )
 
         prettyPrinter.print(header, foregroundStyle)
         prettyPrinter.print("-".repeat(header.length), foregroundStyle)
     }
 
-    private fun printStaging(staging: StagingTransactionResponse, foregroundStyle: Int? = null, backgroundStyle: Int? = null) {
+    private fun printStaging(
+        staging: StagingTransactionResponse,
+        foregroundStyle: Int? = null,
+        backgroundStyle: Int? = null
+    ) {
         val resolvedAssetDisplay = staging.resolvedAsset?.let { asset ->
             "${asset.symbol} ${asset.currency} @${asset.exchange}"
         } ?: "-"

@@ -29,7 +29,20 @@ VALUES
     ('2db22bc5-036e-4be3-a47c-503dff4c86ae', 'Novo Nordisk A/S', 'DK', '048553a5-89b4-4de5-b9af-8865c5a3fac5'),
     ('0cf6cb92-ac8e-49b2-afcb-670ac10f463d', 'Samsung Electronics Co., Ltd.', 'KR', 'c4d5e6f7-8a9b-0c1d-2e3f-4a5b6c7d8e9f'),
     ('97e5c399-e67e-44a6-83ba-c702a1e2930f', 'QUALCOMM Incorporated', 'US', '75cff663-9ad5-4e30-97cd-6837b47b270f'),
-    ('b16db3e3-e654-4c95-a58b-6afad208eec3', 'SoundHound AI, Inc.', 'US', 'bbf4c8e1-3d2a-4f5e-9c1d-2e5f6c3d7a8a')
+    ('b16db3e3-e654-4c95-a58b-6afad208eec3', 'SoundHound AI, Inc.', 'US', 'bbf4c8e1-3d2a-4f5e-9c1d-2e5f6c3d7a8a'),
+    ('1f410137-9bed-4209-aef0-dc162c8d5559', 'Rheinmetall AG', 'DE', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
+    ('b8ddc5a5-d074-403e-a922-307aeda8c626', 'Spotify Technology S.A.', 'LU', 'ddf1e2d3-c4b5-a6b7-8c9d-0e1f2a3b4c5d'),
+    ('cb6bbf55-ab2e-4b10-aa12-110e4ce1175e', 'Marvell Technology, Inc.', 'US', '75cff663-9ad5-4e30-97cd-6837b47b270f'),
+    ('51d47b7b-a5a7-4b22-a028-8f6c0616144e', 'Credo Technology Group Holding Ltd', 'US', '09603d8b-5b0a-4cf2-abfe-89faa8482eea'),
+    ('960f212e-4e3f-4017-afa1-d0d4b97a4698', 'Pfizer Inc.', 'US', '048553a5-89b4-4de5-b9af-8865c5a3fac5'),
+    ('6e14f4f8-fb9d-42eb-b44d-d27866fc5e52', 'NVIDIA Corporation', 'US', '75cff663-9ad5-4e30-97cd-6837b47b270f'),
+    ('28491851-a1a8-4c0f-a7cd-b00154b0d5b1', 'Strategy Inc', 'US', 'bbf4c8e1-3d2a-4f5e-9c1d-2e5f6c3d7a8a'),
+    ('e2780a53-619a-4368-aee0-2c24b2bd5e17', 'Alphabet Inc.', 'US', 'ddf1e2d3-c4b5-a6b7-8c9d-0e1f2a3b4c5d'),
+    ('ce8e02c4-8715-475e-b0ae-78765dfc7e4b', 'CrowdStrike Holdings, Inc.', 'US', 'f7bb2487-c840-4496-bf6e-0f00aa49638f'),
+    ('2f0bd51c-cb8f-4374-8ff5-9ce53ad54a9a', 'JPMorgan Chase & Co.', 'US', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
+    ('715219d5-625a-48b8-96ac-2348ed3a01f2', 'Coinbase Global, Inc.', 'US', 'faed8f69-fe60-4f4c-b093-1e48ef18af1d'),
+    ('d879506c-833a-461d-8295-1e84a7cdbc4b', 'Amazon.com, Inc.', 'US', '14df8d21-4773-4219-b543-3b00363f14ed'),
+    ('486a144c-e530-46c9-88c2-6ed777a938d6', 'McDonald''s Corporation', 'US', 'fe6fa53a-65b5-400e-800e-ce4f24b6a510')
 ;
 
 INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
@@ -68,7 +81,26 @@ VALUES
     ('8c6f483b-398f-4f19-9290-7d566a40ba98', 'STOCK', 'Novo Nordisk A/S', 'NVO', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '2db22bc5-036e-4be3-a47c-503dff4c86ae'),
     ('ebe535d7-32f2-4c19-91de-4eb1b2af04a0', 'STOCK', 'Samsung Electronics Co., Ltd.', 'SMSN.IL', NULL, 'USD', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', '0cf6cb92-ac8e-49b2-afcb-670ac10f463d'),
     ('779e9c90-9622-4e70-8d9c-8e18ac1c39ec', 'STOCK', 'QUALCOMM Incorporated', 'QCOM', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '97e5c399-e67e-44a6-83ba-c702a1e2930f'),
-    ('4acdf8a8-c39e-42ad-a0c5-7a556b0df54b', 'STOCK', 'SoundHound AI, Inc.', 'SOUN', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'b16db3e3-e654-4c95-a58b-6afad208eec3')
+    ('4acdf8a8-c39e-42ad-a0c5-7a556b0df54b', 'STOCK', 'SoundHound AI, Inc.', 'SOUN', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'b16db3e3-e654-4c95-a58b-6afad208eec3'),
+    ('c112dea9-4227-44b1-9283-60acade694fe', 'STOCK', 'Rheinmetall AG', 'RHM.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', '1f410137-9bed-4209-aef0-dc162c8d5559'),
+    ('4d2c27e8-dd0e-4eac-865e-9aabf7a84c83', 'STOCK', 'Vanguard S&P 500 UCITS ETF (Dist)', 'VUSA.L', 'Vanguard', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('67af2278-42d1-4e2d-858b-6a255a4b997b', 'STOCK', 'Spotify Technology S.A.', 'SPOT', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', 'b8ddc5a5-d074-403e-a922-307aeda8c626'),
+    ('a918d957-c365-4cc5-b20d-73de9ec98300', 'STOCK', 'Marvell Technology, Inc.', 'MRVL', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'cb6bbf55-ab2e-4b10-aa12-110e4ce1175e'),
+    ('b4c8add9-dcf6-493d-aaa5-2a1fa91e7d70', 'STOCK', 'Credo Technology Group Holding Ltd', 'CRDO', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '51d47b7b-a5a7-4b22-a028-8f6c0616144e'),
+    ('c5c0bcf3-5ac1-48f2-ab10-e1880a907232', 'STOCK', 'Pfizer Inc.', 'PFE.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', '960f212e-4e3f-4017-afa1-d0d4b97a4698'),
+    ('ec7b54e6-9410-48f9-b0b9-722d5eedeeb4', 'STOCK', 'NVIDIA Corporation', 'NVDA', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '6e14f4f8-fb9d-42eb-b44d-d27866fc5e52'),
+    ('177ffc7d-8dba-4a97-88a5-674c5ad9a35d', 'STOCK', 'Strategy Inc', 'MSTR', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '28491851-a1a8-4c0f-a7cd-b00154b0d5b1'),
+    ('fea2cf4c-fd95-4a3e-a576-ee14d24a7275', 'STOCK', 'Alphabet Inc. (Class A)', 'GOOGL', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'e2780a53-619a-4368-aee0-2c24b2bd5e17'),
+    ('b10c4bfa-81e1-428f-bc7f-ab9613a5bb9e', 'ETF', 'iShares MSCI Europe ex-UK GBP Hedged UCITS ETF (Dist)', 'EUXS.L', 'iShares', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('b5e73d96-86e0-43d5-af1c-c6a5cae5e3a7', 'STOCK', 'CrowdStrike Holdings, Inc.', 'CRWD', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'ce8e02c4-8715-475e-b0ae-78765dfc7e4b'),
+    ('1acf7fd1-2cd8-489d-8170-2f63482152f0', 'STOCK', 'JPMorgan Chase & Co.', 'JPM', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '2f0bd51c-cb8f-4374-8ff5-9ce53ad54a9a'),
+    ('261afd54-5b6d-475d-bd54-532a2d900405', 'STOCK', 'Coinbase Global, Inc.', 'COIN', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '715219d5-625a-48b8-96ac-2348ed3a01f2'),
+    ('9947b11a-69cb-4a8a-a4d0-dd822ac24491', 'STOCK', 'Vanguard FTSE All-World UCITS ETF (Acc)', 'VWRP.L', 'Vanguard', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('9a246e26-17bd-4ea0-8824-c29b91c667b9', 'STOCK', 'Amazon.com, Inc.', 'AMZN', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'd879506c-833a-461d-8295-1e84a7cdbc4b'),
+    ('1dfe41ba-3464-456d-8b51-7e21e4bf4a68', 'ETF', 'iShares Core S&P 500 UCITS ETF USD (Acc)', 'CSP1.L', 'iShares', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('9bde077c-7934-4f4f-a892-68747cc6e57b', 'STOCK', 'McDonald''s Corporation', 'MCD', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '486a144c-e530-46c9-88c2-6ed777a938d6'),
+    ('940d090e-30d5-4133-86c7-9afed791abb5', 'ETF',  'Invesco EQQQ NASDAQ-100 UCITS ETF (Dist)', 'EQQQ.L', 'Invesco', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL)
+
 ;
 
 INSERT INTO asset_aliases (id, asset_id, platform, external_symbol)
@@ -106,6 +138,24 @@ VALUES
     ('44ba300a-0257-4959-8f08-8e05268d8730', 'ebe535d7-32f2-4c19-91de-4eb1b2af04a0', 'TRADING212', 'SMSN'),
     ('f0b70bb5-899e-4c1c-ac9a-249ce7e4d7f0', '779e9c90-9622-4e70-8d9c-8e18ac1c39ec', 'TRADING212', 'QCOM'),
     ('3a5b44c0-b138-4955-bc00-63622a1835b4', '4acdf8a8-c39e-42ad-a0c5-7a556b0df54b', 'TRADING212', 'SOUN'),
+    ('45a5fea8-3730-4528-86b4-43a3ddb3ca83', 'c112dea9-4227-44b1-9283-60acade694fe', 'TRADING212', 'RHM'),
+    ('4666d204-f37e-4c6b-b920-5229d1c66638', '4d2c27e8-dd0e-4eac-865e-9aabf7a84c83', 'TRADING212', 'VUSA'),
+    ('e3ef6693-373e-47f8-8c4f-f6b136c6b029', '67af2278-42d1-4e2d-858b-6a255a4b997b', 'TRADING212', 'SPOT'),
+    ('e86da510-b927-4013-85bd-4678e1c92620', 'a918d957-c365-4cc5-b20d-73de9ec98300', 'TRADING212', 'MRVL'),
+    ('63fef0ff-e417-4d3d-aed1-3f3e7f0924e2', 'b4c8add9-dcf6-493d-aaa5-2a1fa91e7d70', 'TRADING212', 'CRDO'),
+    ('08d408dd-e0c4-4982-b918-b7d520c688dc', 'c5c0bcf3-5ac1-48f2-ab10-e1880a907232', 'TRADING212', 'PFE'),
+    ('9f21d62e-cda1-4bf2-8fc1-177489b224b7', 'ec7b54e6-9410-48f9-b0b9-722d5eedeeb4', 'TRADING212', 'NVDA'),
+    ('0728b94d-94ec-4bd0-a1ca-875cc55bd7c7', '177ffc7d-8dba-4a97-88a5-674c5ad9a35d', 'TRADING212', 'MSTR'),
+    ('025369b8-cf75-43d1-81a1-a981825a2cd0', 'fea2cf4c-fd95-4a3e-a576-ee14d24a7275', 'TRADING212', 'GOOGL'),
+    ('b3ebcb0f-290c-4d09-acbc-85fa1449f48a', 'b10c4bfa-81e1-428f-bc7f-ab9613a5bb9e', 'TRADING212', 'EUXS'),
+    ('5e41bbc3-8f5d-42c9-8df7-e50a760bafec', 'b5e73d96-86e0-43d5-af1c-c6a5cae5e3a7', 'TRADING212', 'CRWD'),
+    ('f1faf102-d96b-46ca-b208-29c354036525', '1acf7fd1-2cd8-489d-8170-2f63482152f0', 'TRADING212', 'JPM'),
+    ('f2a1445e-b4fe-4814-ab75-01cdf8e5a792', '261afd54-5b6d-475d-bd54-532a2d900405', 'TRADING212', 'COIN'),
+    ('1e2d2f41-f25c-4de4-987d-5f2361602966', '9947b11a-69cb-4a8a-a4d0-dd822ac24491', 'TRADING212', 'VWRP'),
+    ('be01130b-a4d2-496e-b5e3-c73d9bfccdf0', '9a246e26-17bd-4ea0-8824-c29b91c667b9', 'TRADING212', 'AMZN'),
+    ('60bebaad-8147-4aba-94d3-d16983c06a71', '1dfe41ba-3464-456d-8b51-7e21e4bf4a68', 'TRADING212', 'CSP1'),
+    ('82a2fd66-7ba7-485b-8f1c-801e6b697487', '9bde077c-7934-4f4f-a892-68747cc6e57b', 'TRADING212', 'MCD'),
+    ('f923712c-15fc-44ad-8f47-b0676225afc3', '940d090e-30d5-4133-86c7-9afed791abb5', 'TRADING212', 'EQQQ'),
 
     ('dca31bb9-743c-4345-83ea-416991b757ea', '3e367f20-5253-42ea-8598-2280a9630704', 'ETORO', 'IBM'),
     ('4fe5a662-9d2b-4bcf-b07f-72c45b8f504b', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'ROG.ZU'),
@@ -116,9 +166,16 @@ VALUES
     ('4861b90a-0027-4d65-99a4-73700c25a1b2', '9f4c8e2d-3b6a-4f5e-9c1d-2e5f6c3d7a8d', 'ETORO', 'META'),
     ('7b6eff16-e0d2-4f33-a870-2edcb5b49888', '2ac726b1-bdb9-4d4e-873c-806958ff80a8', 'ETORO', 'RR.L'),
     ('510cb7df-cbe3-4c31-a882-15ffcd84438f', '134c251f-f7dd-4c45-9f9e-0983ee088d09', 'ETORO', 'BARC.L'),
+    ('a2d9462a-9d8f-4adc-aba2-074975304c1e', 'c112dea9-4227-44b1-9283-60acade694fe', 'ETORO', 'RHM.DE'),
+    ('fb418f5e-6ae4-4645-9b92-41f6b9e26176', 'ec7b54e6-9410-48f9-b0b9-722d5eedeeb4', 'ETORO', 'NVDA'),
+    ('d1ab411b-49b2-40b1-b24d-ed9a45274062', '9a246e26-17bd-4ea0-8824-c29b91c667b9', 'ETORO', 'AMZN'),
 
     ('3662a0a0-66c1-407f-93d7-92fea293aece', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'IBKR', 'AAPL'),
     ('6e08e85f-7b74-4dd3-bf73-afd80c270462', '0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'IBKR', 'AVGO'),
     ('2d657d07-b136-4d51-9bca-fad682fa31ac', '99d7f31a-0c82-4636-ae02-fd117ac1875d', 'IBKR', 'MSFT'),
-    ('2b599799-75ca-4b10-8577-ec3bdec82f38', '80590abb-8c9d-46ae-b76a-51acfbcbe422', 'IBKR', 'IBKR')
+    ('2b599799-75ca-4b10-8577-ec3bdec82f38', '80590abb-8c9d-46ae-b76a-51acfbcbe422', 'IBKR', 'IBKR'),
+    ('56fcd30b-ceb5-435f-ba2e-facd1b8b43b8', 'ec7b54e6-9410-48f9-b0b9-722d5eedeeb4', 'IBKR', 'NVDA'),
+    ('b135d6ff-cc9a-4f64-a3ae-df04f471a05f', 'fea2cf4c-fd95-4a3e-a576-ee14d24a7275', 'IBKR', 'GOOGL'),
+    ('4bfaf3a3-822a-4003-aae2-571ad5cd12d1', '1acf7fd1-2cd8-489d-8170-2f63482152f0', 'IBKR', 'JPM'),
+    ('dfd398b8-9592-40f0-b4ec-8460bea60973', '9a246e26-17bd-4ea0-8824-c29b91c667b9', 'IBKR', 'AMZN')
 ;

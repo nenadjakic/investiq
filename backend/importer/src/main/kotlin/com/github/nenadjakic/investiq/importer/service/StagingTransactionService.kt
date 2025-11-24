@@ -27,31 +27,56 @@ class StagingTransactionService(
             .let { if (limit != null) it.take(limit) else it }
             .map { it.toStagingTransactionResponse() }
 
+    @Transactional()
     fun findById(id: UUID): StagingTransactionResponse =
         stagingTransactionRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
             .let { it.toStagingTransactionResponse() }
 
+    @Transactional
     fun assignAsset(id: UUID, assetId: UUID): StagingTransactionResponse {
         var stagingTransaction = stagingTransactionRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
+
+        var stagingTransactions = stagingTransactionRepository.findByrelatedStagingTransaction_Id(id)
 
         var asset = assetRepository.findById(assetId)
             .orElseThrow { IllegalArgumentException("Asset not found: $id") }
 
         stagingTransaction.resolvedAsset = asset
 
+        if (!stagingTransactions.isEmpty()) {
+            stagingTransactions.forEach { it.resolvedAsset = asset }
+        }
+
+        stagingTransactionRepository.saveAll(stagingTransactions)
+
         return stagingTransactionRepository.save(stagingTransaction)
             .let { it.toStagingTransactionResponse() }
     }
 
+    @Transactional
     fun updateStatus(id: UUID, importStatus: ImportStatus): StagingTransactionResponse {
         var stagingTransaction = stagingTransactionRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
 
+        var stagingTransactions = stagingTransactionRepository.findByrelatedStagingTransaction_Id(id)
+
         stagingTransaction.importStatus = importStatus
 
+        if (!stagingTransactions.isEmpty()) {
+            stagingTransactions.forEach { it.importStatus = importStatus }
+        }
+        stagingTransactionRepository.saveAll(stagingTransactions)
         return stagingTransactionRepository.save(stagingTransaction)
             .let { it.toStagingTransactionResponse() }
+    }
+
+    @Transactional
+    fun updateStatuses(ids: List<UUID>, importStatus: ImportStatus) {
+        stagingTransactionRepository.bulkUpdateStatus(
+            ids = ids,
+            newStatus = importStatus
+        )
     }
 }
