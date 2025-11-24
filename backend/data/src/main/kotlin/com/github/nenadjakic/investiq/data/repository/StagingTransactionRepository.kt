@@ -27,6 +27,8 @@ interface StagingTransactionRepository: JpaRepository<StagingTransaction, UUID> 
 
     fun findByrelatedStagingTransaction_Id(relatedStagingTransaction: UUID): List<StagingTransaction>
 
+    fun findAllByImportStatusAndRelatedStagingTransactionIsNull(importStatus: ImportStatus): List<StagingTransaction>
+
     @Modifying
     @Transactional
     @Query("""

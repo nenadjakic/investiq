@@ -92,19 +92,21 @@ CREATE TABLE transactions (
     transaction_date timestamptz(6) NOT NULL,
     description varchar(500) NULL,
     external_id varchar(100) NULL,
-    price numeric(20, 6) NULL,
-    quantity numeric(20, 6) NULL,
-    amount numeric(20, 6) NULL,
-    gross_amount numeric(20, 6) NULL,
-    tax_amount numeric(20, 6) NULL,
+    price numeric(20, 8) NULL,
+    quantity numeric(20, 12) NULL,
+    amount numeric(20, 8) NULL,
+    gross_amount numeric(20, 8) NULL,
+    tax_amount numeric(20, 8) NULL,
     tax_percentage numeric(10, 4) NULL,
-    price_amount numeric(20, 6) NULL,
+    price_amount numeric(20, 8) NULL,
     asset_id uuid NOT NULL,
     related_transaction_id uuid NULL,
+    currency_code varchar(3) NOT NULL,
 	CONSTRAINT pk_transactions PRIMARY KEY (id),
 	CONSTRAINT ch_transactions_transaction_type CHECK (((transaction_type)::text =  ANY ((ARRAY['BUY'::character varying, 'FEE'::character varying, 'SELL'::character varying, 'DEPOSIT'::character varying, 'WITHDRAWAL'::character varying, 'DIVIDEND'::character varying, 'DIVIDEND_ADJUSTMENT'::character varying, 'UNKNOWN'::character varying])::text[]))),
 	CONSTRAINT fk_transactions_assets FOREIGN KEY (asset_id) REFERENCES assets(id),
-	CONSTRAINT fk_transactions_transactions FOREIGN KEY (related_transaction_id) REFERENCES transactions(id)
+	CONSTRAINT fk_transactions_transactions FOREIGN KEY (related_transaction_id) REFERENCES transactions(id),
+	CONSTRAINT fk_transactions_currencies FOREIGN KEY (currency_code) REFERENCES currencies(code),
 );
 
 CREATE TABLE staging_transactions (

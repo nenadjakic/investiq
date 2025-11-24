@@ -20,12 +20,12 @@ class Buy: Transaction() {
     /**
      * Quantity involved in this transaction.
      */
-    @Column(precision = 20, scale = 6)
+    @Column(precision = 20, scale = 12)
     lateinit var quantity: BigDecimal
 
     /**
      * Price per unit for transactions where it makes sense (buy/sell).
      */
-    @Column(precision = 20, scale = 6)
+    @Column(precision = 20, scale = 8)
     lateinit var price: BigDecimal
 }

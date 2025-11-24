@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import java.math.BigDecimal
@@ -74,6 +75,9 @@ data class StagingTransaction(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "related_staging_transaction_id")
     var relatedStagingTransaction: StagingTransaction? = null,
+
+    @OneToMany(mappedBy = "relatedStagingTransaction", fetch = FetchType.LAZY)
+    val relatedStagingTransactions: MutableSet<StagingTransaction> = mutableSetOf(),
 
     @Column(name = "resolution_note")
     val resolutionNote: String? = null,

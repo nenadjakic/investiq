@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.data.entity.transaction
 
+import com.github.nenadjakic.investiq.data.entity.core.Currency
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
@@ -21,7 +22,7 @@ class Dividend: Transaction() {
     /**
      * Total monetary amount related to this transaction.
      */
-    @Column(name = "gross_amount", precision = 20, scale = 6)
+    @Column(name = "gross_amount", precision = 20, scale = 8)
     lateinit var grossAmount: BigDecimal
 
     /**
@@ -33,7 +34,7 @@ class Dividend: Transaction() {
     /**
      * Tax amount applied on the transaction.
      */
-    @Column(name = "tax_amount", precision = 20, scale = 6)
+    @Column(name = "tax_amount", precision = 20, scale = 8)
     var taxAmount: BigDecimal? = null
 
     /**
@@ -42,4 +43,8 @@ class Dividend: Transaction() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "related_transaction_id")
     var relatedTransaction: Transaction? = null
+
+    @ManyToOne
+    @JoinColumn(name = "currency_code")
+    lateinit var currency: Currency
 }
