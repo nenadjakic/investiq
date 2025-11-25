@@ -82,10 +82,14 @@ class StagingTransactionCommand(
     )
     @ShellMethodAvailability("isStagingSelected")
     fun assignAsset(assetId: UUID) {
-        val asset = assetService.findById(assetId)
-        if (asset == null) {
-            prettyPrinter.print("Asset with ID $assetId not found.", MessageType.ERROR)
-            return
+        runCatching {
+            currentStaging = stagingTransactionService.assignAsset(currentStaging!!.id, assetId)
+            prettyPrinter.print("Successfuly assign asset", AttributedStyle.BLUE)
+            printStagingHeader(AttributedStyle.BLUE)
+            printStaging(currentStaging!!, AttributedStyle.BLUE)
+
+        }.onFailure {
+            prettyPrinter.print(it.message, MessageType.ERROR)
         }
     }
 

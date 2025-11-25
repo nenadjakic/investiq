@@ -151,8 +151,8 @@ class TransactionService(
                             this.externalId = stagingTransaction.externalId
                         }
                         .also {
-                            it.grossAmount = BigDecimal.valueOf(stagingTransaction.grossAmount!!)
-                            it.taxAmount = BigDecimal.valueOf(stagingTransaction.amount!!)
+                            it.grossAmount = BigDecimal.valueOf(stagingTransaction.price!! * stagingTransaction.quantity!!)
+                            it.taxAmount = BigDecimal.valueOf(stagingTransaction.taxAmount!!)
                             it.taxPercentage = it.taxAmount!!
                                 .divide(it.grossAmount, 4, RoundingMode.HALF_UP)
                                 .multiply(BigDecimal(100))
