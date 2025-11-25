@@ -9,9 +9,10 @@ import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.Sell
 import com.github.nenadjakic.investiq.data.entity.transaction.Transaction
 import com.github.nenadjakic.investiq.data.enum.TransactionType
-import com.github.nenadjakic.investiq.data.repository.CurrencyRepository
 import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
+import com.github.nenadjakic.investiq.data.repository.TransactionRepository
 import jakarta.transaction.Transactional
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -19,16 +20,20 @@ import java.math.RoundingMode
 @Service
 class TransactionService(
     private val stagingTransactionRepository: StagingTransactionRepository,
-    private val currencyRepository: CurrencyRepository
+    private val transactionRepository: TransactionRepository
 ) {
 
+    @Scheduled(fixedDelayString = "PT1H")
     @Transactional
     fun copy() {
-        currencyRepository.findAll().associateBy { it.code!! }
         val transactions = mutableListOf<Transaction>()
         val stagingTransactions = stagingTransactionRepository.findAllByImportStatusAndRelatedStagingTransactionIsNull(ImportStatus.VALIDATED)
 
         stagingTransactions.forEach { stagingTransaction ->
+            var related = stagingTransaction.relatedStagingTransactions
+
+            stagingTransaction.importStatus = ImportStatus.IMPORTED
+
             when (stagingTransaction.transactionType) {
                 TransactionType.BUY -> {
                     val buy = Buy()
@@ -36,34 +41,35 @@ class TransactionService(
                             this.platform = stagingTransaction.platform
                             this.asset = stagingTransaction.resolvedAsset!!
                             this.date = stagingTransaction.transactionDate
-                            this.tags = stagingTransaction.tags
+                            this.tags = stagingTransaction.tags.toMutableSet()
                             this.externalId = stagingTransaction.externalId
                         }
                         .also {
                             it.quantity = BigDecimal.valueOf(stagingTransaction.quantity!!)
                             it.price = BigDecimal.valueOf(stagingTransaction.price!!)
+                            it.currency = stagingTransaction.resolvedAsset!!.currency
                         }
                     transactions.add(buy)
-                    if (stagingTransaction.relatedStagingTransactions.isNotEmpty()) {
-                        stagingTransaction.relatedStagingTransactions
+                    related
                             .filter { it.transactionType == TransactionType.FEE }
-                            .forEach { stagingTransaction ->
+                            .forEach { fee ->
+                                fee.importStatus = ImportStatus.IMPORTED
                                 transactions.add(
                                     Fee()
                                         .apply {
-                                            this.platform = stagingTransaction.platform
-                                            this.date = stagingTransaction.transactionDate
-                                            this.tags = stagingTransaction.tags
-                                            this.externalId = stagingTransaction.externalId
+                                            this.platform = fee.platform
+                                            this.date = fee.transactionDate
+                                            this.tags = fee.tags.toMutableSet()
+                                            this.externalId = fee.externalId
                                         }
                                         .also {
-                                            it.priceAmount = BigDecimal.valueOf(stagingTransaction.amount!!)
+                                            it.priceAmount = BigDecimal.valueOf(fee.amount!!)
                                             it.relatedTransaction = buy
-                                            it.currency = stagingTransaction.currency!!
+                                            it.currency = fee.currency!!
                                         }
                                 )
                             }
-                    }
+
                 }
                 TransactionType.SELL -> {
                     val sell = Sell()
@@ -71,34 +77,34 @@ class TransactionService(
                             this.platform = stagingTransaction.platform
                             this.asset = stagingTransaction.resolvedAsset!!
                             this.date = stagingTransaction.transactionDate
-                            this.tags = stagingTransaction.tags
+                            this.tags = stagingTransaction.tags.toMutableSet()
                             this.externalId = stagingTransaction.externalId
                         }
                         .also {
                             it.quantity = BigDecimal.valueOf(stagingTransaction.quantity!!)
                             it.price = BigDecimal.valueOf(stagingTransaction.price!!)
+                            it.currency = stagingTransaction.resolvedAsset!!.currency
                         }
                     transactions.add(sell)
-                    if (stagingTransaction.relatedStagingTransactions.isNotEmpty()) {
-                        stagingTransaction.relatedStagingTransactions
+                    related
                             .filter { it.transactionType == TransactionType.FEE }
-                            .forEach { stagingTransaction ->
+                            .forEach { fee ->
+                                fee.importStatus = ImportStatus.IMPORTED
                                 transactions.add(
                                     Fee()
                                         .apply {
-                                            this.platform = stagingTransaction.platform
-                                            this.date = stagingTransaction.transactionDate
-                                            this.tags = stagingTransaction.tags
-                                            this.externalId = stagingTransaction.externalId
+                                            this.platform = fee.platform
+                                            this.date = fee.transactionDate
+                                            this.tags = fee.tags.toMutableSet()
+                                            this.externalId = fee.externalId
                                         }
                                         .also {
-                                            it.priceAmount = BigDecimal.valueOf(stagingTransaction.amount!!)
+                                            it.priceAmount = BigDecimal.valueOf(fee.amount!!)
                                             it.relatedTransaction = sell
-                                            it.currency = stagingTransaction.currency!!
+                                            it.currency = fee.currency!!
                                         }
                                 )
                             }
-                    }
                 }
                 TransactionType.FEE -> {}
                 TransactionType.DEPOSIT -> {
@@ -106,7 +112,7 @@ class TransactionService(
                         .apply {
                             this.platform = stagingTransaction.platform
                             this.date = stagingTransaction.transactionDate
-                            this.tags = stagingTransaction.tags
+                            this.tags = stagingTransaction.tags.toMutableSet()
                             this.externalId = stagingTransaction.externalId
                         }
                         .also {
@@ -114,26 +120,25 @@ class TransactionService(
                             it.currency = stagingTransaction.currency!!
                         }
                     transactions.add(deposit)
-                    if (stagingTransaction.relatedStagingTransactions.isNotEmpty()) {
-                        stagingTransaction.relatedStagingTransactions
+                    related
                             .filter { it.transactionType == TransactionType.FEE }
-                            .forEach { stagingTransaction ->
+                            .forEach { fee ->
+                                fee.importStatus = ImportStatus.IMPORTED
                                 transactions.add(
                                     Fee()
                                         .apply {
-                                            this.platform = stagingTransaction.platform
-                                            this.date = stagingTransaction.transactionDate
-                                            this.tags = stagingTransaction.tags
-                                            this.externalId = stagingTransaction.externalId
+                                            this.platform = fee.platform
+                                            this.date = fee.transactionDate
+                                            this.tags = fee.tags.toMutableSet()
+                                            this.externalId = fee.externalId
                                         }
                                         .also {
-                                            it.priceAmount = BigDecimal.valueOf(stagingTransaction.amount!!)
+                                            it.priceAmount = BigDecimal.valueOf(fee.amount!!)
                                             it.relatedTransaction = deposit
-                                            it.currency = stagingTransaction.currency!!
+                                            it.currency = fee.currency!!
                                         }
                                 )
                             }
-                    }
                 }
                 TransactionType.WITHDRAWAL -> TODO()
                 TransactionType.DIVIDEND -> {
@@ -142,7 +147,7 @@ class TransactionService(
                             this.platform = stagingTransaction.platform
                             this.asset = stagingTransaction.resolvedAsset!!
                             this.date = stagingTransaction.transactionDate
-                            this.tags = stagingTransaction.tags
+                            this.tags = stagingTransaction.tags.toMutableSet()
                             this.externalId = stagingTransaction.externalId
                         }
                         .also {
@@ -155,33 +160,13 @@ class TransactionService(
                             it.currency = stagingTransaction.currency!!
                         }
                     transactions.add(dividend)
-                    if (stagingTransaction.relatedStagingTransactions.isNotEmpty()) {
-                        stagingTransaction.relatedStagingTransactions
-                            .filter { it.transactionType == TransactionType.FEE }
-                            .forEach { stagingTransaction ->
-                                transactions.add(
-                                    Fee()
-                                        .apply {
-                                            this.platform = stagingTransaction.platform
-                                            this.date = stagingTransaction.transactionDate
-                                            this.tags = stagingTransaction.tags
-                                            this.externalId = stagingTransaction.externalId
-                                        }
-                                        .also {
-                                            it.priceAmount = BigDecimal.valueOf(stagingTransaction.amount!!)
-                                            it.relatedTransaction = dividend
-                                            it.currency = stagingTransaction.currency!!
-                                        }
-                                )
-                            }
-                    }
                 }
                 TransactionType.DIVIDEND_ADJUSTMENT -> {
                     val dividendAdjustment = DividendAdjustment()
                         .apply {
                             this.platform = stagingTransaction.platform
                             this.date = stagingTransaction.transactionDate
-                            this.tags = stagingTransaction.tags
+                            this.tags = stagingTransaction.tags.toMutableSet()
                             this.externalId = stagingTransaction.externalId
                         }.also {
                             it.amount = BigDecimal.valueOf(stagingTransaction.amount!!)
@@ -192,5 +177,7 @@ class TransactionService(
                 TransactionType.UNKNOWN -> {}
             }
         }
+
+        transactionRepository.saveAll(transactions)
     }
 }

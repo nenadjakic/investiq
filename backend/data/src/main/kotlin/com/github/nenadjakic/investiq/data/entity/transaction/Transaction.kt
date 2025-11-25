@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.data.entity.transaction
 
+import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.entity.core.Tag
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.enum.TransactionType
@@ -15,6 +16,8 @@ import jakarta.persistence.InheritanceType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -68,4 +71,15 @@ abstract class Transaction {
 
     @Column(name = "external_id", length = 100)
     var externalId: String? = null
+
+    @ManyToOne
+    @JoinColumn(name = "currency_code")
+    lateinit var currency: Currency
+
+    @PrePersist
+    fun prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID()
+        }
+    }
 }

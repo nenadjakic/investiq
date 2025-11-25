@@ -175,15 +175,10 @@ class Trading212ImporterService(
     }
 
     private fun addToStaging(rowResults: MutableList<RowResult<Trading212Trade>>) {
-        //val portfolio: Portfolio
         val assetAliases = mutableListOf<AssetAlias>()
         val currencies = mutableMapOf<String, Currency>()
         val tags = mutableMapOf<String, Tag>()
         try {
-            //portfolio = entityManager.getReference(
-             //   Portfolio::class.java, "Trading212"
-            //)
-
             assetAliases.addAll(
                 assetAliasRepository.findAllByPlatform(Platform.TRADING212)
             )

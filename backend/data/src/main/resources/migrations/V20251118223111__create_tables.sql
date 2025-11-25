@@ -100,7 +100,7 @@ CREATE TABLE transactions (
     tax_amount numeric(20, 8) NULL,
     tax_percentage numeric(10, 4) NULL,
     price_amount numeric(20, 8) NULL,
-    asset_id uuid NOT NULL,
+    asset_id uuid NULL,
     related_transaction_id uuid NULL,
     currency_code varchar(3) NOT NULL,
 	CONSTRAINT pk_transactions PRIMARY KEY (id),
@@ -109,6 +109,14 @@ CREATE TABLE transactions (
 	CONSTRAINT fk_transactions_assets FOREIGN KEY (asset_id) REFERENCES assets(id),
 	CONSTRAINT fk_transactions_transactions FOREIGN KEY (related_transaction_id) REFERENCES transactions(id),
 	CONSTRAINT fk_transactions_currencies FOREIGN KEY (currency_code) REFERENCES currencies(code)
+);
+
+CREATE TABLE transaction_tags (
+	transaction_id uuid NOT NULL,
+	tag_id uuid NOT NULL,
+	CONSTRAINT pk_transaction_tags PRIMARY KEY (transaction_id, tag_id),
+	CONSTRAINT fk_transaction_tags_staging_transactions FOREIGN KEY (transaction_id) REFERENCES transactions(id),
+	CONSTRAINT fk_transaction_tags_tags FOREIGN KEY (tag_id) REFERENCES tags(id)
 );
 
 CREATE TABLE staging_transactions (

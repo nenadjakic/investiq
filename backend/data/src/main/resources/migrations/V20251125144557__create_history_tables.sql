@@ -1,14 +1,12 @@
 CREATE TABLE currency_histories (
     id uuid NOT NULL,
-    currency_code varchar(3) NOT NULL,
-    valid_from timestamptz NOT NULL,
-    valid_to timestamptz NULL,
+    from_currency_code varchar(3) NOT NULL,
+    to_currency_code varchar(3) NOT NULL,
+    valid_date date NOT NULL,
     exchange_rate numeric(20, 6) NOT NULL,
-    base_currency_code varchar(3) NOT NULL,
     CONSTRAINT pk_currency_histories PRIMARY KEY (id),
-    CONSTRAINT fk_currency_histories_currencies_currency FOREIGN KEY (currency_code) REFERENCES currencies(code),
-    CONSTRAINT fk_currency_histories_currencies_base_currency FOREIGN KEY (base_currency_code) REFERENCES currencies(code),
-    CONSTRAINT ch_currency_histories_valid_dates CHECK (valid_to IS NULL OR valid_to > valid_from)
+    CONSTRAINT fk_currency_histories_currencies_currency FOREIGN KEY (from_currency_code) REFERENCES currencies(code),
+    CONSTRAINT fk_currency_histories_currencies_base_currency FOREIGN KEY (to_currency_code) REFERENCES currencies(code)
 );
 
 CREATE TABLE asset_histories (

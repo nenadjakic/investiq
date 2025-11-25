@@ -32,8 +32,4 @@ class Fee: Transaction() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "related_transaction_id")
     var relatedTransaction: Transaction? = null
-
-    @ManyToOne
-    @JoinColumn(name = "currency_code")
-    lateinit var currency: Currency
 }

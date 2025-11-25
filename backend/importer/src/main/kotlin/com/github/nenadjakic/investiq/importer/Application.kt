@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.shell.jline.PromptProvider
 import javax.sql.DataSource
 
@@ -18,6 +19,7 @@ import javax.sql.DataSource
 @EnableJpaRepositories(basePackages = ["com.github.nenadjakic.investiq.data.repository"])
 @EntityScan(basePackages = ["com.github.nenadjakic.investiq.data.entity"])
 @EnableCaching
+@EnableScheduling
 class Application: PromptProvider  {
 
     override fun getPrompt(): AttributedString? {

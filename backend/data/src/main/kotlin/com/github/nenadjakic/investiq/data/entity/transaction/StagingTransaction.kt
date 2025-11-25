@@ -23,7 +23,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "staging_transactions")
-data class StagingTransaction(
+class StagingTransaction(
     @Id
     var id: UUID? = null,
 

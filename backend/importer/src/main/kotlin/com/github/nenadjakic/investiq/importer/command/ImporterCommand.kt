@@ -5,6 +5,7 @@ import com.github.nenadjakic.investiq.importer.model.Trading212Trade
 import com.github.nenadjakic.investiq.importer.service.ImporterService
 import com.github.nenadjakic.investiq.importer.util.MessageType
 import com.github.nenadjakic.investiq.importer.util.PrettyPrinter
+import org.jline.utils.AttributedStyle
 import org.slf4j.LoggerFactory
 import org.springframework.shell.standard.ShellCommandGroup
 import org.springframework.shell.standard.ShellComponent
@@ -39,12 +40,12 @@ class ImporterCommand(
                 prettyPrinter.print(
                     "Import finished for platform   : $platform — " +
                             "${result.summary.successfulRows} successful, " +
-                            "${result.summary.failedRows} failed", MessageType.INFO
+                            "${result.summary.failedRows} failed", AttributedStyle.GREEN
                 )
             }
             .also { result ->
                 result.errors.forEach { error ->
-                    prettyPrinter.print("Row ${error.rowIndex} error: ${error.message}", MessageType.ERROR)
+                    prettyPrinter.print("Row ${error.rowIndex} error: ${error.message}", AttributedStyle.RED)
                 }
             }
     }

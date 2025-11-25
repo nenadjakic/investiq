@@ -23,8 +23,4 @@ class Deposit: Transaction() {
      */
     @Column(name = "amount", precision = 20, scale = 8)
     lateinit var amount: BigDecimal
-
-    @ManyToOne
-    @JoinColumn(name = "currency_code")
-    lateinit var currency: Currency
 }
