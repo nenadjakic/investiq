@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.data.entity.transaction
 
+import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.core.Currency
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorValue
@@ -19,6 +20,14 @@ import java.math.BigDecimal
 @Entity
 @DiscriminatorValue("DIVIDEND")
 class Dividend: Transaction() {
+
+    /**
+     * Asset related to this transaction.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset_id", nullable = false)
+    lateinit var asset: Asset
+
     /**
      * Total monetary amount related to this transaction.
      */

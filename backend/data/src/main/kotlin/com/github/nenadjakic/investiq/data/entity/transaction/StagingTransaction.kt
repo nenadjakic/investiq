@@ -3,6 +3,7 @@ package com.github.nenadjakic.investiq.data.entity.transaction
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.entity.core.Tag
+import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.enum.TransactionType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -17,7 +18,6 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
-import java.math.BigDecimal
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -28,14 +28,15 @@ data class StagingTransaction(
     var id: UUID? = null,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type", nullable = false)
+    @Column(name = "platform", nullable = false, length = 20)
+    val platform: Platform,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_type", nullable = false, length = 20)
     val transactionType: TransactionType,
 
     @Column(name = "transaction_date", nullable = false)
     val transactionDate: OffsetDateTime,
-
-    @Column(name = "description")
-    val description: String? = null,
 
     @Column(name = "price")
     val price: Double? = null,
@@ -55,7 +56,7 @@ data class StagingTransaction(
     @Column(name = "tax_amount")
     val taxAmount: Double? = null,
 
-    @Column(name = "notes")
+    @Column(name = "notes", length = 1000)
     val notes: String? = null,
 
     @Column(name = "external_symbol")
@@ -79,11 +80,11 @@ data class StagingTransaction(
     @OneToMany(mappedBy = "relatedStagingTransaction", fetch = FetchType.LAZY)
     val relatedStagingTransactions: MutableSet<StagingTransaction> = mutableSetOf(),
 
-    @Column(name = "resolution_note")
+    @Column(name = "resolution_note", length = 1000)
     val resolutionNote: String? = null,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "import_status", nullable = false)
+    @Column(name = "import_status", nullable = false, length = 20)
     var importStatus: ImportStatus = ImportStatus.PENDING,
 
     @ManyToMany

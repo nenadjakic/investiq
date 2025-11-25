@@ -12,7 +12,7 @@ enum class Trading212Action(private val csvAction: String) {
 
     companion object {
         fun fromValue(value: String): Trading212Action =
-            Trading212Action.values().find {
+            entries.find {
                 it.csvAction.equals(value, ignoreCase = true)
             } ?: throw IllegalArgumentException(
                 "Unknown action '$value'"

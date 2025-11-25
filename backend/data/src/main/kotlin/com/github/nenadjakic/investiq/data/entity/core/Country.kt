@@ -24,6 +24,6 @@ data class Country(
     /**
      * Full name of the country (e.g., "Germany").
      */
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false, length = 200, unique = true)
     val name: String,
 )

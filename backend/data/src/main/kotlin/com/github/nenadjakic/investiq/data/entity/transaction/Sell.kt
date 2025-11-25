@@ -1,8 +1,12 @@
 package com.github.nenadjakic.investiq.data.entity.transaction
 
+import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import java.math.BigDecimal
 
 /**
@@ -16,6 +20,13 @@ import java.math.BigDecimal
 @Entity
 @DiscriminatorValue("SELL")
 class Sell: Transaction() {
+
+    /**
+     * Asset related to this transaction.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset_id", nullable = false)
+    lateinit var asset: Asset
 
     /**
      * Quantity involved in this transaction.

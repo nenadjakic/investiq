@@ -33,7 +33,7 @@ data class Industry (
     /**
      * Name of the industry (e.g., "Semiconductors").
      */
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true, length = 100)
     val name: String,
 
     /**

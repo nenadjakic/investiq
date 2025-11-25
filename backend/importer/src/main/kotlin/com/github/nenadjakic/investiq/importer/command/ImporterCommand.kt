@@ -27,7 +27,7 @@ class ImporterCommand(
     fun import(
         @ShellOption(value = ["--platform", "-t"], help = "Type of platform (e.g., TRADING212)") platform: Platform,
         @ShellOption(value = ["--path", "-p"], help = "Path to the file") path: String
-    ): Unit {
+    ) {
         val filePath = runCatching { Paths.get(path) }.getOrNull()?.takeIf { Files.exists(it) }
         if (filePath == null) {
             log.error("File not found at path: $path")

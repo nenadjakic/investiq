@@ -72,7 +72,7 @@ class PrettyPrinter @Autowired constructor(@Lazy private val terminal: Terminal)
         terminal.flush()
     }
 
-    fun print(message: String?, foreground: Int? = null, background: Int? = null,) {
+    fun print(message: String?, foreground: Int? = null, background: Int? = null) {
         val toPrint = getColored(
             message = message,
             foreground = foreground,

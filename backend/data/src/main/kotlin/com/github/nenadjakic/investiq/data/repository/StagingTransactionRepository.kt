@@ -2,7 +2,6 @@ package com.github.nenadjakic.investiq.data.repository
 
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
-import com.github.nenadjakic.investiq.data.enum.Platform
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query

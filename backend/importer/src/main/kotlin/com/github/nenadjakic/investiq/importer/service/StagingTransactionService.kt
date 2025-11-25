@@ -1,12 +1,10 @@
 package com.github.nenadjakic.investiq.importer.service
 
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
-import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
 import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
 import com.github.nenadjakic.investiq.importer.model.StagingTransactionResponse
-import com.github.nenadjakic.investiq.importer.model.toAssetResponse
 import com.github.nenadjakic.investiq.importer.model.toStagingTransactionResponse
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -30,17 +28,17 @@ class StagingTransactionService(
     @Transactional()
     fun findById(id: UUID): StagingTransactionResponse =
         stagingTransactionRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
-            .let { it.toStagingTransactionResponse() }
+        .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
+        .toStagingTransactionResponse()
 
     @Transactional
     fun assignAsset(id: UUID, assetId: UUID): StagingTransactionResponse {
-        var stagingTransaction = stagingTransactionRepository.findById(id)
+        val stagingTransaction = stagingTransactionRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
 
-        var stagingTransactions = stagingTransactionRepository.findByrelatedStagingTransaction_Id(id)
+        val stagingTransactions = stagingTransactionRepository.findByrelatedStagingTransaction_Id(id)
 
-        var asset = assetRepository.findById(assetId)
+        val asset = assetRepository.findById(assetId)
             .orElseThrow { IllegalArgumentException("Asset not found: $id") }
 
         stagingTransaction.resolvedAsset = asset
@@ -51,16 +49,15 @@ class StagingTransactionService(
 
         stagingTransactionRepository.saveAll(stagingTransactions)
 
-        return stagingTransactionRepository.save(stagingTransaction)
-            .let { it.toStagingTransactionResponse() }
+        return stagingTransactionRepository.save(stagingTransaction).toStagingTransactionResponse()
     }
 
     @Transactional
     fun updateStatus(id: UUID, importStatus: ImportStatus): StagingTransactionResponse {
-        var stagingTransaction = stagingTransactionRepository.findById(id)
+        val stagingTransaction = stagingTransactionRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
 
-        var stagingTransactions = stagingTransactionRepository.findByrelatedStagingTransaction_Id(id)
+        val stagingTransactions = stagingTransactionRepository.findByrelatedStagingTransaction_Id(id)
 
         stagingTransaction.importStatus = importStatus
 
@@ -68,8 +65,7 @@ class StagingTransactionService(
             stagingTransactions.forEach { it.importStatus = importStatus }
         }
         stagingTransactionRepository.saveAll(stagingTransactions)
-        return stagingTransactionRepository.save(stagingTransaction)
-            .let { it.toStagingTransactionResponse() }
+        return stagingTransactionRepository.save(stagingTransaction).toStagingTransactionResponse()
     }
 
     @Transactional

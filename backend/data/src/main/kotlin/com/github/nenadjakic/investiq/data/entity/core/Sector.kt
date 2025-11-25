@@ -35,7 +35,7 @@ class Sector(
     /**
      * Name of the sector (e.g., "Technology").
      */
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true, length = 100)
     var name: String,
 
     /**

@@ -9,9 +9,9 @@ import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.enum.TransactionType
 import com.github.nenadjakic.investiq.importer.enum.Trading212Action
-import com.github.nenadjakic.investiq.importer.enum.toTransactionType
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import kotlin.math.abs
 
 data class Trading212Trade(
     val action: Trading212Action,
@@ -48,10 +48,11 @@ fun Trading212Trade.toStagingTransactions(
     fun getFeeTransactions(
         parentStagingTransaction: StagingTransaction,
     ): Collection<StagingTransaction> {
-        var fees = mutableListOf<StagingTransaction>()
+        val fees = mutableListOf<StagingTransaction>()
         if (this.fxFee != 0.0) {
             fees.add(
                 StagingTransaction(
+                    platform = Platform.TRADING212,
                     transactionType = TransactionType.FEE,
                     externalId = this.id,
                     importStatus = ImportStatus.PENDING,
@@ -69,6 +70,7 @@ fun Trading212Trade.toStagingTransactions(
         if (this.stampDuty != 0.0) {
             fees.add(
                 StagingTransaction(
+                    platform = Platform.TRADING212,
                     transactionType = TransactionType.FEE,
                     externalId = this.id,
                     importStatus = ImportStatus.PENDING,
@@ -87,6 +89,7 @@ fun Trading212Trade.toStagingTransactions(
         if (this.frTax != 0.0) {
             fees.add(
                 StagingTransaction(
+                    platform = Platform.TRADING212,
                     transactionType = TransactionType.FEE,
                     externalId = this.id,
                     importStatus = ImportStatus.PENDING,
@@ -104,7 +107,7 @@ fun Trading212Trade.toStagingTransactions(
         return fees
     }
 
-    var stagingTransactions = mutableListOf<StagingTransaction>()
+    val stagingTransactions = mutableListOf<StagingTransaction>()
 
     val asset: Asset?
     val assets = assetAliases.filter {
@@ -121,7 +124,8 @@ fun Trading212Trade.toStagingTransactions(
 
     when (this.action) {
         Trading212Action.DEPOSIT -> {
-            var deposit = StagingTransaction(
+            val deposit = StagingTransaction(
+                platform = Platform.TRADING212,
                 transactionType = TransactionType.DEPOSIT,
                 externalId = this.id,
                 importStatus = ImportStatus.PENDING,
@@ -134,7 +138,8 @@ fun Trading212Trade.toStagingTransactions(
             stagingTransactions.addAll(getFeeTransactions(deposit))
         }
         Trading212Action.BUY -> {
-            var buy = StagingTransaction(
+            val buy = StagingTransaction(
+                platform = Platform.TRADING212,
                 transactionType = TransactionType.BUY,
                 externalId = this.id,
                 importStatus = ImportStatus.PENDING,
@@ -148,7 +153,8 @@ fun Trading212Trade.toStagingTransactions(
             stagingTransactions.addAll(getFeeTransactions(buy))
         }
         Trading212Action.SELL -> {
-            var buy = StagingTransaction(
+            val buy = StagingTransaction(
+                platform = Platform.TRADING212,
                 transactionType = TransactionType.SELL,
                 externalId = this.id,
                 importStatus = ImportStatus.PENDING,
@@ -164,6 +170,7 @@ fun Trading212Trade.toStagingTransactions(
         Trading212Action.DIVIDEND -> {
             stagingTransactions.add(
                 StagingTransaction(
+                    platform = Platform.TRADING212,
                     transactionType = TransactionType.DIVIDEND,
                     externalId = this.id,
                     importStatus = ImportStatus.PENDING,
@@ -173,27 +180,28 @@ fun Trading212Trade.toStagingTransactions(
                     externalSymbol = this.ticker,
                     resolvedAsset = asset,
                     resolutionNote = null,
-                    grossAmount = this.total,
+                    grossAmount = this.numberOfShares * this.pricePerShare,
                     taxAmount = this.withholdingTax,
-                    currency = currencies[this.currencyTotal],
+                    currency = currencies[this.currencyPricePerShare],
                 ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
             )
         }
         Trading212Action.DIVIDEND_ADJUSTMENT -> {
             stagingTransactions.add(
                 StagingTransaction(
+                    platform = Platform.TRADING212,
                     transactionType = TransactionType.DIVIDEND_ADJUSTMENT,
                     externalId = this.id,
                     importStatus = ImportStatus.PENDING,
                     transactionDate = this.time.atOffset(ZoneOffset.UTC),
-                    grossAmount = this.total,
+                    amount = abs(this.total),
                     currency = currencies[this.currencyTotal],
                 ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
             )
         }
         else -> {
-            var unknown = StagingTransaction(
-                id = null,
+            val unknown = StagingTransaction(
+                platform = Platform.TRADING212,
                 transactionType = TransactionType.UNKNOWN,
                 quantity = this.numberOfShares,
                 price = this.pricePerShare,

@@ -16,6 +16,6 @@ class Etf: ListedAsset() {
     /**
      * The name of the fund manager for this ETF.
      */
-    @Column(name = "fund_manager")
+    @Column(name = "fund_manager", length = 200, nullable = false)
     lateinit var fundManager: String
 }

@@ -1,9 +1,9 @@
 package com.github.nenadjakic.investiq.importer.service
 
-import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.entity.transaction.Buy
 import com.github.nenadjakic.investiq.data.entity.transaction.Deposit
 import com.github.nenadjakic.investiq.data.entity.transaction.Dividend
+import com.github.nenadjakic.investiq.data.entity.transaction.DividendAdjustment
 import com.github.nenadjakic.investiq.data.entity.transaction.Fee
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.Sell
@@ -24,15 +24,16 @@ class TransactionService(
 
     @Transactional
     fun copy() {
-        val currencies = currencyRepository.findAll().associateBy { it.code!! }
-        var transactions = mutableListOf<Transaction>()
+        currencyRepository.findAll().associateBy { it.code!! }
+        val transactions = mutableListOf<Transaction>()
         val stagingTransactions = stagingTransactionRepository.findAllByImportStatusAndRelatedStagingTransactionIsNull(ImportStatus.VALIDATED)
 
         stagingTransactions.forEach { stagingTransaction ->
             when (stagingTransaction.transactionType) {
                 TransactionType.BUY -> {
-                    var buy = Buy()
+                    val buy = Buy()
                         .apply {
+                            this.platform = stagingTransaction.platform
                             this.asset = stagingTransaction.resolvedAsset!!
                             this.date = stagingTransaction.transactionDate
                             this.tags = stagingTransaction.tags
@@ -50,7 +51,7 @@ class TransactionService(
                                 transactions.add(
                                     Fee()
                                         .apply {
-                                            this.asset = stagingTransaction.resolvedAsset!!
+                                            this.platform = stagingTransaction.platform
                                             this.date = stagingTransaction.transactionDate
                                             this.tags = stagingTransaction.tags
                                             this.externalId = stagingTransaction.externalId
@@ -65,8 +66,9 @@ class TransactionService(
                     }
                 }
                 TransactionType.SELL -> {
-                    var sell = Sell()
+                    val sell = Sell()
                         .apply {
+                            this.platform = stagingTransaction.platform
                             this.asset = stagingTransaction.resolvedAsset!!
                             this.date = stagingTransaction.transactionDate
                             this.tags = stagingTransaction.tags
@@ -84,7 +86,7 @@ class TransactionService(
                                 transactions.add(
                                     Fee()
                                         .apply {
-                                            this.asset = stagingTransaction.resolvedAsset!!
+                                            this.platform = stagingTransaction.platform
                                             this.date = stagingTransaction.transactionDate
                                             this.tags = stagingTransaction.tags
                                             this.externalId = stagingTransaction.externalId
@@ -100,9 +102,9 @@ class TransactionService(
                 }
                 TransactionType.FEE -> {}
                 TransactionType.DEPOSIT -> {
-                    var deposit = Deposit()
+                    val deposit = Deposit()
                         .apply {
-                            this.asset = stagingTransaction.resolvedAsset!!
+                            this.platform = stagingTransaction.platform
                             this.date = stagingTransaction.transactionDate
                             this.tags = stagingTransaction.tags
                             this.externalId = stagingTransaction.externalId
@@ -119,7 +121,7 @@ class TransactionService(
                                 transactions.add(
                                     Fee()
                                         .apply {
-                                            this.asset = stagingTransaction.resolvedAsset!!
+                                            this.platform = stagingTransaction.platform
                                             this.date = stagingTransaction.transactionDate
                                             this.tags = stagingTransaction.tags
                                             this.externalId = stagingTransaction.externalId
@@ -135,8 +137,9 @@ class TransactionService(
                 }
                 TransactionType.WITHDRAWAL -> TODO()
                 TransactionType.DIVIDEND -> {
-                    var dividend = Dividend()
+                    val dividend = Dividend()
                         .apply {
+                            this.platform = stagingTransaction.platform
                             this.asset = stagingTransaction.resolvedAsset!!
                             this.date = stagingTransaction.transactionDate
                             this.tags = stagingTransaction.tags
@@ -159,7 +162,7 @@ class TransactionService(
                                 transactions.add(
                                     Fee()
                                         .apply {
-                                            this.asset = stagingTransaction.resolvedAsset!!
+                                            this.platform = stagingTransaction.platform
                                             this.date = stagingTransaction.transactionDate
                                             this.tags = stagingTransaction.tags
                                             this.externalId = stagingTransaction.externalId
@@ -173,7 +176,19 @@ class TransactionService(
                             }
                     }
                 }
-                TransactionType.DIVIDEND_ADJUSTMENT -> TODO()
+                TransactionType.DIVIDEND_ADJUSTMENT -> {
+                    val dividendAdjustment = DividendAdjustment()
+                        .apply {
+                            this.platform = stagingTransaction.platform
+                            this.date = stagingTransaction.transactionDate
+                            this.tags = stagingTransaction.tags
+                            this.externalId = stagingTransaction.externalId
+                        }.also {
+                            it.amount = BigDecimal.valueOf(stagingTransaction.amount!!)
+                            it.currency = stagingTransaction.currency!!
+                        }
+                    transactions.add(dividendAdjustment)
+                }
                 TransactionType.UNKNOWN -> {}
             }
         }

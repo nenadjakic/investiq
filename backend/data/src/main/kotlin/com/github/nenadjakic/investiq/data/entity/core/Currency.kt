@@ -28,7 +28,7 @@ data class Currency(
      * The full name of the currency.
      * Cannot be null.
      */
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 200)
     val name: String,
 
     /**

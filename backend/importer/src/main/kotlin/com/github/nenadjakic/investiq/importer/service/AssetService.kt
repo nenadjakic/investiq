@@ -9,7 +9,9 @@ import com.github.nenadjakic.investiq.importer.model.toAssetResponse
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
+import java.util.Optional
 import java.util.UUID
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class AssetService(
@@ -49,6 +51,8 @@ class AssetService(
         return assetRepository.findAll(spec).map { it.toAssetResponse() }
     }
 
-    fun findById(assetId: UUID) =
-        assetRepository.findById(assetId).map { it.toAssetResponse() }
+    fun findById(assetId: UUID): AssetResponse? =
+        assetRepository.findById(assetId)
+            .map { it.toAssetResponse() }
+            .getOrNull()
 }
