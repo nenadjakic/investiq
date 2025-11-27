@@ -45,16 +45,16 @@ class StagingTransaction(
     val quantity: Double? = null,
 
     @Column(name = "amount")
-    val amount: Double? = null,
+    var amount: Double? = null,
 
     @Column(name = "gross_amount")
-    val grossAmount: Double? = null,
+    var grossAmount: Double? = null,
 
     @Column(name = "tax_percentage")
-    val taxPercentage: Double? = null,
+    var taxPercentage: Double? = null,
 
     @Column(name = "tax_amount")
-    val taxAmount: Double? = null,
+    var taxAmount: Double? = null,
 
     @Column(name = "notes", length = 1000)
     val notes: String? = null,

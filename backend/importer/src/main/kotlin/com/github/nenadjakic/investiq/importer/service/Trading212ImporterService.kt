@@ -28,7 +28,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.text.isNotBlank
 
-@Service
+@Service("trading212ImporterService")
 class Trading212ImporterService(
     private val assetAliasRepository: AssetAliasRepository,
     private val currencyRepository: CurrencyRepository,

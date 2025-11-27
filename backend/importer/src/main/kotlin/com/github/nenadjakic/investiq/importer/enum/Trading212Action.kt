@@ -19,13 +19,3 @@ enum class Trading212Action(private val csvAction: String) {
             )
     }
 }
-
-fun Trading212Action.toTransactionType(): TransactionType {
-    return when (this) {
-        Trading212Action.BUY -> TransactionType.BUY
-        Trading212Action.SELL -> TransactionType.SELL
-        Trading212Action.DIVIDEND -> TransactionType.DIVIDEND
-        Trading212Action.DEPOSIT -> TransactionType.DEPOSIT
-        else -> TransactionType.UNKNOWN
-    }
-}
