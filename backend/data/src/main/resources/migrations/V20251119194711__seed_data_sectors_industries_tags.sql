@@ -16,7 +16,8 @@ VALUES
   ('f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f', 'Industrials'),
   ('134d7ecb-7480-44f9-a6b5-8e9211212f1c', 'Consumer Defensive'),
   ('528fa9c4-bb5a-4d58-818f-71e65be26b35', 'Consumer Cyclical'),
-  ('1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 'Utilities')
+  ('1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 'Utilities'),
+  ('ef8c30ca-2538-4913-b020-ead2e82644e6', 'Energy')
  ;
 
 INSERT INTO public.industries (id, "name", sector_id)
@@ -41,10 +42,12 @@ VALUES
   ('3b8e21a7-d3ff-4609-a9fe-8804a28f0c0a', 'Financial - Capital Markets', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
   ('7b93dbff-fca1-48a6-ba84-2560a3b84654', 'Investment - Banking & Investment Services', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
   ('faed8f69-fe60-4f4c-b093-1e48ef18af1d', 'Financial - Data & Stock Exchanges', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
+  ('32001d66-b9fc-48d9-9a10-47a0ed3b325e', 'Insurance - Reinsurance', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
 
 -- Industrials
   ('a1b2c3d4-e5f6-7890-abcd-ef0123456789', 'Aerospace & Defense', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
   ('2a042a16-c2e5-4d53-95fb-2d09362207b8', 'Industrial - Machinery', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
+  ('0229a27a-416b-4002-9526-633b7a76f638', 'Airlines, Airports & Air Services', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
 
 -- Consumer Defensive
    ('131d737e-862e-47ef-9de1-15a38ba41b9b', 'Beverages - Non-Alcoholic', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
@@ -55,8 +58,11 @@ VALUES
 -- Consumer Cyclical
    ('14df8d21-4773-4219-b543-3b00363f14ed', 'Specialty Retail', '528fa9c4-bb5a-4d58-818f-71e65be26b35'),
    ('fe6fa53a-65b5-400e-800e-ce4f24b6a510', 'Restaurants', '528fa9c4-bb5a-4d58-818f-71e65be26b35'),
+   ('efc120bf-a5de-4f16-98ce-f09c8ab97b7c', 'Auto - Manufacturers', '528fa9c4-bb5a-4d58-818f-71e65be26b35'),
 
  -- Utilities
-    ('ac1f6aa5-f052-44e1-937a-b0230a41a7de', 'Regulated Electric', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225')
+    ('ac1f6aa5-f052-44e1-937a-b0230a41a7de', 'Regulated Electric', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225'),
 
+-- Energy
+    ('b7b72bf9-2c1c-472a-831f-06ae1710aeed', 'Oil & Gas Integrated', 'ef8c30ca-2538-4913-b020-ead2e82644e6')
  ;

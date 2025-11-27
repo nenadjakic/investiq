@@ -49,7 +49,24 @@ VALUES
     ('45444f59-a31c-4cc3-9aef-5a9839bef40c', 'ING Groep N.V.', 'NL', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
     ('c3fb26aa-8b50-49d9-bfc0-e3a5d0c728cf', 'Intuitive Machines, Inc.', 'US', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
     ('304d4f79-3bb1-4245-92fd-6d6f0ad18336', 'Danone S.A.', 'FR', 'eda5f07e-d19d-4eb4-8184-4ee612fb6182'),
-    ('16f8364c-0367-431c-8370-68ad99383ad6', 'Berkshire Hathaway Inc.', 'US', 'e5c5bc46-ca43-467e-9395-e54e3bfa6704')
+    ('16f8364c-0367-431c-8370-68ad99383ad6', 'Berkshire Hathaway Inc.', 'US', 'e5c5bc46-ca43-467e-9395-e54e3bfa6704'),
+    ('4108028f-39cd-479a-b95a-c384ce796b70', 'Rocket Lab Corporation', 'US', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
+    ('44e123f9-bd58-43da-b434-ad5a77a5c941', 'Rigetti Computing, Inc.', 'US', 'f923712c-15fc-44ad-8f47-b0676225afc3'),
+    ('64aa3094-7b31-473f-a01c-a7584cf09de2', 'ASML Holding N.V.', 'NL', '75cff663-9ad5-4e30-97cd-6837b47b270f'),
+    ('291e25bf-82e3-4673-bfb6-339981d09edb', 'AST SpaceMobile, Inc.', 'US', '09603d8b-5b0a-4cf2-abfe-89faa8482eea'),
+    ('9647bf24-aa7c-493a-b8ac-912d94f82668', 'Mitsubishi Heavy Industries Ltd', 'JP', '2a042a16-c2e5-4d53-95fb-2d09362207b8'),
+    ('e33788e9-29c3-46c5-9234-da6beb0189e8', 'Schneider Electric S.E.', 'FR', '2a042a16-c2e5-4d53-95fb-2d09362207b8'),
+    ('e5a8517d-0a40-4617-b659-6a032a279dac', 'Chevron Corporation', 'US', 'b7b72bf9-2c1c-472a-831f-06ae1710aeed'),
+    ('eb0d6ccb-5e8d-499f-bda7-206e8c3d101f', 'CoreWeave, Inc.', 'US', 'f7bb2487-c840-4496-bf6e-0f00aa49638f'),
+    ('7e6b89d7-8813-4d89-adbe-f8d10b11d449', 'IonQ, Inc.', 'US', 'f923712c-15fc-44ad-8f47-b0676225afc3'),
+    ('ddca1cc2-9867-4ef4-9bdd-bcc767ed812b', 'Joby Aviation, Inc.', 'US', '0229a27a-416b-4002-9526-633b7a76f638'),
+    ('6c85e76b-27ed-44cc-b2b4-243207e0d7c3', 'BNP Paribas SA', 'FR', '1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
+    ('ee734d88-439e-41d7-8e73-f297cb63b199', 'Siemens Energy AG', 'DE', '2a042a16-c2e5-4d53-95fb-2d09362207b8'),
+    ('ef35ea1e-bd96-4d25-93d3-10d1df8d4443', 'Taiwan Semiconductor Manufacturing Company Limited', 'TW', '75cff663-9ad5-4e30-97cd-6837b47b270f'),
+    ('a0a9f0f0-460d-49de-9a1c-b8875838f098', 'Tesla, Inc.', 'US', 'efc120bf-a5de-4f16-98ce-f09c8ab97b7c'),
+    ('b0e597d7-588c-4ca2-a8cc-f351b12ecda9', 'Swiss Re AG', 'CH', '32001d66-b9fc-48d9-9a10-47a0ed3b325e'),
+    ('d496f8f9-6ad0-4761-9c8d-9e54b1428e56', 'D-Wave Quantum Inc.', 'CA', 'f923712c-15fc-44ad-8f47-b0676225afc3')
+
 ;
 
 INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
@@ -116,7 +133,31 @@ VALUES
     ('30ce052d-2dba-4271-b6e3-1a034681853b', 'ETF', 'Vanguard S&P 500 UCITS ETF USD (Acc)', 'VUAA.MI', 'Vanguard', 'EUR', '08db89ad-c6c3-41d2-864a-650b410e9849', NULL),
     ('4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', 'ETF', 'Invesco FTSE All-World UCITS ETF USD (Acc)', 'FWRG.L', 'Invesco', 'GBX', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
     ('8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', 'ETF', 'iShares Core MSCI Europe UCITS ETF EUR (Acc)', 'EUNK.DE', 'iShares', 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', NULL),
-    ('a962865e-7e8f-45b1-805d-eee1733f8ef0', 'STOCK', 'Berkshire Hathaway Inc. (Class B)', 'BRK-B', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '16f8364c-0367-431c-8370-68ad99383ad6')
+    ('a962865e-7e8f-45b1-805d-eee1733f8ef0', 'STOCK', 'Berkshire Hathaway Inc. (Class B)', 'BRK-B', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '16f8364c-0367-431c-8370-68ad99383ad6'),
+    ('42e35a5d-9958-47dc-8951-be1c98f0c81f', 'ETF', 'iShares MSCI Japan GBP Hedged UCITS ETF (Acc)', 'IJPH.L', 'iShares', 'GBP', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('d36162a7-5b8c-46a0-bbfe-9f773a427f49', 'STOCK', 'Rocket Lab Corporation', 'RKLB', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '4108028f-39cd-479a-b95a-c384ce796b70'),
+    ('017c9024-e01c-4939-bbcd-79083424ffca', 'STOCK', 'Rigetti Computing, Inc.', 'RGTI', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '44e123f9-bd58-43da-b434-ad5a77a5c941'),
+    ('429cf96c-1bef-4e5d-8257-d75ed28ca606', 'STOCK', 'ASML Holding N.V.', 'ASML', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '64aa3094-7b31-473f-a01c-a7584cf09de2'),
+    ('d601f5e3-5850-4164-b31b-f5f11eb50755', 'STOCK', 'ASML Holding N.V.', 'ASML.AS', NULL, 'EUR', '64777de8-a81a-4288-a11d-b8976d56f85a', '64aa3094-7b31-473f-a01c-a7584cf09de2'),
+    ('e28d6216-9090-4674-b7e3-02a96a0d5575', 'STOCK', 'Microsoft Corporation', 'MSF.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', '01eea122-acd7-421e-a61e-1b510a1a2743'),
+    ('61ed87a2-7956-4be7-a454-208ae9f322d3', 'STOCK', 'AST SpaceMobile, Inc.', 'ASTS', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '291e25bf-82e3-4673-bfb6-339981d09edb'),
+    ('a2c40951-27f5-4e09-907a-78e35e786206', 'STOCK', 'name', 'MIH.MU', NULL, 'EUR', 'd83686a5-214c-49fb-982e-a15954699385', '9647bf24-aa7c-493a-b8ac-912d94f82668'),
+    ('9e3576fe-1e9e-41c3-8089-fefec9f420d0', 'ETF', 'HAN-GINS Tech Megatrend Equal Weight UCITS ETF (Acc)', 'ITEK.L', NULL, 'USD', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('ab4c81ec-b4b8-4500-a187-326e834f9196', 'STOCK', 'Schneider Electric S.E.', 'SU.PA', NULL, 'EUR', '258de74f-06ce-480b-85c5-2834e05cd7ac', 'e33788e9-29c3-46c5-9234-da6beb0189e8'),
+    ('e5a8517d-0a40-4617-b659-6a032a279dac', 'STOCK', 'Chevron Corporation', 'CVX', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', 'e5a8517d-0a40-4617-b659-6a032a279dac'),
+    ('5db84264-80bf-4ac2-b2ec-4c00ebcb1a21', 'ETF', 'iShares NASDAQ 100 UCITS ETF USD (Acc)', 'CNX1.L', 'iShares', 'GBX', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('31591987-6fc2-448d-b32b-4dd33c28a16b', 'STOCK', 'CoreWeave, Inc.', 'CRWV', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'eb0d6ccb-5e8d-499f-bda7-206e8c3d101f'),
+    ('24070ba3-6675-46e7-a2a4-47737dfa2152', 'ETF', 'VanECK Space UCITS ETF R (Acc)', 'JEDI.MU', 'VanECK', 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', NULL),
+    ('8a83a5fc-e658-439a-8906-89153ab96a6e', 'STOCK', 'IonQ, Inc.', 'IONQ', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '7e6b89d7-8813-4d89-adbe-f8d10b11d449'),
+    ('fc32957f-dc7b-4b9a-b8e9-5098a9ccb8fd', 'STOCK', 'Joby Aviation, Inc.', 'JOBY', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', 'ddca1cc2-9867-4ef4-9bdd-bcc767ed812b'),
+    ('bb3ca0dd-824b-412d-bc19-a2302c93229d', 'ETF', 'Global X Uranium UCITS ETF USD (Acc)', 'URNU.L', NULL, 'USD', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('e70da300-301a-48b4-a9b7-d6cc62a275df', 'STOCK', 'BNP Paribas SA', 'BNP.PA', NULL, 'EUR', '258de74f-06ce-480b-85c5-2834e05cd7ac', '6c85e76b-27ed-44cc-b2b4-243207e0d7c3'),
+    ('d2051137-a149-4a0f-8279-fd0ff1ff5bce', 'STOCK', 'Siemens Energy AG', 'ENR.DE', NULL, 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'ee734d88-439e-41d7-8e73-f297cb63b199'),
+    ('0dbb894f-ce20-49f8-b09e-082482fb3bca', 'STOCK', 'Taiwan Semiconductor Manufacturing Company Limited', 'TSM', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', 'ef35ea1e-bd96-4d25-93d3-10d1df8d4443'),
+    ('c3e39006-ce14-4710-8593-7d495b9e3acf', 'STOCK', 'Tesla, Inc.', 'TSLA', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'a0a9f0f0-460d-49de-9a1c-b8875838f098'),
+    ('1b393c47-f606-451a-a78e-e632e0934c52', 'STOCK', 'Swiss Re AG', 'SREN.SW', NULL, 'CHF', '6dcc99d9-8812-40f4-a439-ae0db1034388', 'b0e597d7-588c-4ca2-a8cc-f351b12ecda9'),
+    ('3e23a605-d365-4899-a0cf-9195872c34b5', 'STOCK', 'D-Wave Quantum Inc.', 'QBTS', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', 'd496f8f9-6ad0-4761-9c8d-9e54b1428e56')
+
 ;
 
 INSERT INTO asset_aliases (id, asset_id, platform, external_symbol)
@@ -182,7 +223,28 @@ VALUES
     ('de98f8b0-ad3b-43ac-a25a-85b39acd4eaf', '4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', 'TRADING212', 'FWRG'),
     ('b9335745-b310-43b0-953d-eb661e2c8358', '8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', 'TRADING212', 'EUNK'),
     ('2fee6daa-1585-41d8-9afe-c51208970621', 'a962865e-7e8f-45b1-805d-eee1733f8ef0', 'TRADING212', 'BRK.B'),
-
+    ('092a75a7-ffcc-4a97-84a1-a0683bf3c005', '42e35a5d-9958-47dc-8951-be1c98f0c81f', 'TRADING212', 'IJPH'),
+    ('bb220fba-27b7-4f33-b30d-a87de972ef68', 'd36162a7-5b8c-46a0-bbfe-9f773a427f49', 'TRADING212', 'RKLB'),
+    ('055dbd55-4816-4311-a598-9dbcdab2bd26', '017c9024-e01c-4939-bbcd-79083424ffca', 'TRADING212', 'RGTI'),
+    ('13249cdc-8494-473f-99b9-3414472724d4', 'd601f5e3-5850-4164-b31b-f5f11eb50755', 'TRADING212', 'ASML'),
+    ('660d5505-acbb-4ae6-b991-7ed9564d5bbb', 'e28d6216-9090-4674-b7e3-02a96a0d5575', 'TRADING212', 'MSF'),
+    ('63d9e0ff-b6b9-4102-b9cb-d3f0947be41e', '61ed87a2-7956-4be7-a454-208ae9f322d3', 'TRADING212', 'ASTS'),
+    ('418106a2-ae37-4d1c-9eb3-049b7d20c912', 'a2c40951-27f5-4e09-907a-78e35e786206', 'TRADING212', 'MIH'),
+    ('d4ccc037-a7cd-4cfc-adb9-853f8d936444', '9e3576fe-1e9e-41c3-8089-fefec9f420d0', 'TRADING212', 'ITEK'),
+    ('11b0b829-17ff-44ad-b25a-84cb6f2b53ed', 'ab4c81ec-b4b8-4500-a187-326e834f9196', 'TRADING212', 'SU'),
+    ('1cd5031a-7307-4aa5-b1c3-e90735468e65', 'e5a8517d-0a40-4617-b659-6a032a279dac', 'TRADING212', 'CVX'),
+    ('5067cfad-5b9d-4e1b-b02c-4086c2f164fc', '5db84264-80bf-4ac2-b2ec-4c00ebcb1a21', 'TRADING212', 'CNX1'),
+    ('7b7c80d0-5cb8-475e-b2b6-1b8daf09e044', '31591987-6fc2-448d-b32b-4dd33c28a16b', 'TRADING212', 'CRWV'),
+    ('bde689fa-7bcb-48f2-a98e-84b8ca1136de', '24070ba3-6675-46e7-a2a4-47737dfa2152', 'TRADING212', 'JEDI'),
+    ('b1b731d9-6b80-4675-9db5-dda35df6915d', '8a83a5fc-e658-439a-8906-89153ab96a6e', 'TRADING212', 'IONQ'),
+    ('0742f4d2-b96e-4f38-b065-5b7ebe451683', 'fc32957f-dc7b-4b9a-b8e9-5098a9ccb8fd', 'TRADING212', 'JOBY'),
+    ('53b80fe3-4b60-43a1-828f-758ba78da1d5', 'bb3ca0dd-824b-412d-bc19-a2302c93229d', 'TRADING212', 'URNU'),
+    ('d3cabd62-b424-4410-b13e-78b5f8c7f6ee', 'e70da300-301a-48b4-a9b7-d6cc62a275df', 'TRADING212', 'BNP'),
+    ('733d5e3d-c80b-43b1-bb5a-bf805bf4c99c', 'd2051137-a149-4a0f-8279-fd0ff1ff5bce', 'TRADING212', 'ENR'),
+    ('223f6ca7-2275-4263-ac4b-2bec4204f7dd', '0dbb894f-ce20-49f8-b09e-082482fb3bca', 'TRADING212', 'TSM'),
+    ('03189ce2-0d53-4bfa-81d1-823d8c0d4f51', 'c3e39006-ce14-4710-8593-7d495b9e3acf', 'TRADING212', 'TSLA'),
+    ('9da9fae9-9400-4f31-807e-a696ab13978b', '1b393c47-f606-451a-a78e-e632e0934c52', 'TRADING212', 'SREN'),
+    ('707761d2-64ed-4b7c-883e-1fa95f7ffbeb', '3e23a605-d365-4899-a0cf-9195872c34b5', 'TRADING212', 'QBTS'),
 
     ('dca31bb9-743c-4345-83ea-416991b757ea', '3e367f20-5253-42ea-8598-2280a9630704', 'ETORO', 'IBM'),
     ('4fe5a662-9d2b-4bcf-b07f-72c45b8f504b', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'ROG.ZU'),
@@ -198,6 +260,8 @@ VALUES
     ('d1ab411b-49b2-40b1-b24d-ed9a45274062', '9a246e26-17bd-4ea0-8824-c29b91c667b9', 'ETORO', 'AMZN'),
     ('4abae52a-2170-4336-8d9a-be496594ec73', '29ff00bf-a3e8-45e8-ba30-75e37b7a454d', 'ETORO', 'INGA.NV'),
     ('0248e532-2b4b-46c3-b8f2-17e1c0f15a03', '113f2f97-ce2f-4556-a0f4-5e7d7ad4506d', 'ETORO', 'BN.PA'),
+    ('40818649-ea39-4ee4-9881-97978f8d6ae0', 'd2051137-a149-4a0f-8279-fd0ff1ff5bce', 'ETORO', 'ENR.DE'),
+    ('28f9bb71-3f0c-440a-b451-4a3f8de18939', '0dbb894f-ce20-49f8-b09e-082482fb3bca', 'ETORO', 'TSM'),
 
     ('3662a0a0-66c1-407f-93d7-92fea293aece', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'IBKR', 'AAPL'),
     ('6e08e85f-7b74-4dd3-bf73-afd80c270462', '0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'IBKR', 'AVGO'),
@@ -207,5 +271,7 @@ VALUES
     ('b135d6ff-cc9a-4f64-a3ae-df04f471a05f', 'fea2cf4c-fd95-4a3e-a576-ee14d24a7275', 'IBKR', 'GOOGL'),
     ('4bfaf3a3-822a-4003-aae2-571ad5cd12d1', '1acf7fd1-2cd8-489d-8170-2f63482152f0', 'IBKR', 'JPM'),
     ('dfd398b8-9592-40f0-b4ec-8460bea60973', '9a246e26-17bd-4ea0-8824-c29b91c667b9', 'IBKR', 'AMZN'),
-    ('daae946a-f7cb-4387-a76c-f393bbf252fd', 'a962865e-7e8f-45b1-805d-eee1733f8ef0', 'IBKR', 'BRK B')
+    ('daae946a-f7cb-4387-a76c-f393bbf252fd', 'a962865e-7e8f-45b1-805d-eee1733f8ef0', 'IBKR', 'BRK B'),
+    ('4b008828-1f04-472d-ad3d-331d0bf0c71f', '429cf96c-1bef-4e5d-8257-d75ed28ca606', 'IBKR', 'ASML'),
+    ('530ac191-67d5-4b25-81b2-8e1430ed7558', 'e5a8517d-0a40-4617-b659-6a032a279dac', 'IBKR', 'CVX')
 ;
