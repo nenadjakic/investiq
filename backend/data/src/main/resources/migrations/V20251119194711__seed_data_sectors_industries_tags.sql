@@ -15,7 +15,8 @@ VALUES
   ('a45f3a5a-0319-4dcb-86e1-9478b16adfa4', 'Financial Services'),
   ('f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f', 'Industrials'),
   ('134d7ecb-7480-44f9-a6b5-8e9211212f1c', 'Consumer Defensive'),
-  ('528fa9c4-bb5a-4d58-818f-71e65be26b35', 'Consumer Cyclical')
+  ('528fa9c4-bb5a-4d58-818f-71e65be26b35', 'Consumer Cyclical'),
+  ('1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 'Utilities')
  ;
 
 INSERT INTO public.industries (id, "name", sector_id)
@@ -28,6 +29,7 @@ VALUES
   ('75cff663-9ad5-4e30-97cd-6837b47b270f', 'Semiconductors', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e'),
   ('f7bb2487-c840-4496-bf6e-0f00aa49638f', 'Software - Infrastructure', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e'),
   ('09603d8b-5b0a-4cf2-abfe-89faa8482eea', 'Communication Equipment', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e'),
+  ('f923712c-15fc-44ad-8f47-b0676225afc3', 'Computer Hardware', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e'),
 
 -- Healthcare
   ('048553a5-89b4-4de5-b9af-8865c5a3fac5', 'Drug Manufacturers - General', '75536f22-aa7f-4bb3-95c9-c7ae66295a13'),
@@ -47,9 +49,14 @@ VALUES
 -- Consumer Defensive
    ('131d737e-862e-47ef-9de1-15a38ba41b9b', 'Beverages - Non-Alcoholic', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
    ('042ea834-ccce-4627-82e6-a63339a0f343', 'Household & Personal Products', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
+   ('332d72a8-d160-4a18-b9fa-e7c3ffa5ab36', 'Tobacco', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
+   ('eda5f07e-d19d-4eb4-8184-4ee612fb6182', 'Packaged Foods', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
 
 -- Consumer Cyclical
    ('14df8d21-4773-4219-b543-3b00363f14ed', 'Specialty Retail', '528fa9c4-bb5a-4d58-818f-71e65be26b35'),
-   ('fe6fa53a-65b5-400e-800e-ce4f24b6a510', 'Restaurants', '528fa9c4-bb5a-4d58-818f-71e65be26b35')
+   ('fe6fa53a-65b5-400e-800e-ce4f24b6a510', 'Restaurants', '528fa9c4-bb5a-4d58-818f-71e65be26b35'),
+
+ -- Utilities
+    ('ac1f6aa5-f052-44e1-937a-b0230a41a7de', 'Regulated Electric', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225')
 
  ;

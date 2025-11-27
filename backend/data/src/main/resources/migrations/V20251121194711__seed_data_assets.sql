@@ -42,7 +42,14 @@ VALUES
     ('2f0bd51c-cb8f-4374-8ff5-9ce53ad54a9a', 'JPMorgan Chase & Co.', 'US', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
     ('715219d5-625a-48b8-96ac-2348ed3a01f2', 'Coinbase Global, Inc.', 'US', 'faed8f69-fe60-4f4c-b093-1e48ef18af1d'),
     ('d879506c-833a-461d-8295-1e84a7cdbc4b', 'Amazon.com, Inc.', 'US', '14df8d21-4773-4219-b543-3b00363f14ed'),
-    ('486a144c-e530-46c9-88c2-6ed777a938d6', 'McDonald''s Corporation', 'US', 'fe6fa53a-65b5-400e-800e-ce4f24b6a510')
+    ('486a144c-e530-46c9-88c2-6ed777a938d6', 'McDonald''s Corporation', 'US', 'fe6fa53a-65b5-400e-800e-ce4f24b6a510'),
+    ('2788a5f4-b897-4d0d-ba96-e449f3898728', 'Oklo Inc.', 'US', 'ac1f6aa5-f052-44e1-937a-b0230a41a7de'),
+    ('82a2fd66-7ba7-485b-8f1c-801e6b697487', 'Quantum Computing Inc.', 'US', 'f923712c-15fc-44ad-8f47-b0676225afc3'),
+    ('bf0ed24d-6b44-4b3d-a90b-7802fa0fc2f8', 'British American Tobacco p.l.c.', 'GB', '332d72a8-d160-4a18-b9fa-e7c3ffa5ab36'),
+    ('45444f59-a31c-4cc3-9aef-5a9839bef40c', 'ING Groep N.V.', 'NL', '7e543bad-189b-42f0-b7dd-7e0a627db227'),
+    ('c3fb26aa-8b50-49d9-bfc0-e3a5d0c728cf', 'Intuitive Machines, Inc.', 'US', 'a1b2c3d4-e5f6-7890-abcd-ef0123456789'),
+    ('304d4f79-3bb1-4245-92fd-6d6f0ad18336', 'Danone S.A.', 'FR', 'eda5f07e-d19d-4eb4-8184-4ee612fb6182'),
+    ('16f8364c-0367-431c-8370-68ad99383ad6', 'Berkshire Hathaway Inc.', 'US', 'e5c5bc46-ca43-467e-9395-e54e3bfa6704')
 ;
 
 INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
@@ -99,8 +106,17 @@ VALUES
     ('9a246e26-17bd-4ea0-8824-c29b91c667b9', 'STOCK', 'Amazon.com, Inc.', 'AMZN', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'd879506c-833a-461d-8295-1e84a7cdbc4b'),
     ('1dfe41ba-3464-456d-8b51-7e21e4bf4a68', 'ETF', 'iShares Core S&P 500 UCITS ETF USD (Acc)', 'CSP1.L', 'iShares', 'GBX', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
     ('9bde077c-7934-4f4f-a892-68747cc6e57b', 'STOCK', 'McDonald''s Corporation', 'MCD', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '486a144c-e530-46c9-88c2-6ed777a938d6'),
-    ('940d090e-30d5-4133-86c7-9afed791abb5', 'ETF',  'Invesco EQQQ NASDAQ-100 UCITS ETF (Dist)', 'EQQQ.L', 'Invesco', 'GBX', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL)
-
+    ('940d090e-30d5-4133-86c7-9afed791abb5', 'ETF',  'Invesco EQQQ NASDAQ-100 UCITS ETF (Dist)', 'EQQQ.L', 'Invesco', 'GBX', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('828c245a-3d71-494c-bcd9-9560fbef3616', 'STOCK', 'Oklo Inc.', 'OKLO', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '2788a5f4-b897-4d0d-ba96-e449f3898728'),
+    ('4cf3a1c2-1ce9-468a-bac3-4b229701314e', 'STOCK', 'Quantum Computing Inc.', 'QUBT', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '82a2fd66-7ba7-485b-8f1c-801e6b697487'),
+    ('c6efebc8-aef3-4581-9763-b795c3ab6659', 'STOCK', 'British American Tobacco p.l.c.', 'BATS.L', NULL, 'GBX', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', 'bf0ed24d-6b44-4b3d-a90b-7802fa0fc2f8'),
+    ('29ff00bf-a3e8-45e8-ba30-75e37b7a454d', 'STOCK', 'ING Groep N.V.', 'INGA.AS', NULL, 'EUR', '64777de8-a81a-4288-a11d-b8976d56f85a', '45444f59-a31c-4cc3-9aef-5a9839bef40c'),
+    ('2e5b701b-28b4-4855-ad3a-2a5275a305e6', 'STOCK', 'Intuitive Machines, Inc.', 'LUNR', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', 'c3fb26aa-8b50-49d9-bfc0-e3a5d0c728cf'),
+    ('113f2f97-ce2f-4556-a0f4-5e7d7ad4506d', 'STOCK', 'Danone S.A.', 'BN.PA', NULL, 'EUR', '258de74f-06ce-480b-85c5-2834e05cd7ac', '304d4f79-3bb1-4245-92fd-6d6f0ad18336'),
+    ('30ce052d-2dba-4271-b6e3-1a034681853b', 'ETF', 'Vanguard S&P 500 UCITS ETF USD (Acc)', 'VUAA.MI', 'Vanguard', 'EUR', '08db89ad-c6c3-41d2-864a-650b410e9849', NULL),
+    ('4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', 'ETF', 'Invesco FTSE All-World UCITS ETF USD (Acc)', 'FWRG.L', 'Invesco', 'GBX', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
+    ('8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', 'ETF', 'iShares Core MSCI Europe UCITS ETF EUR (Acc)', 'EUNK.DE', 'iShares', 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', NULL),
+    ('a962865e-7e8f-45b1-805d-eee1733f8ef0', 'STOCK', 'Berkshire Hathaway Inc. (Class B)', 'BRK-B', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '16f8364c-0367-431c-8370-68ad99383ad6')
 ;
 
 INSERT INTO asset_aliases (id, asset_id, platform, external_symbol)
@@ -156,6 +172,17 @@ VALUES
     ('60bebaad-8147-4aba-94d3-d16983c06a71', '1dfe41ba-3464-456d-8b51-7e21e4bf4a68', 'TRADING212', 'CSP1'),
     ('82a2fd66-7ba7-485b-8f1c-801e6b697487', '9bde077c-7934-4f4f-a892-68747cc6e57b', 'TRADING212', 'MCD'),
     ('f923712c-15fc-44ad-8f47-b0676225afc3', '940d090e-30d5-4133-86c7-9afed791abb5', 'TRADING212', 'EQQQ'),
+    ('c22b8f97-bcea-48b2-9738-219a92cde0be', '828c245a-3d71-494c-bcd9-9560fbef3616', 'TRADING212', 'OKLO'),
+    ('77bf0b73-e6fb-4495-96cd-604e57f13acc', '4cf3a1c2-1ce9-468a-bac3-4b229701314e', 'TRADING212', 'QUBT'),
+    ('5ef3357d-e06f-4dcd-8a6e-08d54c78f8fb', 'c6efebc8-aef3-4581-9763-b795c3ab6659', 'TRADING212', 'BATS'),
+    ('d3cebf5e-1e37-4153-9abe-aa31201367ad', '29ff00bf-a3e8-45e8-ba30-75e37b7a454d', 'TRADING212', 'INGA'),
+    ('ca7909de-debc-45a0-8b51-37e42732b301', '2e5b701b-28b4-4855-ad3a-2a5275a305e6', 'TRADING212', 'LUNR'),
+    ('97e59bdb-fd46-47e2-a91d-83f59a1eab43', '113f2f97-ce2f-4556-a0f4-5e7d7ad4506d', 'TRADING212', 'BN'),
+    ('ecee28cc-8064-4dd4-bd42-3f757cd15392', '30ce052d-2dba-4271-b6e3-1a034681853b', 'TRADING212', 'VUAA'),
+    ('de98f8b0-ad3b-43ac-a25a-85b39acd4eaf', '4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', 'TRADING212', 'FWRG'),
+    ('b9335745-b310-43b0-953d-eb661e2c8358', '8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', 'TRADING212', 'EUNK'),
+    ('2fee6daa-1585-41d8-9afe-c51208970621', 'a962865e-7e8f-45b1-805d-eee1733f8ef0', 'TRADING212', 'BRK.B'),
+
 
     ('dca31bb9-743c-4345-83ea-416991b757ea', '3e367f20-5253-42ea-8598-2280a9630704', 'ETORO', 'IBM'),
     ('4fe5a662-9d2b-4bcf-b07f-72c45b8f504b', '2314d8b1-0e0a-4fdc-becc-01ec3dc0cbec', 'ETORO', 'ROG.ZU'),
@@ -169,6 +196,8 @@ VALUES
     ('a2d9462a-9d8f-4adc-aba2-074975304c1e', 'c112dea9-4227-44b1-9283-60acade694fe', 'ETORO', 'RHM.DE'),
     ('fb418f5e-6ae4-4645-9b92-41f6b9e26176', 'ec7b54e6-9410-48f9-b0b9-722d5eedeeb4', 'ETORO', 'NVDA'),
     ('d1ab411b-49b2-40b1-b24d-ed9a45274062', '9a246e26-17bd-4ea0-8824-c29b91c667b9', 'ETORO', 'AMZN'),
+    ('4abae52a-2170-4336-8d9a-be496594ec73', '29ff00bf-a3e8-45e8-ba30-75e37b7a454d', 'ETORO', 'INGA.NV'),
+    ('0248e532-2b4b-46c3-b8f2-17e1c0f15a03', '113f2f97-ce2f-4556-a0f4-5e7d7ad4506d', 'ETORO', 'BN.PA'),
 
     ('3662a0a0-66c1-407f-93d7-92fea293aece', 'ca3717a7-df4e-4474-994f-6d5a8bd32bb4', 'IBKR', 'AAPL'),
     ('6e08e85f-7b74-4dd3-bf73-afd80c270462', '0ac84421-d8a5-4412-a2fd-1aafc90bb044', 'IBKR', 'AVGO'),
@@ -177,5 +206,6 @@ VALUES
     ('56fcd30b-ceb5-435f-ba2e-facd1b8b43b8', 'ec7b54e6-9410-48f9-b0b9-722d5eedeeb4', 'IBKR', 'NVDA'),
     ('b135d6ff-cc9a-4f64-a3ae-df04f471a05f', 'fea2cf4c-fd95-4a3e-a576-ee14d24a7275', 'IBKR', 'GOOGL'),
     ('4bfaf3a3-822a-4003-aae2-571ad5cd12d1', '1acf7fd1-2cd8-489d-8170-2f63482152f0', 'IBKR', 'JPM'),
-    ('dfd398b8-9592-40f0-b4ec-8460bea60973', '9a246e26-17bd-4ea0-8824-c29b91c667b9', 'IBKR', 'AMZN')
+    ('dfd398b8-9592-40f0-b4ec-8460bea60973', '9a246e26-17bd-4ea0-8824-c29b91c667b9', 'IBKR', 'AMZN'),
+    ('daae946a-f7cb-4387-a76c-f393bbf252fd', 'a962865e-7e8f-45b1-805d-eee1733f8ef0', 'IBKR', 'BRK B')
 ;
