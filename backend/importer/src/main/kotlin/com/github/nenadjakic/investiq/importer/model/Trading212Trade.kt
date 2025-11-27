@@ -134,7 +134,7 @@ fun Trading212Trade.toStagingTransactions(
             stagingTransactions.add(deposit)
             stagingTransactions.addAll(getFeeTransactions(deposit))
         }
-        Trading212Action.BUY -> {
+        Trading212Action.MARKET_BUY, Trading212Action.LIMIT_BUY -> {
             val buy = StagingTransaction(
                 platform = Platform.TRADING212,
                 transactionType = TransactionType.BUY,
@@ -164,7 +164,7 @@ fun Trading212Trade.toStagingTransactions(
             stagingTransactions.add(buy)
             stagingTransactions.addAll(getFeeTransactions(buy))
         }
-        Trading212Action.DIVIDEND -> {
+        Trading212Action.DIVIDEND, Trading212Action.DIVIDEND_OTHER -> {
             stagingTransactions.add(
                 StagingTransaction(
                     platform = Platform.TRADING212,
@@ -198,6 +198,7 @@ fun Trading212Trade.toStagingTransactions(
                 )
             )
         }
+        Trading212Action.SPLIT_OPEN, Trading212Action.SPLIT_CLOSE -> {}
         else -> {
             val unknown = StagingTransaction(
                 platform = Platform.TRADING212,

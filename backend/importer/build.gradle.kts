@@ -25,6 +25,8 @@ dependencies {
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.apache.commons.csv)
+    implementation(libs.apache.poi)
+    implementation(libs.apache.poi.ooxml)
     runtimeOnly(libs.postgresql)
 
     implementation(libs.flyway.core)

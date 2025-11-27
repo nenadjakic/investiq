@@ -1,14 +1,16 @@
 package com.github.nenadjakic.investiq.importer.enum
 
-import com.github.nenadjakic.investiq.data.enum.TransactionType
-
 enum class Trading212Action(private val csvAction: String) {
     DIVIDEND("Dividend (Dividend)"),
+    DIVIDEND_OTHER("Dividend (Return of capital)"),
     DEPOSIT("Deposit"),
-    BUY("Market buy"),
+    MARKET_BUY("Market buy"),
+    LIMIT_BUY("Limit buy"),
     SELL("Market sell"),
     DIVIDEND_ADJUSTMENT("Dividend Adjustment"),
-    WITHDRAWAL("Withdrawal");
+    WITHDRAWAL("Withdrawal"),
+    SPLIT_OPEN("Stock split open"),
+    SPLIT_CLOSE("Stock split close");
 
     companion object {
         fun fromValue(value: String): Trading212Action =

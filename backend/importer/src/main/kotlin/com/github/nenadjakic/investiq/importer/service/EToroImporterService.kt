@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.text.toDoubleOrNull
@@ -167,7 +166,7 @@ class EToroImporterService(
                         result
                     }
 
-                    var eToroTrade = EToroTrade(
+                    val eToroTrade = EToroTrade(
                         action = action,
                         time = LocalDateTime.parse(row.getCellByNullableIndex(activityColumnIndex["Date"])!!.stringCellValue,
                             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
@@ -178,7 +177,6 @@ class EToroImporterService(
                         id = key.first
                     )
                     if (action == EToroAction.DIVIDEND) {
-
                         val dividendRow =
                             dividendRowByPositionIdAndDate.get(Pair(key.first, key.second.toLocalDate()))!!
 
@@ -192,12 +190,21 @@ class EToroImporterService(
                         }
                         eToroTrade.dividend = EToroDividend(
                             time = eToroTrade.time.toLocalDate()!!,
-                            netAmount = dividendRow.getCellByNullableIndex(dividendColumnIndex["Net Dividend Received (USD)"])!!.numericCellValue,
+                            amount = dividendRow.getCellByNullableIndex(dividendColumnIndex["Net Dividend Received (USD)"])!!.numericCellValue,
                             withHoldingTaxAmount = dividendRow.getCellByNullableIndex(dividendColumnIndex["Withholding Tax Amount (USD)"])!!.numericCellValue,
                             withHoldingTaxRate = withHoldingTaxRate,
                             parentId = dividendRow.getCellByNullableIndex(dividendColumnIndex["Position ID"])!!.stringCellValue,
                         )
+                    } else if (action == EToroAction.BUY) {
+                            commisionRowByActionAndPositionIdAndDate.get(Triple(EToroAction.FEE,key.first, key.second))
+                                ?.let {
+                                    val amount = row.getCellByNullableIndex(activityColumnIndex["Amount"])!!.numericCellValue
 
+                                    eToroTrade.fees.add(EToroFee(
+                                        time = key.second,
+                                        amount = amount
+                                    ))
+                                }
                     }
                     rowResults.add(
                         RowResult(

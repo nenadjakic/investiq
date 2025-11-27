@@ -21,15 +21,21 @@ data class EToroTrade (
     val amount: Double,
     val units: Double,
     val id: String,
-    var dividend: EToroDividend? = null
+    var dividend: EToroDividend? = null,
+    var fees: MutableList<EToroFee> = mutableListOf()
 )
 
 data class EToroDividend (
     val time: LocalDate,
-    val netAmount: Double,
+    val amount: Double,
     val withHoldingTaxAmount: Double,
     val withHoldingTaxRate: Double,
     var parentId: String
+)
+
+data class EToroFee (
+    val time: LocalDateTime,
+    val amount: Double,
 )
 
 fun EToroTrade.toStagingTransactions(
@@ -83,7 +89,17 @@ fun EToroTrade.toStagingTransactions(
         EToroAction.SDRT_FEE -> TODO()
         EToroAction.FEE -> TODO()
         EToroAction.BUY -> {
-
+            stagingTransactions.add(
+                StagingTransaction(
+                    platform = Platform.ETORO,
+                    transactionType = TransactionType.DIVIDEND,
+                    externalId = this.id,
+                    importStatus = ImportStatus.PENDING,
+                    transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                    currency = currencies["USD"],
+                    resolvedAsset = asset
+                )
+            )
         }
         EToroAction.SELL -> TODO()
         EToroAction.DIVIDEND -> {
@@ -100,8 +116,8 @@ fun EToroTrade.toStagingTransactions(
                     val dividend = this.dividend!!
                     it.taxAmount = dividend.withHoldingTaxAmount
                     it.taxPercentage = dividend.withHoldingTaxRate
-                    it.grossAmount = dividend.netAmount + dividend.withHoldingTaxAmount
-                    it.amount = dividend.netAmount
+                    it.grossAmount = dividend.amount + dividend.withHoldingTaxAmount
+                    it.amount = dividend.amount
                 }
             )
         }
