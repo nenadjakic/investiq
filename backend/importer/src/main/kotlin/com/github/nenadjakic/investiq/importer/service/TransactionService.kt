@@ -63,7 +63,7 @@ class TransactionService(
                                             this.externalId = fee.externalId
                                         }
                                         .also {
-                                            it.priceAmount = BigDecimal.valueOf(fee.amount!!)
+                                            it.amount = BigDecimal.valueOf(fee.amount!!)
                                             it.relatedTransaction = buy
                                             it.currency = fee.currency!!
                                         }
@@ -99,7 +99,7 @@ class TransactionService(
                                             this.externalId = fee.externalId
                                         }
                                         .also {
-                                            it.priceAmount = BigDecimal.valueOf(fee.amount!!)
+                                            it.amount = BigDecimal.valueOf(fee.amount!!)
                                             it.relatedTransaction = sell
                                             it.currency = fee.currency!!
                                         }
@@ -133,7 +133,7 @@ class TransactionService(
                                             this.externalId = fee.externalId
                                         }
                                         .also {
-                                            it.priceAmount = BigDecimal.valueOf(fee.amount!!)
+                                            it.amount = BigDecimal.valueOf(fee.amount!!)
                                             it.relatedTransaction = deposit
                                             it.currency = fee.currency!!
                                         }

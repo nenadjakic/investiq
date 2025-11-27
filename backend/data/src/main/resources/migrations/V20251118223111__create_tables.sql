@@ -99,7 +99,6 @@ CREATE TABLE transactions (
     gross_amount numeric(20, 8) NULL,
     tax_amount numeric(20, 8) NULL,
     tax_percentage numeric(10, 4) NULL,
-    price_amount numeric(20, 8) NULL,
     asset_id uuid NULL,
     related_transaction_id uuid NULL,
     currency_code varchar(3) NOT NULL,
