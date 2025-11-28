@@ -92,12 +92,13 @@ fun EToroTrade.toStagingTransactions(
             stagingTransactions.add(
                 StagingTransaction(
                     platform = Platform.ETORO,
-                    transactionType = TransactionType.DIVIDEND,
+                    transactionType = TransactionType.BUY,
                     externalId = this.id,
                     importStatus = ImportStatus.PENDING,
                     transactionDate = this.time.atOffset(ZoneOffset.UTC),
                     currency = currencies["USD"],
-                    resolvedAsset = asset
+                    resolvedAsset = asset,
+                    externalSymbol = this.ticker
                 )
             )
         }

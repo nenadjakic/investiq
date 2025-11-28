@@ -289,7 +289,7 @@ class EToroImporterService(
         val tags = mutableMapOf<String, Tag>()
         try {
             assetAliases.addAll(
-                assetAliasRepository.findAllByPlatform(Platform.TRADING212)
+                assetAliasRepository.findAllByPlatform(Platform.ETORO)
             )
 
             currencies.putAll(

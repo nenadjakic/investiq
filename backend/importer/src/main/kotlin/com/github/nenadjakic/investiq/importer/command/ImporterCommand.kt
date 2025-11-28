@@ -37,24 +37,24 @@ class ImporterCommand(
             log.error("File not found at path: $path")
             return
         }
-        if (platform == Platform.ETORO) {
+        val result = if (platform == Platform.ETORO) {
             eToroImporterService.import(Files.newInputStream(filePath))
         } else if (platform == Platform.TRADING212) {
             tradingImporterService.import(Files.newInputStream(filePath))
         } else {
             throw IllegalArgumentException("Unsupported platform type.")
         }
-            .also { result ->
-                prettyPrinter.print(
-                    "Import finished for platform   : $platform — " +
-                            "${result.summary.successfulRows} successful, " +
-                            "${result.summary.failedRows} failed", AttributedStyle.GREEN
-                )
+
+        result.also { result ->
+            prettyPrinter.print(
+                "Import finished for platform   : $platform — " +
+                        "${result.summary.successfulRows} successful, " +
+                        "${result.summary.failedRows} failed", AttributedStyle.GREEN
+            )
+        }.also { result ->
+            result.errors.forEach { error ->
+                prettyPrinter.print("Row ${error.rowIndex} error: ${error.message}", AttributedStyle.RED)
             }
-            .also { result ->
-                result.errors.forEach { error ->
-                    prettyPrinter.print("Row ${error.rowIndex} error: ${error.message}", AttributedStyle.RED)
-                }
-            }
+        }
     }
 }

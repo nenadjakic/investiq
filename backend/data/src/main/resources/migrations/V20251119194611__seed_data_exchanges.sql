@@ -13,5 +13,6 @@ VALUES
   ('6dcc99d9-8812-40f4-a439-ae0db1034388', 'Swiss Exchange', 'XSWX', 'SIX', 'CH'),
   ('3b6ce289-aa2e-40a3-b7b2-0c7aeda967bc', 'Wiener Börse (Vienna Stock Exchange)', 'XWBO', 'WBAG', 'AT'),
   ('b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', 'Xetra (Deutsche Börse)', 'XETR', 'XETRA', 'DE'),
-  ('d83686a5-214c-49fb-982e-a15954699385', 'Gettex', 'XGET', 'GETEX', 'DE')
+  ('d83686a5-214c-49fb-982e-a15954699385', 'Gettex', 'XGET', 'GETEX', 'DE'),
+  ('15d0214e-53f6-4aee-ba76-e88176469db9', 'OTC Pink Sheets', 'OTCPK', 'OTC', 'US')
 ;

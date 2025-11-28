@@ -75,7 +75,7 @@ CREATE TABLE asset_aliases (
 	external_symbol varchar(50) NOT NULL,
 	asset_id uuid NOT NULL,
 	CONSTRAINT pk_asset_aliases PRIMARY KEY (id),
-	CONSTRAINT ch_asset_aliases_platform CHECK (((platform)::text = ANY ((ARRAY['TRADING212'::character varying, 'ETORO'::character varying, 'IBKR'::character varying])::text[]))),
+	CONSTRAINT ch_asset_aliases_platform CHECK (((platform)::text = ANY ((ARRAY['TRADING212'::character varying, 'ETORO'::character varying, 'IBKR'::character varying, 'REVOLUT'::character varying])::text[]))),
 	CONSTRAINT fk_asset_aliases_assets FOREIGN KEY (asset_id) REFERENCES assets(id)
 );
 
@@ -103,7 +103,7 @@ CREATE TABLE transactions (
     related_transaction_id uuid NULL,
     currency_code varchar(3) NOT NULL,
 	CONSTRAINT pk_transactions PRIMARY KEY (id),
-	CONSTRAINT ch_staging_transactions_platform CHECK (((platform)::text = ANY ((ARRAY['TRADING212'::character varying, 'ETORO'::character varying, 'IBKR'::character varying])::text[]))),
+	CONSTRAINT ch_staging_transactions_platform CHECK (((platform)::text = ANY ((ARRAY['TRADING212'::character varying, 'ETORO'::character varying, 'IBKR'::character varying, 'REVOLUT'::character varying])::text[]))),
 	CONSTRAINT ch_transactions_transaction_type CHECK (((transaction_type)::text =  ANY ((ARRAY['BUY'::character varying, 'FEE'::character varying, 'SELL'::character varying, 'DEPOSIT'::character varying, 'WITHDRAWAL'::character varying, 'DIVIDEND'::character varying, 'DIVIDEND_ADJUSTMENT'::character varying, 'UNKNOWN'::character varying])::text[]))),
 	CONSTRAINT fk_transactions_assets FOREIGN KEY (asset_id) REFERENCES assets(id),
 	CONSTRAINT fk_transactions_transactions FOREIGN KEY (related_transaction_id) REFERENCES transactions(id),
@@ -138,7 +138,7 @@ CREATE TABLE staging_transactions (
     related_staging_transaction_id uuid NULL,
     resolved_asset_id uuid NULL,
 	CONSTRAINT ch_staging_transactions_import_status CHECK (((import_status)::text = ANY ((ARRAY['PENDING'::character varying, 'VALIDATED'::character varying, 'FAILED'::character varying, 'IMPORTED'::character varying])::text[]))),
-	CONSTRAINT ch_staging_transactions_platform CHECK (((platform)::text = ANY ((ARRAY['TRADING212'::character varying, 'ETORO'::character varying, 'IBKR'::character varying])::text[]))),
+	CONSTRAINT ch_staging_transactions_platform CHECK (((platform)::text = ANY ((ARRAY['TRADING212'::character varying, 'ETORO'::character varying, 'IBKR'::character varying, 'REVOLUT'::character varying])::text[]))),
 	CONSTRAINT pk_staging_transactions PRIMARY KEY (id),
 	CONSTRAINT ch_staging_transactions_transaction_type CHECK (((transaction_type)::text = ANY ((ARRAY['BUY'::character varying, 'FEE'::character varying, 'SELL'::character varying, 'DEPOSIT'::character varying, 'WITHDRAWAL'::character varying, 'DIVIDEND'::character varying, 'DIVIDEND_ADJUSTMENT'::character varying, 'UNKNOWN'::character varying])::text[]))),
 	CONSTRAINT fk_staging_transactions_assets FOREIGN KEY (resolved_asset_id) REFERENCES assets(id),

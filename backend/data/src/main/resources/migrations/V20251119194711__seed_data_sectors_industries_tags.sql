@@ -17,7 +17,8 @@ VALUES
   ('134d7ecb-7480-44f9-a6b5-8e9211212f1c', 'Consumer Defensive'),
   ('528fa9c4-bb5a-4d58-818f-71e65be26b35', 'Consumer Cyclical'),
   ('1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 'Utilities'),
-  ('ef8c30ca-2538-4913-b020-ead2e82644e6', 'Energy')
+  ('ef8c30ca-2538-4913-b020-ead2e82644e6', 'Energy'),
+  ('ee4c5e5c-def2-4965-8779-00b32b1edf70', 'Communication Services')
  ;
 
 INSERT INTO public.industries (id, "name", sector_id)
@@ -43,17 +44,23 @@ VALUES
   ('7b93dbff-fca1-48a6-ba84-2560a3b84654', 'Investment - Banking & Investment Services', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
   ('faed8f69-fe60-4f4c-b093-1e48ef18af1d', 'Financial - Data & Stock Exchanges', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
   ('32001d66-b9fc-48d9-9a10-47a0ed3b325e', 'Insurance - Reinsurance', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
+  ('d5017ce1-bd8a-4848-b772-dcb64f05ce6d', 'Financial - Credit Services', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
+  ('e303e373-c3a6-4dd4-9e86-f99135ba06c5', 'Insurance - Life', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4'),
 
 -- Industrials
   ('a1b2c3d4-e5f6-7890-abcd-ef0123456789', 'Aerospace & Defense', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
   ('2a042a16-c2e5-4d53-95fb-2d09362207b8', 'Industrial - Machinery', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
   ('0229a27a-416b-4002-9526-633b7a76f638', 'Airlines, Airports & Air Services', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
+  ('c6c2b6e7-6b95-42b6-b7ff-977d3b99a963', 'Manufacturing - Tools & Accessories', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
+  ('7083d6ae-bc7a-4a59-8248-2368c2bbe6d4', 'Agricultural - Machinery', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
+  ('0f2a3e00-1778-4c8b-995e-7b6e43f1896a', 'Marine Shipping', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
 
 -- Consumer Defensive
    ('131d737e-862e-47ef-9de1-15a38ba41b9b', 'Beverages - Non-Alcoholic', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
    ('042ea834-ccce-4627-82e6-a63339a0f343', 'Household & Personal Products', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
    ('332d72a8-d160-4a18-b9fa-e7c3ffa5ab36', 'Tobacco', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
    ('eda5f07e-d19d-4eb4-8184-4ee612fb6182', 'Packaged Foods', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
+   ('06af5b6b-22ba-4f74-a06c-17466cb8d655', 'Discount Stores', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
 
 -- Consumer Cyclical
    ('14df8d21-4773-4219-b543-3b00363f14ed', 'Specialty Retail', '528fa9c4-bb5a-4d58-818f-71e65be26b35'),
@@ -62,7 +69,12 @@ VALUES
 
  -- Utilities
     ('ac1f6aa5-f052-44e1-937a-b0230a41a7de', 'Regulated Electric', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225'),
+    ('f8a077d7-2fa4-4edc-8e28-1630366e5d4f', 'Renewable Utilities', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225'),
 
 -- Energy
-    ('b7b72bf9-2c1c-472a-831f-06ae1710aeed', 'Oil & Gas Integrated', 'ef8c30ca-2538-4913-b020-ead2e82644e6')
- ;
+    ('b7b72bf9-2c1c-472a-831f-06ae1710aeed', 'Oil & Gas Integrated', 'ef8c30ca-2538-4913-b020-ead2e82644e6'),
+
+-- Communication Services
+    ('5ea3232a-cf55-444b-8f67-5ea2a16a4657', 'Telecommunications Services', 'ee4c5e5c-def2-4965-8779-00b32b1edf70'),
+    ('e0509c0a-0ae5-4a4b-89af-1b45d9760488', 'Entertainment', 'ee4c5e5c-def2-4965-8779-00b32b1edf70')
+;
