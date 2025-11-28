@@ -30,7 +30,7 @@ class TransactionService(
         val stagingTransactions = stagingTransactionRepository.findAllByImportStatusAndRelatedStagingTransactionIsNull(ImportStatus.VALIDATED)
 
         stagingTransactions.forEach { stagingTransaction ->
-            var related = stagingTransaction.relatedStagingTransactions
+            val related = stagingTransaction.relatedStagingTransactions
 
             stagingTransaction.importStatus = ImportStatus.IMPORTED
 

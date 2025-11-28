@@ -105,7 +105,7 @@ class EToroImporterService(
 
             val dividendRowByPositionIdAndDate = mutableMapOf<Pair<String, LocalDate>, Row>()
             val commisionRowByActionAndPositionIdAndDate =
-                mutableMapOf<Triple<EToroAction, String, LocalDateTime>, Row>()
+                mutableMapOf<Triple<EToroAction, String, LocalDate>, Row>()
             val activityRowByPositionIdAndDate = mutableMapOf<Pair<String, LocalDateTime>, Row>()
 
             for (rowIndex in 1..dividendSheet.lastRowNum) {
@@ -134,7 +134,7 @@ class EToroImporterService(
                         details, true
                     )))
                 ) {
-                    commisionRowByActionAndPositionIdAndDate[Triple(action, positionId, date)] = row
+                    commisionRowByActionAndPositionIdAndDate[Triple(action, positionId, date.toLocalDate())] = row
                 } else {
                     activityRowByPositionIdAndDate[Pair(positionId, date)] = row
                 }
@@ -196,9 +196,9 @@ class EToroImporterService(
                             parentId = dividendRow.getCellByNullableIndex(dividendColumnIndex["Position ID"])!!.stringCellValue,
                         )
                     } else if (action == EToroAction.BUY) {
-                            commisionRowByActionAndPositionIdAndDate.get(Triple(EToroAction.FEE,key.first, key.second))
+                            commisionRowByActionAndPositionIdAndDate[Triple(EToroAction.FEE,key.first, key.second.toLocalDate())]
                                 ?.let {
-                                    val amount = row.getCellByNullableIndex(activityColumnIndex["Amount"])!!.numericCellValue
+                                    val amount = it.getCellByNullableIndex(activityColumnIndex["Amount"])!!.numericCellValue
 
                                     eToroTrade.fees.add(EToroFee(
                                         time = key.second,

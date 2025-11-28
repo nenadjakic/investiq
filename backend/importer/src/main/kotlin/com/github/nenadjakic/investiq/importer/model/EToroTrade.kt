@@ -8,10 +8,13 @@ import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.enum.TransactionType
+import com.github.nenadjakic.investiq.data.repository.CurrencyHistoryRepository
 import com.github.nenadjakic.investiq.importer.enum.EToroAction
+import com.github.nenadjakic.investiq.importer.service.CurrencyHistoryService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import kotlin.math.abs
 
 data class EToroTrade (
     val action: EToroAction,
@@ -89,20 +92,50 @@ fun EToroTrade.toStagingTransactions(
         EToroAction.SDRT_FEE -> TODO()
         EToroAction.FEE -> TODO()
         EToroAction.BUY -> {
+            val buy = StagingTransaction(
+                platform = Platform.ETORO,
+                transactionType = TransactionType.BUY,
+                externalId = this.id,
+                importStatus = ImportStatus.PENDING,
+                transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                currency = currencies["USD"],
+                resolvedAsset = asset,
+                externalSymbol = this.ticker,
+                quantity = this.units,
+                amount = this.amount
+            )
+            stagingTransactions.add(buy)
+            this.fees.forEach {
+                stagingTransactions.add(
+                    StagingTransaction(
+                        platform = Platform.ETORO,
+                        transactionType = TransactionType.FEE,
+                        externalId = this.id,
+                        importStatus = ImportStatus.PENDING,
+                        transactionDate = it.time.atOffset(ZoneOffset.UTC),
+                        currency = currencies["USD"],
+                        amount = abs(it.amount),
+                        relatedStagingTransaction = buy
+                    )
+                )
+            }
+        }
+        EToroAction.SELL -> {
             stagingTransactions.add(
                 StagingTransaction(
                     platform = Platform.ETORO,
-                    transactionType = TransactionType.BUY,
+                    transactionType = TransactionType.SELL,
                     externalId = this.id,
                     importStatus = ImportStatus.PENDING,
                     transactionDate = this.time.atOffset(ZoneOffset.UTC),
                     currency = currencies["USD"],
                     resolvedAsset = asset,
-                    externalSymbol = this.ticker
+                    externalSymbol = this.ticker,
+                    quantity = this.units,
+                    amount = abs(this.amount)
                 )
             )
         }
-        EToroAction.SELL -> TODO()
         EToroAction.DIVIDEND -> {
             stagingTransactions.add(
                 StagingTransaction(
@@ -123,7 +156,7 @@ fun EToroTrade.toStagingTransactions(
             )
         }
         EToroAction.DIVIDEND_ADJUSTMENT -> {}
-        EToroAction.WITHDRAWAL -> TODO()
+        EToroAction.WITHDRAWAL -> {}
     }
 
     return stagingTransactions
