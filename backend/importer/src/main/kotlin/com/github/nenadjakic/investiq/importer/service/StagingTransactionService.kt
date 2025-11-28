@@ -21,7 +21,7 @@ class StagingTransactionService(
         platform: Platform,
         limit: Int?
     ): List<StagingTransactionResponse> =
-        stagingTransactionRepository.findByPlatformAndResolvedStatus(platform.displayName, if (unresolved) ImportStatus.PENDING else null)
+        stagingTransactionRepository.findByPlatformAndResolvedStatus(platform, if (unresolved) ImportStatus.PENDING else null)
             .let { if (limit != null) it.take(limit) else it }
             .map { it.toStagingTransactionResponse() }
 

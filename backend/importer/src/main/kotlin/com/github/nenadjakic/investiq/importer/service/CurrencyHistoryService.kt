@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.importer.service
 
+import com.github.nenadjakic.investiq.currencyfetcher.service.FrankfurterService
 import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.repository.CurrencyHistoryRepository
 import org.springframework.stereotype.Service
@@ -9,14 +10,15 @@ import java.time.LocalDate
 
 @Service
 class CurrencyHistoryService(
-    private val currencyHistoryRepository: CurrencyHistoryRepository
+    private val currencyHistoryRepository: CurrencyHistoryRepository,
+    private val frankfurterService: FrankfurterService
 ) {
 
-    fun convert(amount: BigDecimal, fromCurrency: Currency, toCurrency: Currency, date: LocalDate): BigDecimal {
+    fun convert(amount: BigDecimal, fromCurrency: String, toCurrency: String, date: LocalDate): BigDecimal {
         if (fromCurrency == toCurrency) return amount
 
         val direct = currencyHistoryRepository
-            .findTopByFromCurrencyAndToCurrencyAndValidDateLessThanEqualOrderByValidDateDesc(
+            .findTopByFromCurrency_CodeAndToCurrency_CodeAndValidDateLessThanEqualOrderByValidDateDesc(
                 fromCurrency,
                 toCurrency,
                 date
@@ -26,7 +28,7 @@ class CurrencyHistoryService(
         }
 
         val reverse = currencyHistoryRepository
-            .findTopByFromCurrencyAndToCurrencyAndValidDateLessThanEqualOrderByValidDateDesc(
+            .findTopByFromCurrency_CodeAndToCurrency_CodeAndValidDateLessThanEqualOrderByValidDateDesc(
                 toCurrency,
                 fromCurrency,
                 date
@@ -36,8 +38,14 @@ class CurrencyHistoryService(
             return amount.multiply(invertedRate)
         }
 
+        frankfurterService
+            .convert(fromCurrency, toCurrency, date)
+            ?.let {
+                return amount.multiply(it)
+            }
+
         throw NoSuchElementException(
-            "No exchange rate available for ${fromCurrency.code} -> ${toCurrency.code} on or before $date"
+            "No exchange rate available for $fromCurrency -> $toCurrency on or before $date"
         )
     }
 }

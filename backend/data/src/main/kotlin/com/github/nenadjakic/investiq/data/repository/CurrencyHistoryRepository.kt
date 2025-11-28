@@ -21,9 +21,9 @@ interface CurrencyHistoryRepository: JpaRepository<CurrencyHistory, UUID> {
      * @param date The date for which the historical rate is requested.
      * @return The closest matching `CurrencyHistory` entry, or `null` if none exist.
      */
-    fun findTopByFromCurrencyAndToCurrencyAndValidDateLessThanEqualOrderByValidDateDesc(
-        fromCurrency: Currency,
-        toCurrency: Currency,
+    fun findTopByFromCurrency_CodeAndToCurrency_CodeAndValidDateLessThanEqualOrderByValidDateDesc(
+        fromCurrency: String,
+        toCurrency: String,
         date: LocalDate
     ): CurrencyHistory?
 }

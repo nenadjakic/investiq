@@ -12,7 +12,7 @@ class FrankfurterService(
 ) {
     private val baseUrl = "https://api.frankfurter.dev/v1"
 
-    fun fetchRate(fromCode: String, toCode: String, date: LocalDate? = null): BigDecimal? {
+    fun convert(fromCode: String, toCode: String, date: LocalDate? = null): BigDecimal? {
         try {
             val endpoint = if (date == null || date.isEqual(LocalDate.now())) "latest" else date.toString()
 
