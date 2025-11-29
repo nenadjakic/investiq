@@ -1,6 +1,6 @@
 package com.github.nenadjakic.investiq.importer.command
 
-import com.github.nenadjakic.investiq.importer.service.AssetService
+import com.github.nenadjakic.investiq.commonservice.service.AssetService
 import com.github.nenadjakic.investiq.importer.util.MessageType
 import com.github.nenadjakic.investiq.importer.util.PrettyPrinter
 import org.jline.utils.AttributedStyle

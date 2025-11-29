@@ -5,6 +5,7 @@ import com.github.nenadjakic.investiq.importer.model.EToroTrade
 import com.github.nenadjakic.investiq.importer.model.Trading212Trade
 import com.github.nenadjakic.investiq.importer.service.EToroImporterService
 import com.github.nenadjakic.investiq.importer.service.ImporterService
+import com.github.nenadjakic.investiq.importer.service.RevolutImporterService
 import com.github.nenadjakic.investiq.importer.util.MessageType
 import com.github.nenadjakic.investiq.importer.util.PrettyPrinter
 import org.jline.utils.AttributedStyle
@@ -21,7 +22,8 @@ import java.nio.file.Paths
 class ImporterCommand(
     private val prettyPrinter: PrettyPrinter,
     private val tradingImporterService: ImporterService<Trading212Trade>,
-    private val eToroImporterService: ImporterService<EToroTrade>
+    private val eToroImporterService: ImporterService<EToroTrade>,
+    private val revolutImporterService: RevolutImporterService
 ) {
     companion object {
         private val log = LoggerFactory.getLogger(ImporterCommand::class.java)
@@ -37,12 +39,19 @@ class ImporterCommand(
             log.error("File not found at path: $path")
             return
         }
-        val result = if (platform == Platform.ETORO) {
-            eToroImporterService.import(Files.newInputStream(filePath))
-        } else if (platform == Platform.TRADING212) {
-            tradingImporterService.import(Files.newInputStream(filePath))
-        } else {
-            throw IllegalArgumentException("Unsupported platform type.")
+        val result = when (platform) {
+            Platform.ETORO -> {
+                eToroImporterService.import(Files.newInputStream(filePath))
+            }
+            Platform.TRADING212 -> {
+                tradingImporterService.import(Files.newInputStream(filePath))
+            }
+            Platform.REVOLUT -> {
+                revolutImporterService.import(Files.newInputStream(filePath))
+            }
+            else -> {
+                throw IllegalArgumentException("Unsupported platform type.")
+            }
         }
 
         result.also { result ->

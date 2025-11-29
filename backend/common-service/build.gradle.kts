@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.spring)
+    alias(libs.plugins.kotlin.jpa)
 
     alias(libs.plugins.spring.dependency.management)
 
@@ -9,11 +10,12 @@ plugins {
 
 dependencies {
     implementation(project(":data"))
+    implementation(project(":currency-fetcher"))
 
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlin.stdlib)
-    implementation(libs.spring.framework.context)
-    implementation(libs.spring.framework.web)
+    implementation(libs.jakarta.persistence.api)
+    implementation(libs.jakarta.transaction.api)
     implementation(libs.spring.data.jpa)
 
     testImplementation(libs.junit.jupiter.api)

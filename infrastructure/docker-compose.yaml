@@ -1,6 +1,7 @@
 services:
   investiq-postgres:
     image: "postgres:18"
+    command: -c 'max_connections=${POSTGRES_MAX_CONNECTIONS}'
     container_name: "investiq-postgres"
     restart: "unless-stopped"
     environment:

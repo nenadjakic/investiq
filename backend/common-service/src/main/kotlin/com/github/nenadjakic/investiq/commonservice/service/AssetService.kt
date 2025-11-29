@@ -1,15 +1,14 @@
-package com.github.nenadjakic.investiq.importer.service
+package com.github.nenadjakic.investiq.commonservice.service
 
+import com.github.nenadjakic.investiq.commonservice.model.AssetResponse
+import com.github.nenadjakic.investiq.commonservice.model.toAssetResponse
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.entity.core.Exchange
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
-import com.github.nenadjakic.investiq.importer.model.AssetResponse
-import com.github.nenadjakic.investiq.importer.model.toAssetResponse
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
-import java.util.Optional
 import java.util.UUID
 import kotlin.jvm.optionals.getOrNull
 

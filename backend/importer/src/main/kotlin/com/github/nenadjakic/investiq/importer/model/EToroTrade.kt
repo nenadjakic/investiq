@@ -8,9 +8,7 @@ import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.enum.TransactionType
-import com.github.nenadjakic.investiq.data.repository.CurrencyHistoryRepository
 import com.github.nenadjakic.investiq.importer.enum.EToroAction
-import com.github.nenadjakic.investiq.importer.service.CurrencyHistoryService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset

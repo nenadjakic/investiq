@@ -1,9 +1,8 @@
-package com.github.nenadjakic.investiq.importer.model
+package com.github.nenadjakic.investiq.commonservice.model
 
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.asset.Etf
 import com.github.nenadjakic.investiq.data.entity.asset.Stock
-import org.hibernate.Hibernate
 import java.util.UUID
 
 data class AssetResponse (
@@ -14,16 +13,14 @@ data class AssetResponse (
 )
 
 fun Asset.toAssetResponse(): AssetResponse  {
-    val real = Hibernate.unproxy(this) as Asset
-
     return AssetResponse(
-        id = real.id!!,
-        symbol = real.symbol,
-        currency = real.currency.code!!,
+        id = this.id!!,
+        symbol = this.symbol,
+        currency = this.currency.code!!,
     ).also { response ->
-        when (real) {
-            is Stock -> response.exchange = real.exchange?.acronym
-            is Etf -> response.exchange = real.exchange?.acronym
+        when (this) {
+            is Stock -> response.exchange = this.exchange.acronym
+            is Etf -> response.exchange = this.exchange.acronym
         }
     }
 }

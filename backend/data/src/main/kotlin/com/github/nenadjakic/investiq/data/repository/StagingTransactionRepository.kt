@@ -13,7 +13,7 @@ import java.util.UUID
 interface StagingTransactionRepository: JpaRepository<StagingTransaction, UUID> {
     @Query("""
         SELECT st FROM StagingTransaction st
-        LEFT JOIN st.resolvedAsset ra
+        LEFT JOIN FETCH st.resolvedAsset ra
         WHERE st.platform = :platform
           AND (:importStatus IS NULL OR st.importStatus = :importStatus)
           AND st.relatedStagingTransaction IS NULL

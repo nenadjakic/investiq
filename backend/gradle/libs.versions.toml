@@ -1,5 +1,6 @@
 [versions]
 kotlin = "2.2.21"
+spring-framework = "7.0.1"
 spring-boot = "4.0.0-RC2"
 spring-boot-starter-test = "4.0.0-RC2"
 spring-dependency-management = "1.1.7"
@@ -12,6 +13,7 @@ apache-commons-csv = "1.14.1"
 apache-poi = "5.5.0"
 junit = "6.0.1"
 jakarta-persistence = "3.2.0"
+jakarta-transaction = "2.0.1"
 
 
 [libraries]
@@ -27,6 +29,8 @@ spring-boot-starter-validation = { module = "org.springframework.boot:spring-boo
 spring-boot-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
 spring-data-jpa = { module = "org.springframework.data:spring-data-jpa", version.ref = "spring-boot" }
 spring-shell-starter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "spring-shell-starter" }
+spring-framework-context = { module = "org.springframework:spring-context", version.ref = "spring-framework"}
+spring-framework-web = { module = "org.springframework:spring-web", version.ref = "spring-framework"}
 springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway"}
@@ -35,6 +39,7 @@ apache-commons-csv = { module = "org.apache.commons:commons-csv", version.ref = 
 apache-poi = { module = "org.apache.poi:poi", version.ref = "apache-poi" }
 apache-poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "apache-poi"}
 jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence" }
+jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jakarta-transaction" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 

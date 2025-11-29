@@ -1,11 +1,11 @@
-package com.github.nenadjakic.investiq.importer.service
+package com.github.nenadjakic.investiq.commonservice.service
 
+import com.github.nenadjakic.investiq.commonservice.model.StagingTransactionResponse
+import com.github.nenadjakic.investiq.commonservice.model.toStagingTransactionResponse
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
 import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
-import com.github.nenadjakic.investiq.importer.model.StagingTransactionResponse
-import com.github.nenadjakic.investiq.importer.model.toStagingTransactionResponse
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -13,7 +13,8 @@ import java.util.UUID
 @Service
 class StagingTransactionService(
     private val stagingTransactionRepository: StagingTransactionRepository,
-    private val assetRepository: AssetRepository) {
+    private val assetRepository: AssetRepository
+) {
 
     @Transactional
     fun listStagingTransactions(
