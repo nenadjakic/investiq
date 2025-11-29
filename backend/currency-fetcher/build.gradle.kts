@@ -13,7 +13,6 @@ plugins {
 
 dependencies {
     implementation(project(":data"))
-    implementation(project(":currency-fetcher"))
 
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlin.stdlib)
@@ -37,6 +36,8 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testImplementation(libs.spring.boot.starter.test)
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }
 
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {

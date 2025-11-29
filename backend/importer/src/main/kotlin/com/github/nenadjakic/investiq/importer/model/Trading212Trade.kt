@@ -62,7 +62,6 @@ fun Trading212Trade.toStagingTransactions(
                     notes = this.notes,
                     relatedStagingTransaction = parentStagingTransaction
                 ).also {
-                    tags["Trading212"]?.let { element -> it.tags.add(element) }
                     tags["Conversation fee"]?.let { element -> it.tags.add(element) }
                 }
             )
@@ -80,7 +79,6 @@ fun Trading212Trade.toStagingTransactions(
                     notes = this.notes,
                     relatedStagingTransaction = parentStagingTransaction
                 ).also {
-                    tags["Trading212"]?.let { element -> it.tags.add(element) }
                     tags["Stamp duty reserve tax"]?.let { element -> it.tags.add(element) }
                 }
             )
@@ -99,7 +97,6 @@ fun Trading212Trade.toStagingTransactions(
                     notes = this.notes,
                     relatedStagingTransaction = parentStagingTransaction
                 ).also {
-                    tags["Trading212"]?.let { element -> it.tags.add(element) }
                     tags["French transaction tax"]?.let { element -> it.tags.add(element) }
                 }
             )
@@ -133,11 +130,11 @@ fun Trading212Trade.toStagingTransactions(
                 currency = currencies[this.currencyTotal],
                 amount = this.total,
                 notes = this.notes,
-            ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
+            )
             stagingTransactions.add(deposit)
             stagingTransactions.addAll(getFeeTransactions(deposit))
         }
-        Trading212Action.BUY -> {
+        Trading212Action.MARKET_BUY, Trading212Action.LIMIT_BUY -> {
             val buy = StagingTransaction(
                 platform = Platform.TRADING212,
                 transactionType = TransactionType.BUY,
@@ -148,7 +145,7 @@ fun Trading212Trade.toStagingTransactions(
                 quantity = this.numberOfShares,
                 externalSymbol = this.ticker,
                 resolvedAsset = asset,
-            ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
+            )
             stagingTransactions.add(buy)
             stagingTransactions.addAll(getFeeTransactions(buy))
         }
@@ -163,11 +160,11 @@ fun Trading212Trade.toStagingTransactions(
                 quantity = this.numberOfShares,
                 externalSymbol = this.ticker,
                 resolvedAsset = asset,
-            ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
+            )
             stagingTransactions.add(buy)
             stagingTransactions.addAll(getFeeTransactions(buy))
         }
-        Trading212Action.DIVIDEND -> {
+        Trading212Action.DIVIDEND, Trading212Action.DIVIDEND_OTHER -> {
             stagingTransactions.add(
                 StagingTransaction(
                     platform = Platform.TRADING212,
@@ -183,7 +180,9 @@ fun Trading212Trade.toStagingTransactions(
                     grossAmount = this.numberOfShares * this.pricePerShare,
                     taxAmount = this.withholdingTax,
                     currency = currencies[this.currencyPricePerShare],
-                ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
+                ).also {
+                    it.amount = it.grossAmount!! - it.taxAmount!!
+                }
             )
         }
         Trading212Action.DIVIDEND_ADJUSTMENT -> {
@@ -196,9 +195,10 @@ fun Trading212Trade.toStagingTransactions(
                     transactionDate = this.time.atOffset(ZoneOffset.UTC),
                     amount = abs(this.total),
                     currency = currencies[this.currencyTotal],
-                ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
+                )
             )
         }
+        Trading212Action.SPLIT_OPEN, Trading212Action.SPLIT_CLOSE -> {}
         else -> {
             val unknown = StagingTransaction(
                 platform = Platform.TRADING212,
@@ -210,7 +210,7 @@ fun Trading212Trade.toStagingTransactions(
                 resolvedAsset = asset,
                 importStatus = ImportStatus.PENDING,
                 externalId = this.id
-            ).also { tags["Trading212"]?.let { element -> it.tags.add(element) }}
+            )
             stagingTransactions.add(unknown)
             stagingTransactions.addAll(getFeeTransactions(unknown))
         }

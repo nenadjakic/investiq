@@ -8,6 +8,7 @@ import org.springframework.boot.persistence.autoconfigure.EntityScan
 import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -20,6 +21,7 @@ import javax.sql.DataSource
 @EntityScan(basePackages = ["com.github.nenadjakic.investiq.data.entity"])
 @EnableCaching
 @EnableScheduling
+@ComponentScan(basePackages = ["com.github.nenadjakic.investiq"])
 class Application: PromptProvider  {
 
     override fun getPrompt(): AttributedString? {

@@ -9,6 +9,7 @@ flyway = "11.17.0"
 postgres = "42.7.8"
 springdoc-openapi = "3.0.0-RC1"
 apache-commons-csv = "1.14.1"
+apache-poi = "5.5.0"
 junit = "6.0.1"
 jakarta-persistence = "3.2.0"
 
@@ -31,6 +32,8 @@ flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway"}
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 apache-commons-csv = { module = "org.apache.commons:commons-csv", version.ref = "apache-commons-csv" }
+apache-poi = { module = "org.apache.poi:poi", version.ref = "apache-poi" }
+apache-poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "apache-poi"}
 jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }

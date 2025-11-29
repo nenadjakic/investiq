@@ -1,7 +1,9 @@
 package com.github.nenadjakic.investiq.importer.command
 
 import com.github.nenadjakic.investiq.data.enum.Platform
+import com.github.nenadjakic.investiq.importer.model.EToroTrade
 import com.github.nenadjakic.investiq.importer.model.Trading212Trade
+import com.github.nenadjakic.investiq.importer.service.EToroImporterService
 import com.github.nenadjakic.investiq.importer.service.ImporterService
 import com.github.nenadjakic.investiq.importer.util.MessageType
 import com.github.nenadjakic.investiq.importer.util.PrettyPrinter
@@ -18,7 +20,8 @@ import java.nio.file.Paths
 @ShellComponent
 class ImporterCommand(
     private val prettyPrinter: PrettyPrinter,
-    private val importerService: ImporterService<Trading212Trade>
+    private val tradingImporterService: ImporterService<Trading212Trade>,
+    private val eToroImporterService: ImporterService<EToroTrade>
 ) {
     companion object {
         private val log = LoggerFactory.getLogger(ImporterCommand::class.java)
@@ -34,19 +37,24 @@ class ImporterCommand(
             log.error("File not found at path: $path")
             return
         }
+        val result = if (platform == Platform.ETORO) {
+            eToroImporterService.import(Files.newInputStream(filePath))
+        } else if (platform == Platform.TRADING212) {
+            tradingImporterService.import(Files.newInputStream(filePath))
+        } else {
+            throw IllegalArgumentException("Unsupported platform type.")
+        }
 
-        importerService.import(Files.newInputStream(filePath))
-            .also { result ->
-                prettyPrinter.print(
-                    "Import finished for platform   : $platform — " +
-                            "${result.summary.successfulRows} successful, " +
-                            "${result.summary.failedRows} failed", AttributedStyle.GREEN
-                )
+        result.also { result ->
+            prettyPrinter.print(
+                "Import finished for platform   : $platform — " +
+                        "${result.summary.successfulRows} successful, " +
+                        "${result.summary.failedRows} failed", AttributedStyle.GREEN
+            )
+        }.also { result ->
+            result.errors.forEach { error ->
+                prettyPrinter.print("Row ${error.rowIndex} error: ${error.message}", AttributedStyle.RED)
             }
-            .also { result ->
-                result.errors.forEach { error ->
-                    prettyPrinter.print("Row ${error.rowIndex} error: ${error.message}", AttributedStyle.RED)
-                }
-            }
+        }
     }
 }

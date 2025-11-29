@@ -6,4 +6,5 @@ enum class Platform(
     TRADING212("Trading212"),
     ETORO("eToro"),
     IBKR("IBKR"),
+    REVOLUT("Revolut")
 }

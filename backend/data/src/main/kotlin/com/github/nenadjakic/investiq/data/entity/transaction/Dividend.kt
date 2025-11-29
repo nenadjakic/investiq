@@ -46,6 +46,13 @@ class Dividend: Transaction() {
     @Column(name = "tax_amount", precision = 20, scale = 8)
     var taxAmount: BigDecimal? = null
 
+
+    /**
+     * Net amount of dividend received.
+     */
+    @Column(name = "amount", precision = 20, scale = 8)
+    lateinit var amount: BigDecimal
+
     /**
      * Link to a related transaction (e.g. dividend linked to a buy or sell).
      */

@@ -39,4 +39,10 @@ class Sell: Transaction() {
      */
     @Column(precision = 20, scale = 8)
     lateinit var price: BigDecimal
+
+    /**
+     * Total value of the sell transaction.
+     */
+    val amount: BigDecimal
+        get() = quantity * price
 }
