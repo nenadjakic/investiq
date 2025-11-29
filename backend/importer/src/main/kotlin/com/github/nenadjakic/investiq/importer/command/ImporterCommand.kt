@@ -2,8 +2,10 @@ package com.github.nenadjakic.investiq.importer.command
 
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.importer.model.EToroTrade
+import com.github.nenadjakic.investiq.importer.model.IBKRTrade
 import com.github.nenadjakic.investiq.importer.model.Trading212Trade
 import com.github.nenadjakic.investiq.importer.service.EToroImporterService
+import com.github.nenadjakic.investiq.importer.service.IBKRImportesService
 import com.github.nenadjakic.investiq.importer.service.ImporterService
 import com.github.nenadjakic.investiq.importer.service.RevolutImporterService
 import com.github.nenadjakic.investiq.importer.util.MessageType
@@ -23,6 +25,7 @@ class ImporterCommand(
     private val prettyPrinter: PrettyPrinter,
     private val tradingImporterService: ImporterService<Trading212Trade>,
     private val eToroImporterService: ImporterService<EToroTrade>,
+    private val ibkrImportesService: ImporterService<IBKRTrade>,
     private val revolutImporterService: RevolutImporterService
 ) {
     companion object {
@@ -39,19 +42,26 @@ class ImporterCommand(
             log.error("File not found at path: $path")
             return
         }
-        val result = when (platform) {
-            Platform.ETORO -> {
-                eToroImporterService.import(Files.newInputStream(filePath))
+        val result = Files.newInputStream(filePath).use {
+
+           val result = when (platform) {
+                Platform.ETORO -> {
+                    eToroImporterService.import(it)
+                }
+
+                Platform.TRADING212 -> {
+                    tradingImporterService.import(it)
+                }
+
+                Platform.REVOLUT -> {
+                    revolutImporterService.import(it)
+                }
+                Platform.IBKR -> {
+                    ibkrImportesService.import(it)
+                }
             }
-            Platform.TRADING212 -> {
-                tradingImporterService.import(Files.newInputStream(filePath))
-            }
-            Platform.REVOLUT -> {
-                revolutImporterService.import(Files.newInputStream(filePath))
-            }
-            else -> {
-                throw IllegalArgumentException("Unsupported platform type.")
-            }
+
+            result
         }
 
         result.also { result ->
