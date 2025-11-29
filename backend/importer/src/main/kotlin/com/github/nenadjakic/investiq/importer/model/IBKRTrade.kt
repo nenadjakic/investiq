@@ -35,7 +35,7 @@ fun IBKRTrade.toStagingTransactions(
 
     val asset: Asset?
     val assets = assetAliases.filter {
-        it.platform == Platform.TRADING212 && it.externalSymbol.equals(
+        it.platform == Platform.IBKR && it.externalSymbol.equals(
             this.ticker, ignoreCase = true
         )
     }
