@@ -1,0 +1,1 @@
+update assets set asset_type = 'ETF' where symbol in ('VUSA.L', 'VWRP.L');

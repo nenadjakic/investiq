@@ -62,6 +62,7 @@ fun RevolutTrade.toStagingTransactions(
                     currency = currencies[this.currency],
                 ).also {
                     it.amount = it.grossAmount!! - it.taxAmount!!
+                    it.taxPercentage = 0.0
                 }
             )
         }

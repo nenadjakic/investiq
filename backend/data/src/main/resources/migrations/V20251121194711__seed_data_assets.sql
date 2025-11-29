@@ -82,7 +82,8 @@ VALUES
     ('d48b9d09-3763-45ab-aaf2-44c28a2552c9', 'Constellation Energy Corporation', 'US', 'f8a077d7-2fa4-4edc-8e28-1630366e5d4f'),
     ('ecdc29cc-f4b5-4f2b-a2be-d11714280cfe', 'Eli Lilly and Company', 'US', '048553a5-89b4-4de5-b9af-8865c5a3fac5'),
     ('1bd7f15f-e2a0-4d05-9ca0-f9cea2be14ad', 'Visa Inc.', 'US', 'd5017ce1-bd8a-4848-b772-dcb64f05ce6d'),
-    ('1a133e08-5fdb-4a3f-8650-5b88ad4e6feb', 'Sony Financial Group Inc.', 'JP', 'e303e373-c3a6-4dd4-9e86-f99135ba06c5')
+    ('1a133e08-5fdb-4a3f-8650-5b88ad4e6feb', 'Sony Financial Group Inc.', 'JP', 'e303e373-c3a6-4dd4-9e86-f99135ba06c5'),
+    ('6f3515bb-71b1-43de-867d-6ae9006ab91d', '3M', 'US', 'a97bafe0-8bcc-4b64-a51d-b5cb9497732d')
 ;
 
 INSERT INTO assets (id, asset_type, "name", symbol, fund_manager, currency_code, exchange_id, company_id)
@@ -204,7 +205,8 @@ VALUES
     ('c9d8f0da-45dc-4682-972b-beba6a16d75d', 'ETF', 'Invesco S&P 500 UCITS ETF (Dist)', 'D500.DE', 'Invesco', 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', NULL),
     ('3cd133b1-1207-40fe-b91b-ab3e62afbfa6', 'ETF', 'iShares MSCI Europe ESG Enhanced CTB UCITS ETF EUR Inc (Dist)', 'EMNU.DE', 'iShares', 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', NULL),
     ('5c526cd2-44f6-4de7-b5ea-fd83e081bf35', 'ETF', 'HSBC MSCI World UCITS ETF (Dist)', 'H4ZJ.DE', 'HSBC', 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', NULL),
-    ('6024a513-45cf-4146-9d6f-cba3efd78e60', 'ETF', 'iShares VII PLC - iShares NASDAQ 100 UCITS ETF (Acc)', 'NQSE.DE', 'iShares', 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', NULL)
+    ('6024a513-45cf-4146-9d6f-cba3efd78e60', 'ETF', 'iShares VII PLC - iShares NASDAQ 100 UCITS ETF (Acc)', 'NQSE.DE', 'iShares', 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', NULL),
+    ('18960fa8-5eee-4e0f-8357-b71de51ae287', 'STOCK', '3M', 'MMM', NULL, 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', '6f3515bb-71b1-43de-867d-6ae9006ab91d')
 ;
 
 INSERT INTO asset_aliases (id, asset_id, platform, external_symbol)
@@ -354,6 +356,7 @@ VALUES
     ('d47ef9d3-4fab-4692-b86b-e5431b42756b', '13c69d18-28ab-4868-a75b-540f321f78ce', 'IBKR', 'LLY'),
     ('6f926d8d-ab24-43bc-9c8b-80d494ca2767', 'aefd4388-9cd8-4531-8211-89896bc19052', 'IBKR', 'V'),
     ('59b2b86b-4989-420d-948a-4589aee5bc43', '6d223203-79e9-43bb-9464-5affdc8ce097', 'IBKR', 'SFGYY'),
+    ('450b8f35-909a-4eda-949d-39e263fc3b88', '18960fa8-5eee-4e0f-8357-b71de51ae287', 'IBKR', 'MMM'),
 
     ('5aa63181-9524-4a1e-8e94-5ce6a877f64a', 'c9d8f0da-45dc-4682-972b-beba6a16d75d', 'REVOLUT', 'D500'),
     ('0e11998e-ef38-454e-b7d5-4ec66e029e77', '3cd133b1-1207-40fe-b91b-ab3e62afbfa6', 'REVOLUT', 'EMNU'),

@@ -185,13 +185,10 @@ class TransactionService(
                             this.externalId = stagingTransaction.externalId
                         }
                         .also {
-                            it.grossAmount =
-                                BigDecimal.valueOf(stagingTransaction.price!! * stagingTransaction.quantity!!)
+                            it.grossAmount = BigDecimal.valueOf(stagingTransaction.grossAmount!!)
+                            it.amount = BigDecimal.valueOf(stagingTransaction.amount!!)
                             it.taxAmount = BigDecimal.valueOf(stagingTransaction.taxAmount!!)
-                            it.taxPercentage = it.taxAmount!!
-                                .divide(it.grossAmount, 4, RoundingMode.HALF_UP)
-                                .multiply(BigDecimal(100))
-                                .setScale(2, RoundingMode.HALF_UP)
+                            it.taxPercentage = BigDecimal.valueOf(stagingTransaction.taxPercentage!!)
                             it.currency = stagingTransaction.currency!!
                         }
                     transactions.add(dividend)

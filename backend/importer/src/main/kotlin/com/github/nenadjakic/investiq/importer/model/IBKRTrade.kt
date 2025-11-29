@@ -64,6 +64,7 @@ fun IBKRTrade.toStagingTransactions(
                     currency = currencies[this.currency],
                 ).also {
                     it.amount = it.grossAmount!! - it.taxAmount!!
+                    it.taxPercentage = it.taxAmount!! / (it.grossAmount!! - it.taxAmount!!) * 100
                 }
             )
         }
@@ -90,6 +91,7 @@ fun IBKRTrade.toStagingTransactions(
                 quantity = this.quantity,
                 externalSymbol = this.ticker,
                 resolvedAsset = asset,
+                currency = currencies[this.currency],
             )
             stagingTransactions.add(buy)
             if (this.commission != null && this.commission!! != 0.0) {
@@ -100,6 +102,7 @@ fun IBKRTrade.toStagingTransactions(
                         importStatus = ImportStatus.PENDING,
                         transactionDate = this.time.atOffset(ZoneOffset.UTC),
                         amount = abs(this.commission!!),
+                        currency = currencies[this.currency],
                         relatedStagingTransaction = buy
                     )
                 )

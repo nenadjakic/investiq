@@ -182,6 +182,7 @@ fun Trading212Trade.toStagingTransactions(
                     currency = currencies[this.currencyPricePerShare],
                 ).also {
                     it.amount = it.grossAmount!! - it.taxAmount!!
+                    it.taxPercentage = it.taxAmount!! / (it.grossAmount!! - it.taxAmount!!) * 100
                 }
             )
         }

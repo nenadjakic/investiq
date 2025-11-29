@@ -54,6 +54,7 @@ VALUES
   ('c6c2b6e7-6b95-42b6-b7ff-977d3b99a963', 'Manufacturing - Tools & Accessories', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
   ('7083d6ae-bc7a-4a59-8248-2368c2bbe6d4', 'Agricultural - Machinery', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
   ('0f2a3e00-1778-4c8b-995e-7b6e43f1896a', 'Marine Shipping', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
+  ('a97bafe0-8bcc-4b64-a51d-b5cb9497732d', 'Conglomerates', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f'),
 
 -- Consumer Defensive
    ('131d737e-862e-47ef-9de1-15a38ba41b9b', 'Beverages - Non-Alcoholic', '134d7ecb-7480-44f9-a6b5-8e9211212f1c'),
