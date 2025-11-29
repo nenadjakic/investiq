@@ -1,4 +1,4 @@
-package com.github.nenadjakic.investiq.commonservice.service.model
+package com.github.nenadjakic.investiq.commonservice.model
 
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.asset.Etf

@@ -1,7 +1,7 @@
 package com.github.nenadjakic.investiq.commonservice.service
 
-import com.github.nenadjakic.investiq.commonservice.service.model.AssetResponse
-import com.github.nenadjakic.investiq.commonservice.service.model.toAssetResponse
+import com.github.nenadjakic.investiq.commonservice.model.AssetResponse
+import com.github.nenadjakic.investiq.commonservice.model.toAssetResponse
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.entity.core.Exchange
