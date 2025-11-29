@@ -151,6 +151,8 @@ class EToroImporterService(
 
                     val ticker = if (action == EToroAction.BUY || action == EToroAction.SELL) {
                         row.getCellByNullableIndex(activityColumnIndex["Details"])!!.stringCellValue.getTicker()
+                    } else if (action == EToroAction.DIVIDEND) {
+                        row.getCellByNullableIndex(activityColumnIndex["Details"])!!.stringCellValue.getTicker()
                     } else {
                         ""
                     }

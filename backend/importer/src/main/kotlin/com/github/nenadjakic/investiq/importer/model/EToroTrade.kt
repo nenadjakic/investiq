@@ -143,6 +143,7 @@ fun EToroTrade.toStagingTransactions(
                     importStatus = ImportStatus.PENDING,
                     transactionDate = this.time.atOffset(ZoneOffset.UTC),
                     currency = currencies["USD"],
+                    externalSymbol = this.ticker,
                     resolvedAsset = asset
                 ).also {
                     val dividend = this.dividend!!
