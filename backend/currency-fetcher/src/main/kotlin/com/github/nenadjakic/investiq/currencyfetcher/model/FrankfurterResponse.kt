@@ -1,6 +1,5 @@
 package com.github.nenadjakic.investiq.currencyfetcher.model
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import java.math.BigDecimal
 import java.time.LocalDate
 

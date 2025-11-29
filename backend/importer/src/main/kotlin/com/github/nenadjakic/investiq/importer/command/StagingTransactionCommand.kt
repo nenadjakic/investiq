@@ -101,7 +101,7 @@ class StagingTransactionCommand(
         )
 
         runCatching {
-            stagingTransactionService.updateStatus(currentStaging!!.id!!, ImportStatus.VALIDATED)
+            stagingTransactionService.updateStatus(currentStaging!!.id, ImportStatus.VALIDATED)
         }.onFailure {
             prettyPrinter.print(it.message, MessageType.ERROR)
         }.onSuccess { currentStaging = null }
@@ -139,7 +139,7 @@ class StagingTransactionCommand(
 
     private fun printStagingHeader(foregroundStyle: Int? = null, backgroundStyle: Int? = null) {
         val header = String.format(
-            "%-36s %-20s %-10s %-8s %-25s %-10s", "ID", "Date", "Type", "Symbol", "Resolved Asset", "Status"
+            "%-36s %-30s %-10s %-8s %-25s %-10s", "ID", "Date", "Type", "Symbol", "Resolved Asset", "Status"
         )
 
         prettyPrinter.print(header, foregroundStyle)
@@ -156,7 +156,7 @@ class StagingTransactionCommand(
         } ?: "-"
 
         val line = String.format(
-            "%-36s %-20s %-10s %-8s %-25s %-10s",
+            "%-36s %-30s %-10s %-8s %-25s %-10s",
             staging.id,
             staging.date,
             staging.type,
