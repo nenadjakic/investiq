@@ -2,8 +2,8 @@ package com.github.nenadjakic.investiq.importer.command
 
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.enum.Platform
-import com.github.nenadjakic.investiq.importer.model.StagingTransactionResponse
-import com.github.nenadjakic.investiq.importer.service.AssetService
+import com.github.nenadjakic.investiq.commonservice.service.model.StagingTransactionResponse
+import com.github.nenadjakic.investiq.commonservice.service.AssetService
 import com.github.nenadjakic.investiq.importer.service.StagingTransactionService
 import com.github.nenadjakic.investiq.importer.util.MessageType
 import com.github.nenadjakic.investiq.importer.util.PrettyPrinter

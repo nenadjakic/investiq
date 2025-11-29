@@ -1,6 +1,5 @@
-package com.github.nenadjakic.investiq.importer.service
+package com.github.nenadjakic.investiq.commonservice.service
 
-import com.github.nenadjakic.investiq.currencyfetcher.service.FrankfurterService
 import com.github.nenadjakic.investiq.data.entity.transaction.Buy
 import com.github.nenadjakic.investiq.data.entity.transaction.Deposit
 import com.github.nenadjakic.investiq.data.entity.transaction.Dividend

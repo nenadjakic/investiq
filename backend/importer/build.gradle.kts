@@ -13,6 +13,8 @@ plugins {
 
 dependencies {
     implementation(project(":data"))
+    implementation(project(":common-service"))
+
     implementation(project(":currency-fetcher"))
 
     implementation(libs.kotlin.reflect)

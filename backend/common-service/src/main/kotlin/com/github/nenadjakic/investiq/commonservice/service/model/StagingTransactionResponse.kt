@@ -1,4 +1,4 @@
-package com.github.nenadjakic.investiq.importer.model
+package com.github.nenadjakic.investiq.commonservice.service.model
 
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction

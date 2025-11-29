@@ -4,8 +4,8 @@ import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
 import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
-import com.github.nenadjakic.investiq.importer.model.StagingTransactionResponse
-import com.github.nenadjakic.investiq.importer.model.toStagingTransactionResponse
+import com.github.nenadjakic.investiq.commonservice.service.model.StagingTransactionResponse
+import com.github.nenadjakic.investiq.commonservice.service.model.toStagingTransactionResponse
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.UUID

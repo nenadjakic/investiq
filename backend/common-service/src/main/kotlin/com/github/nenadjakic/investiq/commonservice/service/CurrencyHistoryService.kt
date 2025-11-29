@@ -1,7 +1,6 @@
-package com.github.nenadjakic.investiq.importer.service
+package com.github.nenadjakic.investiq.commonservice.service
 
 import com.github.nenadjakic.investiq.currencyfetcher.service.FrankfurterService
-import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.repository.CurrencyHistoryRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
