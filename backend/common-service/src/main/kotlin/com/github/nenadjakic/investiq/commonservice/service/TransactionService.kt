@@ -50,21 +50,7 @@ class TransactionService(
                         .also {
                             it.quantity = BigDecimal.valueOf(stagingTransaction.quantity!!)
                             it.currency = stagingTransaction.resolvedAsset!!.currency
-                        }
-                        .also {
-                            if (it.platform == Platform.ETORO) {
-                                it.price =
-                                    currencyHistoryService
-                                        .convert(
-                                            BigDecimal.valueOf(stagingTransaction.amount!!),
-                                            "USD",
-                                            "EUR",
-                                            it.date.toLocalDate()
-                                        )
-                                        .divide(it.quantity, 10, RoundingMode.HALF_UP)
-                            } else {
-                                it.price = BigDecimal.valueOf(stagingTransaction.price!!)
-                            }
+                            it.price = BigDecimal.valueOf(stagingTransaction.price!!)
                         }
                     transactions.add(buy)
                     related
@@ -101,21 +87,7 @@ class TransactionService(
                         .also {
                             it.quantity = BigDecimal.valueOf(stagingTransaction.quantity!!)
                             it.currency = stagingTransaction.resolvedAsset!!.currency
-                        }
-                        .also {
-                            if (it.platform == Platform.ETORO) {
-                                it.price =
-                                    currencyHistoryService
-                                        .convert(
-                                            BigDecimal.valueOf(stagingTransaction.amount!!),
-                                            "USD",
-                                            "EUR",
-                                            it.date.toLocalDate()
-                                        )
-                                        .divide(it.quantity, 10, RoundingMode.HALF_UP)
-                            } else {
-                                it.price = BigDecimal.valueOf(stagingTransaction.price!!)
-                            }
+                            it.price = BigDecimal.valueOf(stagingTransaction.price!!)
                         }
                     transactions.add(sell)
                     related

@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.importer.model
 
+import com.github.nenadjakic.investiq.commonservice.service.CurrencyHistoryService
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.asset.AssetAlias
 import com.github.nenadjakic.investiq.data.entity.core.Currency
@@ -9,6 +10,7 @@ import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.enum.TransactionType
 import com.github.nenadjakic.investiq.importer.enum.EToroAction
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -43,11 +45,14 @@ fun EToroTrade.toStagingTransactions(
     assetAliases: Collection<AssetAlias>,
     currencies: Map<String, Currency>,
     tags: MutableMap<String, Tag>,
-
+    currencyHistoryService: CurrencyHistoryService,
     ): Collection<StagingTransaction> {
     val extractDepositCurrency: (String) -> String = { text ->
         Regex("""\b([A-Z]{2,5})\b""")
             .find(text)!!.value
+    }
+    val extractBuySellCurrency: (String) -> String = {
+        it.substringAfter("/")
     }
 
     val stagingTransactions = mutableListOf<StagingTransaction>()
@@ -100,8 +105,27 @@ fun EToroTrade.toStagingTransactions(
                 resolvedAsset = asset,
                 externalSymbol = this.ticker,
                 quantity = this.units,
-                amount = this.amount
-            )
+                amount = this.amount,
+                notes = this.details
+            ).also {
+                val rawCurrency = extractBuySellCurrency(this.details).substringAfter("/")
+                val targetCurrency = if (rawCurrency == "GBX") "GBP" else rawCurrency
+
+                var converted =
+                    currencyHistoryService.convert(
+                        BigDecimal.valueOf(this.amount),
+                        "USD",
+                        targetCurrency,
+                        it.transactionDate.toLocalDate()
+                    ).toDouble()
+
+                if (rawCurrency == "GBX") {
+                    converted *= 100
+                }
+
+                it.price = converted / this.units
+                it.currency = currencies[rawCurrency]
+            }
             stagingTransactions.add(buy)
             this.fees.forEach {
                 stagingTransactions.add(
@@ -130,8 +154,27 @@ fun EToroTrade.toStagingTransactions(
                     resolvedAsset = asset,
                     externalSymbol = this.ticker,
                     quantity = this.units,
-                    amount = abs(this.amount)
-                )
+                    amount = abs(this.amount),
+                    notes = extractBuySellCurrency(this.details)
+                ).also {
+                    val rawCurrency = extractBuySellCurrency(this.details).substringAfter("/")
+                    val targetCurrency = if (rawCurrency == "GBX") "GBP" else rawCurrency
+
+                    var converted =
+                        currencyHistoryService.convert(
+                            BigDecimal.valueOf(this.amount),
+                            "USD",
+                            targetCurrency,
+                            it.transactionDate.toLocalDate()
+                        ).toDouble()
+
+                    if (rawCurrency == "GBX") {
+                        converted *= 100
+                    }
+
+                    it.price = converted / this.units
+                    it.currency = currencies[rawCurrency]
+                }
             )
         }
         EToroAction.DIVIDEND -> {
@@ -144,7 +187,8 @@ fun EToroTrade.toStagingTransactions(
                     transactionDate = this.time.atOffset(ZoneOffset.UTC),
                     currency = currencies["USD"],
                     externalSymbol = this.ticker,
-                    resolvedAsset = asset
+                    resolvedAsset = asset,
+                    notes = this.details
                 ).also {
                     val dividend = this.dividend!!
                     it.taxAmount = dividend.withHoldingTaxAmount

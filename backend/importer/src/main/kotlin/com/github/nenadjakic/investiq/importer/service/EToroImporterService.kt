@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.importer.service
 
+import com.github.nenadjakic.investiq.commonservice.service.CurrencyHistoryService
 import com.github.nenadjakic.investiq.data.entity.asset.AssetAlias
 import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.entity.core.Tag
@@ -29,7 +30,8 @@ class EToroImporterService(
     private val assetAliasRepository: AssetAliasRepository,
     private val currencyRepository: CurrencyRepository,
     private val stagingTransactionRepository: StagingTransactionRepository,
-    private val tagRepository: TagRepository
+    private val tagRepository: TagRepository,
+    private val currencyHistoryService: CurrencyHistoryService
 ) : ImporterService<EToroTrade> {
 
     companion object {
@@ -309,7 +311,7 @@ class EToroImporterService(
         for (rowResult in rowResults) {
             if (rowResult.status == RowStatus.SUCCESS) {
                 stagingTransactions.addAll(
-                    rowResult.mappedObjectInfo!!.toStagingTransactions(assetAliases, currencies, tags)
+                    rowResult.mappedObjectInfo!!.toStagingTransactions(assetAliases, currencies, tags, currencyHistoryService)
                 )
             }
         }

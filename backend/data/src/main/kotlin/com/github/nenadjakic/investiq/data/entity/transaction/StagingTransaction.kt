@@ -39,7 +39,7 @@ class StagingTransaction(
     val transactionDate: OffsetDateTime,
 
     @Column(name = "price")
-    val price: Double? = null,
+    var price: Double? = null,
 
     @Column(name = "quantity")
     val quantity: Double? = null,
@@ -68,7 +68,7 @@ class StagingTransaction(
 
     @ManyToOne
     @JoinColumn(name = "currency_code")
-    val currency: Currency? = null,
+    var currency: Currency? = null,
 
     @Column(name = "external_id", length = 100)
     val externalId: String? = null,
