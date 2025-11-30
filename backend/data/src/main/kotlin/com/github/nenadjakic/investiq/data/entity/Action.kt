@@ -1,0 +1,53 @@
+package com.github.nenadjakic.investiq.data.entity
+
+import com.github.nenadjakic.investiq.data.entity.asset.Asset
+import com.github.nenadjakic.investiq.data.enum.Platform
+import jakarta.persistence.CollectionTable
+import jakarta.persistence.Column
+import jakarta.persistence.ElementCollection
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
+import java.time.LocalDate
+import java.util.UUID
+
+@Entity
+@Table(name = "actions")
+class Action {
+
+    @Id
+    @Column(name = "id", nullable = false)
+    var actionId: UUID? = null
+
+    @Column(name = "name", length = 100, nullable = false)
+    lateinit var name: String
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "asset_id", nullable = false)
+    lateinit var assetId: Asset
+
+    @Column(name = "rule", length = 500, nullable = false)
+    lateinit var rule: String
+
+    @Column(name = "description", length = 1000)
+    var description: String? = null
+
+    @ElementCollection
+    @CollectionTable(
+        name = "action_platforms",
+        joinColumns = [JoinColumn(name = "action_id")],
+    )
+    @Enumerated(EnumType.STRING)
+    @Column(name = "platform", length = 20, nullable = false)
+    var platforms: MutableList<Platform> = mutableListOf()
+
+    @Column(name = "date", nullable = false)
+    lateinit var actionDate: LocalDate
+
+    @Column(name = "executed", nullable = false)
+    var executed: Boolean = false
+}
