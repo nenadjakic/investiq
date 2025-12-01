@@ -28,7 +28,7 @@ class Action {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "asset_id", nullable = false)
-    lateinit var assetId: Asset
+    lateinit var asset: Asset
 
     @Column(name = "rule", length = 500, nullable = false)
     lateinit var rule: String
@@ -36,17 +36,9 @@ class Action {
     @Column(name = "description", length = 1000)
     var description: String? = null
 
-    @ElementCollection
-    @CollectionTable(
-        name = "action_platforms",
-        joinColumns = [JoinColumn(name = "action_id")],
-    )
-    @Enumerated(EnumType.STRING)
-    @Column(name = "platform", length = 20, nullable = false)
-    var platforms: MutableList<Platform> = mutableListOf()
 
     @Column(name = "date", nullable = false)
-    lateinit var actionDate: LocalDate
+    lateinit var date: LocalDate
 
     @Column(name = "executed", nullable = false)
     var executed: Boolean = false
