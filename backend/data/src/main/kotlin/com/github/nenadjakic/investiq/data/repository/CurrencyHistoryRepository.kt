@@ -26,4 +26,10 @@ interface CurrencyHistoryRepository: JpaRepository<CurrencyHistory, UUID> {
         toCurrency: String,
         date: LocalDate
     ): CurrencyHistory?
+
+    fun existsByFromCurrency_CodeAndToCurrency_CodeAndValidDate(
+        fromCurrency: String,
+        toCurrency: String,
+        date: LocalDate
+    ): Boolean
 }

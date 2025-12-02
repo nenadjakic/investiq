@@ -6,6 +6,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -24,18 +25,18 @@ data class CurrencyHistory(
      */
     @Id
     @Column(name = "id", nullable = false)
-    val id: UUID? = null,
+    var id: UUID? = null,
 
     @ManyToOne
     @JoinColumn(name = "from_currency_code", nullable = false)
-    val fromCurrency: Currency,
+    var fromCurrency: Currency,
 
     @ManyToOne
     @JoinColumn(name = "to_currency_code", nullable = false)
-    val toCurrency: Currency,
+    var toCurrency: Currency,
 
     @Column(name = "valid_date", nullable = false)
-    val validDate: LocalDate,
+    var validDate: LocalDate,
 
     /**
      * The exchange rate value relative to the base currency.
@@ -43,5 +44,12 @@ data class CurrencyHistory(
      * then 1 USD = 0.85 EUR.
      */
     @Column(name = "exchange_rate", nullable = false, precision = 20, scale = 6)
-    val exchangeRate: BigDecimal,
-)
+    var exchangeRate: BigDecimal,
+) {
+    @PrePersist
+    fun prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID()
+        }
+    }
+}
