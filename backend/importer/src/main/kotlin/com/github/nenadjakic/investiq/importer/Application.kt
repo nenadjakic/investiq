@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.importer
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.flywaydb.core.Flyway
 import org.jline.utils.AttributedString
 import org.jline.utils.AttributedStyle
@@ -13,6 +14,7 @@ import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.shell.jline.PromptProvider
+import org.springframework.web.client.RestTemplate
 import javax.sql.DataSource
 
 
@@ -26,6 +28,16 @@ class Application: PromptProvider  {
 
     override fun getPrompt(): AttributedString? {
         return AttributedString("importer:>", AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN))
+    }
+
+    @Bean
+    fun restTemplate(): RestTemplate {
+        return RestTemplate()
+    }
+
+    @Bean
+    fun objectMapper(): ObjectMapper {
+        return ObjectMapper()
     }
 
     @Bean

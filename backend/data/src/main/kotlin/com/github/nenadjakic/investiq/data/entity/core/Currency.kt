@@ -15,36 +15,36 @@ import java.math.BigDecimal
  */
 @Entity
 @Table(name = "currencies")
-data class Currency(
+class Currency {
     /**
      * The primary key identifier for the currency.
      * The ISO 4217 currency code.
      */
     @Id
     @Column(name = "code", nullable = false, length = 3)
-    var code: String? = null,
+    var code: String? = null
 
     /**
      * The full name of the currency.
      * Cannot be null.
      */
     @Column(name = "name", nullable = false, length = 200)
-    val name: String,
+    lateinit var name: String
 
     /**
      * The symbol representing the currency.
      * Optional field (e.g., $, €, ¥).
      */
     @Column(name = "symbol", length = 10)
-    val symbol: String? = null,
+    val symbol: String? = null
 
     @ManyToOne
     @JoinColumn(name = "parent_code")
-    val parent: Currency? = null,
+    val parent: Currency? = null
 
     @Column(name = "to_parent_factor", precision = 20, scale = 6)
-    val toParentFactor: BigDecimal = BigDecimal.ONE,
+    val toParentFactor: BigDecimal = BigDecimal.ONE
 
     @OneToMany(mappedBy = "parent")
     val children: MutableSet<Currency> = mutableSetOf()
-)
+}
