@@ -1,30 +1,32 @@
 package com.github.nenadjakic.investiq.data.repository
 
+import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
-interface StagingTransactionRepository: JpaRepository<StagingTransaction, UUID> {
+interface StagingTransactionRepository: JpaRepository<StagingTransaction, UUID>, JpaSpecificationExecutor<StagingTransaction> {
     @Query("""
         SELECT st FROM StagingTransaction st
         LEFT JOIN FETCH st.resolvedAsset ra
-        WHERE st.platform = :platform
+        WHERE (:platform IS NULL OR st.platform = :platform)
           AND (:importStatus IS NULL OR st.importStatus = :importStatus)
           AND st.relatedStagingTransaction IS NULL
         ORDER BY st.transactionDate ASC
     """)
-    fun findByPlatformAndResolvedStatus(
-        @Param("platform") platform: Platform,
+    fun findByPlatformAndImportStatus(
+        @Param("platform") platform: Platform? = null,
         @Param("importStatus") importStatus: ImportStatus? = null
     ): List<StagingTransaction>
 
-    fun findByrelatedStagingTransaction_Id(relatedStagingTransaction: UUID): List<StagingTransaction>
+    fun findByRelatedStagingTransaction_Id(relatedStagingTransaction: UUID): List<StagingTransaction>
 
     fun findAllByImportStatusAndRelatedStagingTransactionIsNull(importStatus: ImportStatus): List<StagingTransaction>
 
@@ -52,5 +54,4 @@ interface StagingTransactionRepository: JpaRepository<StagingTransaction, UUID> 
         @Param("newStatus") newStatus: ImportStatus,
         @Param("pendingStatus") pendingStatus: ImportStatus = ImportStatus.PENDING
     ): Int
-
 }

@@ -32,4 +32,9 @@ interface CurrencyHistoryRepository: JpaRepository<CurrencyHistory, UUID> {
         toCurrency: String,
         date: LocalDate
     ): Boolean
+
+    fun findTopByFromCurrency_CodeAndToCurrency_CodeOrderByValidDateDesc(
+        fromCurrency: String,
+        toCurrency: String
+    ): CurrencyHistory?
 }

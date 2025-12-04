@@ -1,6 +1,8 @@
 rootProject.name = "investiq"
 include("data")
-include("importer")
-include("asset-fetcher")
-include("currency-fetcher")
-include("common-service")
+include("common")
+include("service")
+include("integration")
+include("app-cli")
+include("app-rest")
+include("scheduler")
