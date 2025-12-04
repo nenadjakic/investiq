@@ -19,18 +19,20 @@ jobs:
       frontend: ${{ steps.detect.outputs.frontend }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - id: detect
         run: |
-          git fetch --no-tags --prune --depth=1 origin/main
+          git fetch origin main:main || true
 
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only origin/main...HEAD | grep -q '^backend/') ]]; then
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only main...HEAD | grep -q '^backend/') ]]; then
             echo "backend=true" >> $GITHUB_OUTPUT
           else
             echo "backend=false" >> $GITHUB_OUTPUT
           fi
 
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only origin/main...HEAD | grep -q '^frontend/') ]]; then
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only main...HEAD | grep -q '^frontend/') ]]; then
             echo "frontend=true" >> $GITHUB_OUTPUT
           else
             echo "frontend=false" >> $GITHUB_OUTPUT
@@ -42,10 +44,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
       - run: chmod +x ./gradlew
         working-directory: backend
