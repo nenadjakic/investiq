@@ -15,21 +15,27 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      backend: ${{ steps.paths.outputs.backend }}
-      frontend: ${{ steps.paths.outputs.frontend }}
+      backend: ${{ steps.detect.outputs.backend }}
+      frontend: ${{ steps.detect.outputs.frontend }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Paths Changes Filter
-        id: paths
-        uses: dorny/paths-filter@v3.0.2
-        with:
-          token: ${{ github.token }}
-          filters: |
-            backend:
-              - 'backend/**'
-            frontend:
-              - 'frontend/**'
+      - id: detect
+        run: |
+          git fetch --no-tags --prune --depth=1 origin/main
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only origin/main...HEAD | grep -q '^backend/') ]]; then
+            echo "backend=true" >> $GITHUB_OUTPUT
+          else
+            echo "backend=false" >> $GITHUB_OUTPUT
+          fi
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only origin/main...HEAD | grep -q '^frontend/') ]]; then
+            echo "frontend=true" >> $GITHUB_OUTPUT
+          else
+            echo "frontend=false" >> $GITHUB_OUTPUT
+          fi
+
   backend:
     needs: changes
     if: ${{ needs.changes.outputs.backend == 'true' }}
@@ -39,7 +45,7 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '25'
+          java-version: '21'
           distribution: 'temurin'
       - run: chmod +x ./gradlew
         working-directory: backend
