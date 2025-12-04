@@ -46,6 +46,9 @@ class AssetScheduler(
                     log.error("Error fetching data for $symbol: ${ex.message}", ex)
                 }
             }
+        if(assetHistories.isNotEmpty()) {
+            assetHistoryRepository.saveAll(assetHistories)
+        }
     }
 
     private fun initAssetHistories(yahooResponse: AssetHistoryList): List<AssetHistory> {
