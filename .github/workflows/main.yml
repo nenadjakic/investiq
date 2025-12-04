@@ -22,17 +22,19 @@ jobs:
 
       - id: detect
         run: |
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -q '^backend/') ]]; then
+          git fetch --no-tags --prune --depth=1 origin main
+          
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only origin/main...HEAD | grep -q '^backend/') ]]; then
             echo "backend=true" >> $GITHUB_OUTPUT
           else
             echo "backend=false" >> $GITHUB_OUTPUT
           fi
-
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep -q '^frontend/') ]]; then
+          
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only origin/main...HEAD | grep -q '^frontend/') ]]; then
             echo "frontend=true" >> $GITHUB_OUTPUT
           else
             echo "frontend=false" >> $GITHUB_OUTPUT
-          fi
+          fi  
 
   backend:
     needs: changes
