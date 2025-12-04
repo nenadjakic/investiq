@@ -1,0 +1,83 @@
+
+name: CI
+
+on:
+  push:
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+  workflow_dispatch:
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            backend:
+                - 'backend/**'
+            frontend:
+                - 'frontend/**'
+      - id: set
+        run: |
+          echo "backend=${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.backend == 'true' }}" >> $GITHUB_OUTPUT
+          echo "frontend=${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.frontend == 'true' }}" >> $GITHUB_OUTPUT
+
+  backend:
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+        working-directory: backend
+
+      - name: Run build with Gradle Wrapper
+        run: ./gradlew build
+        working-directory: backend
+
+  frontend:
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+          cache-dependency-path: './frontend/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build
+        run: npm run build
+        working-directory: frontend
+
+      - name: Run tests
+        run: npm test
+        working-directory: frontend
