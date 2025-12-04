@@ -24,15 +24,20 @@ jobs:
 
       - id: detect
         run: |
-          git fetch origin main:main || true
-
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only main...HEAD | grep -q '^backend/') ]]; then
+          git fetch origin main --unshallow || true
+          git fetch origin main || true
+          
+          BASE=$(git merge-base HEAD origin/main)
+          
+          # Backend
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only $BASE HEAD | grep -q '^backend/') ]]; then
             echo "backend=true" >> $GITHUB_OUTPUT
           else
             echo "backend=false" >> $GITHUB_OUTPUT
           fi
-
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only main...HEAD | grep -q '^frontend/') ]]; then
+          
+          # Frontend
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only $BASE HEAD | grep -q '^frontend/') ]]; then
             echo "frontend=true" >> $GITHUB_OUTPUT
           else
             echo "frontend=false" >> $GITHUB_OUTPUT
