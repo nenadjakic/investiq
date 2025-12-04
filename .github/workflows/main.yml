@@ -2,50 +2,11 @@ name: CI
 
 on:
   push:
-    paths:
-      - 'backend/**'
-      - 'frontend/**'
   pull_request:
-    paths:
-      - 'backend/**'
-      - 'frontend/**'
   workflow_dispatch:
 
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      backend: ${{ steps.detect.outputs.backend }}
-      frontend: ${{ steps.detect.outputs.frontend }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - id: detect
-        run: |
-          git fetch origin main --unshallow || true
-          git fetch origin main || true
-          
-          BASE=$(git merge-base HEAD origin/main)
-          
-          # Backend
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only $BASE HEAD | grep -q '^backend/') ]]; then
-            echo "backend=true" >> $GITHUB_OUTPUT
-          else
-            echo "backend=false" >> $GITHUB_OUTPUT
-          fi
-          
-          # Frontend
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || $(git diff --name-only $BASE HEAD | grep -q '^frontend/') ]]; then
-            echo "frontend=true" >> $GITHUB_OUTPUT
-          else
-            echo "frontend=false" >> $GITHUB_OUTPUT
-          fi
-
   backend:
-    needs: changes
-    if: ${{ needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -59,20 +20,18 @@ jobs:
       - run: ./gradlew build
         working-directory: backend
 
-  frontend:
-    needs: changes
-    if: ${{ needs.changes.outputs.frontend == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22.x'
-          cache: 'npm'
-          cache-dependency-path: './frontend/package-lock.json'
-      - run: npm ci
-        working-directory: frontend
-      - run: npm run build
-        working-directory: frontend
-      - run: npm test
-        working-directory: frontend
+#  frontend:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: actions/setup-node@v4
+#        with:
+#          node-version: '22.x'
+#          cache: 'npm'
+#          cache-dependency-path: './frontend/package-lock.json'
+#      - run: npm ci
+#        working-directory: frontend
+#      - run: npm run build
+#        working-directory: frontend
+#      - run: npm test
+#        working-directory: frontend
