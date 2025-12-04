@@ -31,16 +31,6 @@ class Application: PromptProvider  {
     }
 
     @Bean
-    fun restTemplate(): RestTemplate {
-        return RestTemplate()
-    }
-
-    @Bean
-    fun objectMapper(): ObjectMapper {
-        return ObjectMapper()
-    }
-
-    @Bean
     fun flywayMigrate(
         dataSource: DataSource,
         env: Environment

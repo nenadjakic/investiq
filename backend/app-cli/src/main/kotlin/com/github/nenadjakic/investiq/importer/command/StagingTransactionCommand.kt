@@ -11,6 +11,7 @@ import org.jline.utils.AttributedStyle
 import org.springframework.data.domain.Pageable
 import org.springframework.shell.Availability
 import org.springframework.shell.standard.*
+import java.util.UUID
 
 @ShellCommandGroup("Staging transaction commands")
 @ShellComponent

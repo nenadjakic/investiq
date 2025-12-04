@@ -20,11 +20,12 @@ import java.time.ZoneOffset
 @Service
 class YahooFinanceCurrencyService(
     private val restTemplate: RestTemplate,
-    private val objectMapper: ObjectMapper = ObjectMapper(),
+    private val objectMapper: ObjectMapper
+): AbstractYahooFinanceService(
+    restTemplate,
+    objectMapper
 ) {
-    private val log = LoggerFactory.getLogger(javaClass)
 
-    private val yahooBase = "https://query1.finance.yahoo.com/v8/finance/chart"
 
     fun  fetchHistory(
         fromCode: String,
@@ -43,30 +44,11 @@ class YahooFinanceCurrencyService(
         val inverseCandidate = "${toCode}${fromCode}=X"
 
         var usedInverse = false
-        var yahooChartResponse: YahooChartResponse?
+        var yahooChartResponse: YahooChartResponse? = fetchChart(symbolCandidate, fromDate, toDate)
 
-        fun fetch(symbol: String): YahooChartResponse? {
-            val url = "$yahooBase/$symbol?period1=$periodFrom&period2=$periodTo&interval=1d"
-            log.info("Fetching Yahoo data: $url")
-            val headers = HttpHeaders()
-            headers.set(
-                "User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
-            )
-            val entity = HttpEntity<String>(headers)
-            val raw = restTemplate.exchange(url, HttpMethod.GET, entity, String::class.java).body ?: return null
-            return try {
-                objectMapper.readValue(raw, YahooChartResponse::class.java)
-            } catch (ex: Exception) {
-                log.error("Failed to parse Yahoo JSON for $symbol: ${ex.message}")
-                null
-            }
-        }
-
-        yahooChartResponse = fetch(symbolCandidate)
         if (yahooChartResponse == null || yahooChartResponse.chart?.result.isNullOrEmpty()) {
             log.info("No result for $symbolCandidate, trying inverse $inverseCandidate")
-            yahooChartResponse = fetch(inverseCandidate)
+            yahooChartResponse = fetchChart(inverseCandidate, fromDate, toDate)
             if (yahooChartResponse == null || yahooChartResponse.chart?.result.isNullOrEmpty()) {
                 throw IllegalStateException("No data found for $symbolCandidate or $inverseCandidate")
             } else {
@@ -80,7 +62,6 @@ class YahooFinanceCurrencyService(
         val timestamps = result.timestamp!!
         val quote = result.indicators!!.quote!!.firstOrNull()
         val closes = quote?.close ?: emptyList()
-
 
         timestamps.forEachIndexed { idx, ts ->
             val priceNullable = closes.getOrNull(idx)

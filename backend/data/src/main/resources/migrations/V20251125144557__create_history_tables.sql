@@ -12,8 +12,7 @@ CREATE TABLE currency_histories (
 CREATE TABLE asset_histories (
     id uuid NOT NULL,
     asset_id uuid NOT NULL,
-    valid_from timestamptz NOT NULL,
-    valid_to timestamptz NULL,
+    valid_date timestamptz NOT NULL,
     volume bigint NULL,
     open_price numeric(20, 6) NULL,
     high_price numeric(20, 6) NULL,
@@ -22,7 +21,6 @@ CREATE TABLE asset_histories (
     adjusted_close numeric(20, 6) NULL,
     CONSTRAINT pk_asset_histories PRIMARY KEY (id),
     CONSTRAINT fk_asset_histories_assets FOREIGN KEY (asset_id) REFERENCES assets(id),
-    CONSTRAINT ch_asset_histories_valid_dates CHECK (valid_to IS NULL OR valid_to > valid_from),
     CONSTRAINT ch_asset_histories_positive_prices CHECK (
         (open_price IS NULL OR open_price > 0) AND
         (high_price IS NULL OR high_price > 0) AND

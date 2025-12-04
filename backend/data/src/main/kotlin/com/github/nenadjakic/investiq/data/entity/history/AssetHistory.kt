@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -33,18 +34,8 @@ data class AssetHistory(
     @JoinColumn(name = "asset_id", nullable = false)
     val asset: Asset,
 
-    /**
-     * The start date and time when this price became valid.
-     */
-    @Column(name = "valid_from", nullable = false)
-    val validFrom: OffsetDateTime,
-
-    /**
-     * The end date and time when this price stopped being valid.
-     * Null indicates this is the current price.
-     */
-    @Column(name = "valid_to")
-    val validTo: OffsetDateTime? = null,
+    @Column(name = "valid_date", nullable = false)
+    var validDate: LocalDate,
 
     /**
      * Trading volume during this period.

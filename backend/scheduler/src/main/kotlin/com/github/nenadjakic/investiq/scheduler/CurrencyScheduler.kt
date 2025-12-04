@@ -27,7 +27,7 @@ class CurrencyScheduler(
     @Value("\${investiq.to-currencies}")
     private lateinit var toCurrencies: List<String>
 
-    @Scheduled(fixedDelayString = "PT1H")
+    @Scheduled(fixedDelayString = "PT168H")
     fun fetchCurrencyHistories() {
         val currencyHistories = mutableListOf<CurrencyHistory>()
         fromCurrencies.forEach { fromCurrency ->

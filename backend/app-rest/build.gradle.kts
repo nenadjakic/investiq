@@ -19,10 +19,8 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlin.stdlib)
     implementation(libs.spring.boot.starter.web)
-    //implementation(libs.spring.shell.starter)
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.cache)
-    //implementation(libs.spring.boot.starter.web)
     //implementation(libs.spring.boot.starter.security)
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
@@ -31,6 +29,7 @@ dependencies {
     implementation(libs.apache.poi.ooxml)
     runtimeOnly(libs.postgresql)
 
+    implementation(libs.spring.boot.flyway)
     implementation(libs.flyway.core)
     implementation(libs.flyway.postgresql)
 
