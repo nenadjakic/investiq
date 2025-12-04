@@ -37,6 +37,10 @@ class AssetScheduler(
                     val fromDate = latestValidDate ?: LocalDate.of(2024, 10, 1)
                     val toDate = LocalDate.now()
 
+                    if (fromDate.equals(toDate)) {
+                        return@forEach
+                    }
+
                     val response = yahooFinanceAssetService.fetchHistory(symbol, fromDate, toDate)
 
                     assetHistories.addAll(initAssetHistories(response))

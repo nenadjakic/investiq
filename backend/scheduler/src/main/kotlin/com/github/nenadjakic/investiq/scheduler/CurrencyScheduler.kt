@@ -44,6 +44,10 @@ class CurrencyScheduler(
                     val fromDate = latestValidDate ?: LocalDate.of(2024, 10, 1)
                     val toDate = LocalDate.now()
 
+                    if (fromDate.equals(toDate)) {
+                        return@forEach
+                    }
+
                     val response = yahooFinanceCurrencyService.fetchHistory(fromCurrency, toCurrency, fromDate, toDate)
 
                     currencyHistories.addAll(initCurrencyHistories(response))
