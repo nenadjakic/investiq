@@ -15,8 +15,8 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      backend: ${{ steps.detect.outputs.backend }}
-      frontend: ${{ steps.detect.outputs.frontend }}
+      backend: ${{ steps.paths.outputs.backend }}
+      frontend: ${{ steps.paths.outputs.frontend }}
     steps:
       - uses: actions/checkout@v4
 
@@ -24,7 +24,7 @@ jobs:
         id: paths
         uses: dorny/paths-filter@v3.0.2
         with:
-          ref: main
+          token: ${{ github.token }}
           filters: |
             backend:
               - 'backend/**'
