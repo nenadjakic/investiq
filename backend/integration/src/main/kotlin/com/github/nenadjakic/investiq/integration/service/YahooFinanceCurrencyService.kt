@@ -3,10 +3,6 @@ package com.github.nenadjakic.investiq.integration.service
 import com.github.nenadjakic.investiq.integration.dto.CurrencyHistoryList
 import com.github.nenadjakic.investiq.integration.dto.DateExchangeRate
 import com.github.nenadjakic.investiq.integration.dto.YahooChartResponse
-import org.slf4j.LoggerFactory
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import tools.jackson.databind.ObjectMapper
@@ -37,14 +33,12 @@ class YahooFinanceCurrencyService(
         require(!toDate.isBefore(fromDate)) { "toDate must be >= fromDate" }
 
         val utcZone = ZoneOffset.UTC
-        val periodFrom = fromDate.atStartOfDay(utcZone).toEpochSecond()
-        val periodTo = toDate.plusDays(1).atStartOfDay(utcZone).toEpochSecond()
 
         val symbolCandidate = "${fromCode}${toCode}=X"
         val inverseCandidate = "${toCode}${fromCode}=X"
 
         var usedInverse = false
-        var yahooChartResponse: YahooChartResponse? = fetchChart(symbolCandidate, fromDate, toDate)
+        var yahooChartResponse = fetchChart(symbolCandidate, fromDate, toDate)
 
         if (yahooChartResponse == null || yahooChartResponse.chart?.result.isNullOrEmpty()) {
             log.info("No result for $symbolCandidate, trying inverse $inverseCandidate")

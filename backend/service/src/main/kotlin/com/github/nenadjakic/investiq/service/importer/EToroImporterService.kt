@@ -161,12 +161,16 @@ class EToroImporterService(
                     val action =
                         EToroAction.fromValue(row.getCellByNullableIndex(activityColumnIndex["Type"])!!.stringCellValue)
 
-                    val ticker = if (action == EToroAction.BUY || action == EToroAction.SELL) {
-                        row.getCellByNullableIndex(activityColumnIndex["Details"])!!.stringCellValue.getTicker()
-                    } else if (action == EToroAction.DIVIDEND) {
-                        row.getCellByNullableIndex(activityColumnIndex["Details"])!!.stringCellValue.getTicker()
-                    } else {
-                        ""
+                    val ticker = when(action) {
+                        EToroAction.BUY, EToroAction.SELL -> {
+                            row.getCellByNullableIndex(activityColumnIndex["Details"])!!.stringCellValue.getTicker()
+                        }
+                        EToroAction.DIVIDEND -> {
+                            row.getCellByNullableIndex(activityColumnIndex["Details"])!!.stringCellValue.getTicker()
+                        }
+                        else -> {
+                            ""
+                        }
                     }
                     val amount = row.getCellByNullableIndex(activityColumnIndex["Amount"])!!.numericCellValue
                     val units = run {
@@ -192,7 +196,7 @@ class EToroImporterService(
                     )
                     if (action == EToroAction.DIVIDEND) {
                         val dividendRow =
-                            dividendRowByPositionIdAndDate.get(Pair(key.first, key.second.toLocalDate()))!!
+                            dividendRowByPositionIdAndDate[Pair(key.first, key.second.toLocalDate())]!!
 
                         val withHoldingTaxRate = run {
                             dividendRow

@@ -6,8 +6,6 @@ import com.github.nenadjakic.investiq.data.repository.CurrencyRepository
 import com.github.nenadjakic.investiq.integration.dto.CurrencyHistoryList
 import com.github.nenadjakic.investiq.integration.service.YahooFinanceCurrencyService
 import com.github.nenadjakic.investiq.service.CurrencyHistoryService
-import com.github.nenadjakic.investiq.service.CurrencyService
-import org.apache.poi.hpsf.Currency
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -24,13 +22,13 @@ class CurrencyScheduler(
 ) {
     val log: Logger = LoggerFactory.getLogger(javaClass)
 
-    @Value("\${investiq.scheduler.currency.from}")
+    @Value($$"${investiq.scheduler.currency.from}")
     private lateinit var fromCurrencies: List<String>
 
-    @Value("\${investiq.scheduler.currency.to}")
+    @Value($$"${investiq.scheduler.currency.to}")
     private lateinit var toCurrencies: List<String>
 
-    @Value("\${investiq.scheduler.currency.fetch-delay-ms}")
+    @Value($$"${investiq.scheduler.currency.fetch-delay-ms}")
     private var fetchDelayMs: Long? = null
 
     @Scheduled(fixedDelayString = "PT168H")

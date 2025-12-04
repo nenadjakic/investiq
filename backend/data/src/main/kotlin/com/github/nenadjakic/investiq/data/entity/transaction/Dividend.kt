@@ -1,7 +1,6 @@
 package com.github.nenadjakic.investiq.data.entity.transaction
 
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
-import com.github.nenadjakic.investiq.data.entity.core.Currency
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity

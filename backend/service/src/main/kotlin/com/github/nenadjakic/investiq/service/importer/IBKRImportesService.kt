@@ -76,7 +76,7 @@ class IBKRImportesService(
         CSVParser.parse(input, StandardCharsets.UTF_8, format).use { parser ->
             var currentSection: String? = null
 
-            for ((i, record) in parser.records.withIndex()) {
+            for ((_, record) in parser.records.withIndex()) {
                 if (record.all { it.isBlank() }) {
                     continue
                 }

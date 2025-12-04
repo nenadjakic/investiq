@@ -13,8 +13,8 @@ import java.time.ZoneId
 
 @Service
 class YahooFinanceAssetService(
-    private val restTemplate: RestTemplate,
-    private val objectMapper: ObjectMapper
+    restTemplate: RestTemplate,
+    objectMapper: ObjectMapper
 ): AbstractYahooFinanceService(
     restTemplate,
     objectMapper

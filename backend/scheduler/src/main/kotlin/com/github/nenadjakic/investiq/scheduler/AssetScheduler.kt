@@ -1,7 +1,6 @@
 package com.github.nenadjakic.investiq.scheduler
 
 import com.github.nenadjakic.investiq.data.entity.history.AssetHistory
-import com.github.nenadjakic.investiq.data.entity.history.CurrencyHistory
 import com.github.nenadjakic.investiq.data.repository.AssetHistoryRepository
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
 import com.github.nenadjakic.investiq.integration.dto.AssetHistoryList
@@ -23,7 +22,7 @@ class AssetScheduler(
 ) {
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-    @Value("\${investiq.scheduler.asset.fetch-delay-ms}")
+    @Value($$"${investiq.scheduler.asset.fetch-delay-ms}")
     private var fetchDelayMs: Long? = null
 
     @Scheduled(fixedDelayString = "PT168H")
