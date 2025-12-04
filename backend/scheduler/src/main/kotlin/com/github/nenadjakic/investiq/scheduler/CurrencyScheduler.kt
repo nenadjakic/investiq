@@ -8,6 +8,8 @@ import com.github.nenadjakic.investiq.integration.service.YahooFinanceCurrencySe
 import com.github.nenadjakic.investiq.service.CurrencyHistoryService
 import com.github.nenadjakic.investiq.service.CurrencyService
 import org.apache.poi.hpsf.Currency
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -20,29 +22,37 @@ class CurrencyScheduler(
     private val currencyHistoryService: CurrencyHistoryService,
     private val yahooFinanceCurrencyService: YahooFinanceCurrencyService
 ) {
+    val log: Logger = LoggerFactory.getLogger(javaClass)
 
-    @Value("\${investiq.from-currencies}")
+    @Value("\${investiq.scheduler.currency.from}")
     private lateinit var fromCurrencies: List<String>
 
-    @Value("\${investiq.to-currencies}")
+    @Value("\${investiq.scheduler.currency.to}")
     private lateinit var toCurrencies: List<String>
+
+    @Value("\${investiq.scheduler.currency.fetch-delay-ms}")
+    private var fetchDelayMs: Long? = null
 
     @Scheduled(fixedDelayString = "PT168H")
     fun fetchCurrencyHistories() {
         val currencyHistories = mutableListOf<CurrencyHistory>()
         fromCurrencies.forEach { fromCurrency ->
             toCurrencies.forEach { toCurrency ->
-                var latestValidDate = currencyHistoryService.getLatestValidDate(fromCurrency, toCurrency)
-                if (latestValidDate == null) {
-                    latestValidDate = currencyHistoryService.getLatestValidDate(toCurrency, fromCurrency)
+                try {
+                    var latestValidDate = currencyHistoryService.getLatestValidDate(fromCurrency, toCurrency)
+                    if (latestValidDate == null) {
+                        latestValidDate = currencyHistoryService.getLatestValidDate(toCurrency, fromCurrency)
+                    }
+                    val fromDate = latestValidDate ?: LocalDate.of(2024, 10, 1)
+                    val toDate = LocalDate.now()
+
+                    val response = yahooFinanceCurrencyService.fetchHistory(fromCurrency, toCurrency, fromDate, toDate)
+
+                    currencyHistories.addAll(initCurrencyHistories(response))
+                    Thread.sleep(fetchDelayMs!!)
+                } catch (ex: Exception) {
+                    log.error("Error fetching data for $fromCurrency -> $toCurrency: ${ex.message}", ex)
                 }
-                val fromDate = latestValidDate ?: LocalDate.of(2024, 10, 1)
-                val toDate = LocalDate.now()
-
-                val response = yahooFinanceCurrencyService.fetchHistory(fromCurrency, toCurrency, fromDate, toDate)
-
-                currencyHistories.addAll(initCurrencyHistories(response))
-                Thread.sleep(60_000)
             }
         }
         if (currencyHistories.isNotEmpty()) {

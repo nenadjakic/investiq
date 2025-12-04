@@ -34,7 +34,7 @@ abstract class AbstractYahooFinanceService(
 
 
         val url = "$yahooBase/$symbol?period1=$periodFrom&period2=$periodTo&interval=1d"
-        log.info("Fetching Yahoo data: $url")
+        log.debug("Fetching Yahoo data: $url")
 
 
         val headers = HttpHeaders()

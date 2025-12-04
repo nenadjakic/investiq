@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import java.util.UUID
 
-interface AssetRepository: JpaRepository<Asset, UUID>, JpaSpecificationExecutor<Asset>
+interface AssetRepository: JpaRepository<Asset, UUID>, JpaSpecificationExecutor<Asset> {
+    fun findBySymbol(symbol: String): Asset?
+}
