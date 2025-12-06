@@ -1,0 +1,30 @@
+<div class="h-screen">
+    <mat-toolbar class="bg-gray-200!">
+        <span>{{ title }}</span>
+        <span class="spacer"></span>
+        <button matIconButton (click)="drawer.toggle()">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <button matIconButton>
+            <mat-icon>favorite</mat-icon>
+        </button>
+    </mat-toolbar>
+
+    <mat-drawer-container [hasBackdrop]="false" class="h-full">
+
+        <mat-drawer #drawer mode="side" opened class="bg-gray-200!">
+            <mat-nav-list>
+                @for (link of links; track link) {
+                <mat-list-item [activated]="link.activated">
+                    <a mat-list-item [routerLink]="link.url">{{ link.label }}</a>
+                </mat-list-item>
+                }
+            </mat-nav-list>
+            
+        </mat-drawer>
+
+        <mat-drawer-content class="pr-3 pl-3 pt-3">
+            <router-outlet></router-outlet>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>
