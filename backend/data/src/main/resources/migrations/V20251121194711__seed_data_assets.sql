@@ -190,7 +190,7 @@ VALUES
     ('188936e8-c419-421a-8813-d5c81e325713', 'ETF', 'iShares Core S&P 500 ETF (Dist)', 'IVV', 'iShares', 'USD', 'e698eb12-504d-4247-b65c-ef711e4a0003', NULL),
     ('4aa41c1f-5285-4e93-8ef2-4a1171e90882', 'ETF', 'Invesco QQQ Trust', 'QQQ', 'Invesco', 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', NULL),
     ('465fa574-db49-4091-852b-d3208f947325', 'STOCK', 'Ferrari N.V.', 'RACE', NULL, 'USD', '2bcbd047-9de4-4220-a385-d431544a942a', '0bd1ae88-b62e-4096-832b-2fe6693fb2ef'),
-    ('ee071f38-7339-4242-a0dd-66862c28587a', 'STOCK', 'Saab AB', 'SAABB.ST', NULL, 'SEK', '7d9ee083-742b-4af9-9eeb-717f2bb3a3f0', 'e42e7986-be76-4b98-9d02-e93fdd8b19fe'),
+    ('ee071f38-7339-4242-a0dd-66862c28587a', 'STOCK', 'Saab AB', 'SAAB-B.ST', NULL, 'SEK', '7d9ee083-742b-4af9-9eeb-717f2bb3a3f0', 'e42e7986-be76-4b98-9d02-e93fdd8b19fe'),
     ('f72ab37b-8ef8-427c-9660-df243595e2cb', 'ETF', 'iShares Core EURO STOXX 50 UCITS ETF EUR (Dist)', 'EUN2.DE', 'iShares', 'EUR', 'b3c1b9fe-5a55-4e9e-9f6c-2f6f2cd13c30', NULL),
     ('f71be082-9fc5-4357-81d2-7ae891bbc5d0', 'STOCK', 'UniCredit S.p.A.', 'UCG.MI', NULL, 'EUR', '08db89ad-c6c3-41d2-864a-650b410e9849', '416bd8da-b6f0-40c6-a3b4-26484eae8371'),
     ('142cae00-06fe-465f-bbac-4741caf74cc9', 'ETF', 'WisdomTree Core Physical Gold USD ETC', 'WGLD.L', 'WisdomTree', 'USD', '0cafbed5-1a23-4f1f-a5db-418c60b3e482', NULL),
