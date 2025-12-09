@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.scheduler
 
+import jakarta.transaction.Transactional
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcCall
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import java.time.LocalDate
 
 @Service
@@ -41,16 +43,19 @@ class SnapshotScheduler(
             .filter { it !in existingDates }
             .chunked(parallelism).forEach { chunk ->
                 chunk.map { date ->
-                    async(Dispatchers.IO) {
-                        log.info("Generating snapshot for date: $date")
-                        val call = SimpleJdbcCall(jdbcTemplate)
-                            .withFunctionName("populate_asset_daily_snapshots")
-
-                        call.execute(
-                            mapOf("p_snapshot_date" to java.sql.Date.valueOf(date))
-                        )
-                    }
+                    async(Dispatchers.IO) { populateForDate(date) }
                 }.awaitAll()
             }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    fun populateForDate(date: LocalDate) {
+        log.info("Generating snapshot for date: $date")
+        val call = SimpleJdbcCall(jdbcTemplate)
+            .withFunctionName("populate_asset_daily_snapshots")
+
+        call.execute(
+            mapOf("p_snapshot_date" to java.sql.Date.valueOf(date))
+        )
     }
 }

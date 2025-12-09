@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.common.dto
 
+import com.github.nenadjakic.investiq.data.entity.transaction.Dividend
 import io.swagger.v3.oas.annotations.media.Schema
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -21,12 +22,43 @@ data class PortfolioSummaryResponse(
     @param:Schema(description = "Total return percentage", example = "14.05")
     val totalReturnPercentage: BigDecimal,
 
-    @param:Schema(description = "Today's change amount", example = "1234.56")
-    val todayChange: BigDecimal,
+    @param:Schema(description = "Total unrealized profit/loss", example = "12500.00")
+    val totalUnrealizedPL: BigDecimal,
 
-    @param:Schema(description = "Today's change percentage", example = "2.45")
-    val todayChangePercentage: BigDecimal
+    @param:Schema(description = "Total realized profit/loss", example = "2930.00")
+    val totalRealizedPL: BigDecimal,
+
+    @param:Schema(description = "Total number of holdings/positions", example = "15")
+    val totalHoldings: Int,
+
+    @param:Schema(description = "Total dividends", example = "15")
+    val totalDividends: BigDecimal,
+
+    @param:Schema(description = "Period-based change information")
+    val periodChange: PeriodChangeResponse
 )
+
+@Schema(description = "Change information for a specific period")
+data class PeriodChangeResponse(
+    @param:Schema(description = "Start date of the period", example = "2024-12-04")
+    val startDate: LocalDate,
+
+    @param:Schema(description = "End date of the period (snapshot date)", example = "2024-12-09")
+    val endDate: LocalDate,
+
+    @param:Schema(description = "Number of days in the period", example = "5")
+    val periodDays: Int,
+
+    @param:Schema(description = "Change amount in the period", example = "1234.56")
+    val changeAmount: BigDecimal,
+
+    @param:Schema(description = "Change percentage in the period", example = "2.45")
+    val changePercentage: BigDecimal,
+
+    @param:Schema(description = "Period label", example = "last 5 days", allowableValues = ["today", "last 5 days", "last week", "last month"])
+    val periodLabel: String
+)
+
 
 @Schema(description = "Individual stock holding details")
 data class HoldingDTO(
