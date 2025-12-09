@@ -14,7 +14,8 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlin.stdlib)
 
-    implementation("jakarta.validation:jakarta.validation-api:4.0.0-M1")
+    implementation(libs.jakarta.validation.api)
+    implementation(libs.springdoc.openapi.starter.common)
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

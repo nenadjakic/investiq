@@ -1,0 +1,21 @@
+CREATE TABLE asset_daily_snapshots (
+    snapshot_date date NOT NULL,
+    asset_id uuid NOT NULL,
+    platform varchar(20) NOT NULL,
+    quantity numeric(30, 12) NOT NULL,
+    avg_cost_per_share_eur numeric(30, 8),
+    cost_basis_eur numeric(30, 8),
+    market_price_eur numeric(30, 8),
+    market_value_eur numeric(36, 8),
+    unrealized_pl_eur numeric(36, 8),
+    realized_pl_eur numeric(36, 8),
+    total_buy_qty numeric(30, 12),
+    total_buy_amount_eur numeric(36, 8),
+    total_sell_qty numeric(30, 12),
+    total_sell_amount_eur numeric(36, 8),
+    total_dividends_eur numeric(36, 8),
+    total_fees_eur numeric(36, 8),
+    CONSTRAINT pk_asset_daily_snapshots PRIMARY KEY (snapshot_date, asset_id, platform),
+    CONSTRAINT fk_asset_daily_snapshots_snapshots_assets FOREIGN KEY (asset_id) REFERENCES assets(id),
+    CONSTRAINT ch_asset_daily_snapshots_platform CHECK (((platform)::text = ANY ((ARRAY['TRADING212'::character varying, 'ETORO'::character varying, 'IBKR'::character varying, 'REVOLUT'::character varying])::text[])))
+);
