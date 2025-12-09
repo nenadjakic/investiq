@@ -1,5 +1,8 @@
-<div class="relative h-screen bg-white">
-  <div class="w-full">
+<div class="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
+  <app-header [title]="title"></app-header>
+
+  <main class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <router-outlet></router-outlet>
-  </div>
+    <app-toast></app-toast>
+  </main>
 </div>

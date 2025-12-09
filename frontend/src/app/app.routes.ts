@@ -1,46 +1,28 @@
 import { Routes } from '@angular/router';
-import { Layout } from './pages/layout/layout';
+import { DashboardPage } from '../dashboard/dashboard';
+import { AssetPage } from '../asset/asset';
 
 export const routes: Routes = [
   {
     path: '',
-    component: Layout,
-   /* children: [
-      {
-        path: '',
-        component: Dashboard,
-        data: { title: 'Dashboard' },
-        pathMatch: 'full',
-      },
-      {
-        path: 'dashboard',
-        component: Dashboard,
-        data: { title: 'Dashboard' },
-      },
-      {
-        path: 'portfolio',
-        component: Portfolio,
-        data: { title: 'Portfolio' },
-      },
-      {
-        path: 'asset',
-        component: Asset,
-        data: { title: 'Assets' },
-      },
-      {
-        path: 'transaction',
-        component: Transaction,
-        data: { title: 'Transactions' },
-      },
-      {
-        path: 'settings',
-        component: Settings,
-        data: { title: 'Settings' },
-        loadChildren: () =>
-          import('./pages/settings/settings.routes').then(
-            (m) => m.settingsRoutes,
-          ),
-      },
-    ],*/
+    redirectTo: 'dashboard',
+    pathMatch: 'full',
+  },
+  {
+    path: 'dashboard',
+    component: DashboardPage,
+  },
+  {
+    path: 'transactions',
+    component: DashboardPage,
+    data: { title: 'Transactions' },
+    pathMatch: 'full',
+  },
+
+  {
+    path: 'assets',
+    component: AssetPage,
+    data: { title: 'Assets' },
+    pathMatch: 'full',
   },
 ];

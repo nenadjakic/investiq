@@ -1,0 +1,218 @@
+<h2 class="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
+<div echarts [options]="chartOption" class="demo-chart"></div>
+<!-- Portfolio Overview Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+  <!-- 1. Ukupna vrijednost portfolija -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Total Portfolio Value</p>
+    <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ summary?.totalValue | currency:'EUR' }}</h3>
+    <p class="text-sm" 
+       [ngClass]="(summary?.todayChange ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'">
+      {{ summary?.todayChange | currency:'EUR':'symbol':'1.2-2' }}
+      ({{ (summary?.todayChangePercentage ?? 0) >= 0 ? '+' : '' }}{{ summary?.todayChangePercentage | number:'1.2-2' }}%)
+      <span class="text-gray-400 ml-1">today</span>
+    </p>
+  </div>
+  
+  <!-- 2. Uloženo -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Total Invested</p>
+    <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ summary?.totalInvested | currency:'EUR' }}</h3>
+  </div>
+  
+  <!-- 3. Ukupan profit/gubitak -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Total P/L</p>
+    <h3 class="text-3xl font-bold" 
+        [ngClass]="(summary?.totalReturn ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'">
+      {{ summary?.totalReturn | currency:'EUR' }}
+    </h3>
+    <p class="text-sm" 
+       [ngClass]="(summary?.totalReturnPercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'">
+      {{ (summary?.totalReturnPercentage ?? 0) >= 0 ? '+' : '' }}{{ summary?.totalReturnPercentage | number:'1.2-2' }}%
+    </p>
+  </div>
+
+  <!-- 4. Broj dionica -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Holdings</p>
+    <h3 class="text-3xl font-bold text-gray-800">8</h3>
+  </div>
+</div>
+
+<!-- Secondary Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Realized P/L</p>
+    <h3 class="text-2xl font-bold text-green-600">+$2,500.00</h3>
+  </div>
+  
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Unrealized P/L</p>
+    <h3 class="text-2xl font-bold text-green-600">+$12,930.00</h3>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Total Dividends</p>
+    <h3 class="text-2xl font-bold text-gray-800">$0.00</h3>
+  </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+  <!-- Performance Chart -->
+  <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Portfolio Performance</h3>
+      <div class="flex gap-2">
+        <button class="px-3 py-1 text-sm bg-blue-500 text-white rounded">1D</button>
+        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">1W</button>
+        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">1M</button>
+        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">3M</button>
+        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">1Y</button>
+        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">ALL</button>
+      </div>
+    </div>
+    <div class="h-64 bg-gray-50 rounded flex items-center justify-center">
+      <p class="text-gray-400">Chart placeholder</p>
+    </div>
+  </div>
+  
+  <!-- Allocation Chart -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Allocation</h3>
+    <div class="h-64 bg-gray-50 rounded flex items-center justify-center">
+      <p class="text-gray-400">Pie chart placeholder</p>
+    </div>
+  </div>
+</div>
+
+<!-- Holdings Table -->
+<div class="bg-white rounded-lg shadow mb-6">
+  <div class="p-6 border-b border-gray-200">
+    <h3 class="text-lg font-semibold text-gray-800">Holdings</h3>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticker</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shares</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Price</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Price</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">P/L</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% Portfolio</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">AAPL</div>
+            <div class="text-sm text-gray-500">Apple Inc.</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">50</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$150.00</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$175.50</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+$1,275.00 (+17.0%)</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">35%</td>
+        </tr>
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">MSFT</div>
+            <div class="text-sm text-gray-500">Microsoft Corp.</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">30</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$320.00</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$350.00</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">+$900.00 (+9.4%)</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">25%</td>
+        </tr>
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">GOOGL</div>
+            <div class="text-sm text-gray-500">Alphabet Inc.</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">25</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$140.00</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$135.00</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">-$125.00 (-3.6%)</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">20%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Bottom Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+  <!-- Recent Transactions -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Transactions</h3>
+    <div class="space-y-3">
+      <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+        <div>
+          <p class="text-sm font-medium text-gray-900">AAPL - BUY</p>
+          <p class="text-xs text-gray-500">December 5, 2024</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-medium text-gray-900">10 shares</p>
+          <p class="text-xs text-gray-500">@ $175.50</p>
+        </div>
+      </div>
+      <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+        <div>
+          <p class="text-sm font-medium text-gray-900">TSLA - SELL</p>
+          <p class="text-xs text-gray-500">December 3, 2024</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-medium text-gray-900">5 shares</p>
+          <p class="text-xs text-gray-500">@ $245.00</p>
+        </div>
+      </div>
+      <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+        <div>
+          <p class="text-sm font-medium text-gray-900">MSFT - BUY</p>
+          <p class="text-xs text-gray-500">December 1, 2024</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-medium text-gray-900">15 shares</p>
+          <p class="text-xs text-gray-500">@ $350.00</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Top Performers -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Performers</h3>
+    <div class="space-y-4">
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-medium text-gray-900">AAPL - Best Performer</span>
+          <span class="text-sm font-medium text-green-600">+17.0%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-medium text-gray-900">MSFT</span>
+          <span class="text-sm font-medium text-green-600">+9.4%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div class="bg-green-500 h-2 rounded-full" style="width: 55%"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-medium text-gray-900">GOOGL - Worst Performer</span>
+          <span class="text-sm font-medium text-red-600">-3.6%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div class="bg-red-500 h-2 rounded-full" style="width: 20%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
