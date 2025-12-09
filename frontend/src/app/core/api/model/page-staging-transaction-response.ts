@@ -19,8 +19,8 @@ export interface PageStagingTransactionResponse {
     content?: Array<StagingTransactionResponse>;
     number?: number;
     numberOfElements?: number;
-    sort?: SortObject;
     pageable?: PageableObject;
+    sort?: SortObject;
     first?: boolean;
     last?: boolean;
     empty?: boolean;

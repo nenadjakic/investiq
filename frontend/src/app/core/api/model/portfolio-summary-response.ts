@@ -7,17 +7,22 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { PeriodChangeResponse } from './period-change-response';
 
 
 /**
  * Portfolio summary with total value and returns
  */
 export interface PortfolioSummaryResponse { 
+    snapshotDate?: string;
     totalValue?: number;
     totalInvested?: number;
     totalReturn?: number;
     totalReturnPercentage?: number;
-    todayChange?: number;
-    todayChangePercentage?: number;
+    totalUnrealizedPL?: number;
+    totalRealizedPL?: number;
+    totalHoldings?: number;
+    totalDividends?: number;
+    periodChange?: PeriodChangeResponse;
 }
 

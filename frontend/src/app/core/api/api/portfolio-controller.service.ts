@@ -37,8 +37,8 @@ export class PortfolioControllerService extends BaseService {
 
     /**
      * Get portfolio summary
-     * Returns aggregated portfolio statistics including total value, returns, and daily changes
-     * @endpoint get /asset/summary
+     * Returns aggregated portfolio statistics including total value, returns, and changes
+     * @endpoint get /portfolio/summary
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -72,7 +72,7 @@ export class PortfolioControllerService extends BaseService {
             }
         }
 
-        let localVarPath = `/asset/summary`;
+        let localVarPath = `/portfolio/summary`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<PortfolioSummaryResponse>('get', `${basePath}${localVarPath}`,
             {
