@@ -52,6 +52,9 @@ export class DashboardPage implements OnInit {
           ],
           tooltip: {
             trigger: 'axis',
+            valueFormatter: (value: number) => {
+              return `€ ${value.toFixed(2)}`;
+            }
           },
           legend: {
             data: ['Market Value', 'Invested'],
