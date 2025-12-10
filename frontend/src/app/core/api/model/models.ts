@@ -8,6 +8,7 @@ export * from './page-asset-response';
 export * from './page-staging-transaction-response';
 export * from './pageable-object';
 export * from './period-change-response';
+export * from './portfolio-chart-response';
 export * from './portfolio-summary-response';
 export * from './sort-object';
 export * from './staging-transaction-edit-request';

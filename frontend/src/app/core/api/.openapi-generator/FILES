@@ -22,6 +22,7 @@ model/page-asset-response.ts
 model/page-staging-transaction-response.ts
 model/pageable-object.ts
 model/period-change-response.ts
+model/portfolio-chart-response.ts
 model/portfolio-summary-response.ts
 model/sort-object.ts
 model/staging-transaction-edit-request.ts

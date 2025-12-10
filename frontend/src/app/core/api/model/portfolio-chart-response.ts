@@ -9,9 +9,9 @@
  */
 
 
-export interface SortObject { 
-    empty?: boolean;
-    sorted?: boolean;
-    unsorted?: boolean;
+export interface PortfolioChartResponse { 
+    dates?: Array<string>;
+    invested?: Array<number>;
+    marketValue?: Array<number>;
 }
 

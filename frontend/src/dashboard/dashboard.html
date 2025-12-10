@@ -1,5 +1,5 @@
 <h2 class="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
-<!-- Portfolio Overview Cards -->
+
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
   <div class="bg-white rounded-lg shadow p-6">
     <div class="flex justify-between items-start mb-2">
@@ -7,25 +7,25 @@
       <p class="text-xs text-gray-400">as of {{ '2025-02-1' | date : 'yyyy-MM-dd' }}</p>
     </div>
     <h3 class="text-3xl font-bold text-gray-800 mb-1">
-      {{ summary?.totalValue | currency : 'EUR' }}
+      {{ summary()?.totalValue | currency : 'EUR' }}
     </h3>
     <p
       class="text-sm"
       [ngClass]="
-        (summary?.periodChange?.changePercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'
+        (summary()?.periodChange?.changePercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'
       "
     >
-      {{ summary?.periodChange?.changeAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}
-      ({{ (summary?.periodChange?.changePercentage ?? 0) >= 0 ? '+' : ''
-      }}{{ summary?.periodChange?.changePercentage | number : '1.2-2' }}%)
-      <span class="text-gray-400 ml-1">{{ summary?.periodChange?.periodLabel }}</span>
+      {{ summary()?.periodChange?.changeAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}
+      ({{ (summary()?.periodChange?.changePercentage ?? 0) >= 0 ? '+' : ''
+      }}{{ summary()?.periodChange?.changePercentage | number : '1.2-2' }}%)
+      <span class="text-gray-400 ml-1">{{ summary()?.periodChange?.periodLabel }}</span>
     </p>
   </div>
 
   <div class="bg-white rounded-lg shadow p-6">
     <p class="text-sm text-gray-500 mb-2">Total Invested</p>
     <h3 class="text-3xl font-bold text-gray-800 mb-1">
-      {{ summary?.totalInvested | currency : 'EUR' }}
+      {{ summary()?.totalInvested | currency : 'EUR' }}
     </h3>
   </div>
 
@@ -33,22 +33,22 @@
     <p class="text-sm text-gray-500 mb-2">Total P/L</p>
     <h3
       class="text-3xl font-bold"
-      [ngClass]="(summary?.totalReturn ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+      [ngClass]="(summary()?.totalReturn ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
     >
-      {{ summary?.totalReturn | currency : 'EUR' }}
+      {{ summary()?.totalReturn | currency : 'EUR' }}
     </h3>
     <p
       class="text-sm"
-      [ngClass]="(summary?.totalReturnPercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+      [ngClass]="(summary()?.totalReturnPercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
     >
-      {{ (summary?.totalReturnPercentage ?? 0) >= 0 ? '+' : ''
-      }}{{ summary?.totalReturnPercentage | number : '1.2-2' }}%
+      {{ (summary()?.totalReturnPercentage ?? 0) >= 0 ? '+' : ''
+      }}{{ summary()?.totalReturnPercentage | number : '1.2-2' }}%
     </p>
   </div>
 
   <div class="bg-white rounded-lg shadow p-6">
     <p class="text-sm text-gray-500 mb-2">Holdings</p>
-    <h3 class="text-3xl font-bold text-gray-800">{{ summary?.totalHoldings }}</h3>
+    <h3 class="text-3xl font-bold text-gray-800">{{ summary()?.totalHoldings }}</h3>
   </div>
 </div>
 
@@ -57,9 +57,9 @@
     <p class="text-sm text-gray-500 mb-2">Realized P/L</p>
     <h3
       class="text-3xl font-bold"
-      [ngClass]="(summary?.totalRealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+      [ngClass]="(summary()?.totalRealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
     >
-      {{ summary?.totalRealizedPL | currency : 'EUR' }}
+      {{ summary()?.totalRealizedPL | currency : 'EUR' }}
     </h3>
   </div>
 
@@ -67,15 +67,15 @@
     <p class="text-sm text-gray-500 mb-2">Unrealized P/L</p>
     <h3
       class="text-3xl font-bold"
-      [ngClass]="(summary?.totalUnrealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+      [ngClass]="(summary()?.totalUnrealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
     >
-      {{ summary?.totalUnrealizedPL | currency : 'EUR' }}
+      {{ summary()?.totalUnrealizedPL | currency : 'EUR' }}
     </h3>
   </div>
 
   <div class="bg-white rounded-lg shadow p-6">
     <p class="text-sm text-gray-500 mb-2">Total Dividends</p>
-    <h3 class="text-3xl font-bold text-gray-800"> {{ summary?.totalDividends | currency : 'EUR' }}</h3>
+    <h3 class="text-3xl font-bold text-gray-800"> {{ summary()?.totalDividends | currency : 'EUR' }}</h3>
   </div>
 </div>
 
@@ -84,25 +84,17 @@
   <!-- Performance Chart -->
   <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
     <div class="flex justify-between items-center mb-4">
-      <h3 class="text-lg font-semibold text-gray-800">Portfolio Performance</h3>
-      <div class="flex gap-2">
-        <button class="px-3 py-1 text-sm bg-blue-500 text-white rounded">1D</button>
-        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">1W</button>
-        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">1M</button>
-        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">3M</button>
-        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">1Y</button>
-        <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">ALL</button>
-      </div>
+      <h3 class="text-lg font-semibold text-gray-800">Portfolio Performance</h3>      
     </div>
     <div class="h-64 bg-gray-50 rounded flex items-center justify-center">
-      <p class="text-gray-400">Chart placeholder</p>
+      <div echarts [options]="chartOption()" class="flex-1 min-h-0"></div>
     </div>
   </div>
 
   <!-- Allocation Chart -->
   <div class="bg-white rounded-lg shadow p-6">
     <h3 class="text-lg font-semibold text-gray-800 mb-4">Allocation</h3>
-    <div class="h-64 bg-gray-50 rounded flex items-center justify-center">
+    <div class="h-82 bg-gray-50 rounded flex items-center justify-center">
       <p class="text-gray-400">Pie chart placeholder</p>
     </div>
   </div>
