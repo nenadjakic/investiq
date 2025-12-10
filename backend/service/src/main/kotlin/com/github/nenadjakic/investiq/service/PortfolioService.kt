@@ -1,6 +1,7 @@
 package com.github.nenadjakic.investiq.service
 
 import com.github.nenadjakic.investiq.common.dto.PeriodChangeResponse
+import com.github.nenadjakic.investiq.common.dto.PortfolioChartResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioSummaryResponse
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
 import org.springframework.stereotype.Service
@@ -50,6 +51,23 @@ class PortfolioService(
             totalHoldings = latestSnapshot.totalHoldings,
             periodChange = periodChange,
             totalDividends = latestSnapshot.totalDividends
+        )
+    }
+
+    fun getPortfolioValueSeries(days: Int = 365): PortfolioChartResponse {
+        val endDate = LocalDate.now()
+        val startDate = endDate.minusDays(days.toLong())
+
+        val dailyData = portfolioRepository.findDailyValuesBetween(startDate, endDate)
+
+        val dates = dailyData.map { it.snapshotDate }
+        val totalValue = dailyData.map { it.totalValue.toDouble() }
+        val totalInvested = dailyData.map { it.totalInvested.toDouble() }
+
+        return PortfolioChartResponse(
+            dates = dates,
+            marketValue = totalValue,
+            invested = totalInvested
         )
     }
 

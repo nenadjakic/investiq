@@ -3,6 +3,7 @@ package com.github.nenadjakic.investiq.data.repository
 import com.github.nenadjakic.investiq.data.entity.transaction.Dividend
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.queryForList
 import org.springframework.stereotype.Repository
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -53,6 +54,19 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, portfolioSnapshotMapper, date).firstOrNull()
     }
 
+    fun findDailyValuesBetween(startDate: LocalDate, endDate: LocalDate): List<PortfolioDailyValue> {
+        val sql = """
+            SELECT snapshot_date,
+                SUM(cost_basis_eur) as total_invested, 
+                SUM(market_value_eur) as total_value
+            FROM asset_daily_snapshots
+            WHERE snapshot_date BETWEEN ? AND ?
+            GROUP BY snapshot_date
+            order by snapshot_date
+        """.trimIndent()
+        return jdbcTemplate.query(sql, portfolioDailyValueMapper, startDate, endDate)
+    }
+
     private val portfolioSnapshotMapper = RowMapper<PortfolioSnapshot> { rs, _ ->
         PortfolioSnapshot(
             snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
@@ -62,6 +76,14 @@ class PortfolioRepository(
             totalRealizedPL = rs.getBigDecimal("total_realized_pl"),
             totalHoldings = rs.getInt("total_holdings"),
             totalDividends = rs.getBigDecimal("total_dividends_eur")
+        )
+    }
+
+    private val portfolioDailyValueMapper = RowMapper<PortfolioDailyValue> { rs, _ ->
+        PortfolioDailyValue(
+            snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
+            totalInvested = rs.getBigDecimal("total_invested"),
+            totalValue = rs.getBigDecimal("total_value")
         )
     }
 }
@@ -74,6 +96,12 @@ data class PortfolioSnapshot(
     val totalRealizedPL: BigDecimal,
     val totalHoldings: Int,
     val totalDividends: BigDecimal
+)
+
+data class PortfolioDailyValue(
+    val snapshotDate: LocalDate,
+    val totalInvested: BigDecimal,
+    val totalValue: BigDecimal
 )
 
 data class AssetSnapshot(

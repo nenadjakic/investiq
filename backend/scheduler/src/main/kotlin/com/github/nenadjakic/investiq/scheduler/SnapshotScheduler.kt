@@ -18,6 +18,7 @@ import java.time.LocalDate
 
 @Service
 class SnapshotScheduler(
+    private val snapshotWorker: SnapshotWorker,
     private val jdbcTemplate: JdbcTemplate
 ) {
     private val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -43,19 +44,25 @@ class SnapshotScheduler(
             .filter { it !in existingDates }
             .chunked(parallelism).forEach { chunk ->
                 chunk.map { date ->
-                    async(Dispatchers.IO) { populateForDate(date) }
+                    async { snapshotWorker.populateForDate(date) }
                 }.awaitAll()
             }
     }
+}
+
+@Service
+class SnapshotWorker(
+    private val jdbcTemplate: JdbcTemplate
+) {
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     fun populateForDate(date: LocalDate) {
         log.info("Generating snapshot for date: $date")
+
         val call = SimpleJdbcCall(jdbcTemplate)
             .withFunctionName("populate_asset_daily_snapshots")
 
-        call.execute(
-            mapOf("p_snapshot_date" to java.sql.Date.valueOf(date))
-        )
+        call.execute(mapOf("p_snapshot_date" to java.sql.Date.valueOf(date)))
     }
 }

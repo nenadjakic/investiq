@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.restapp.controller
 
+import com.github.nenadjakic.investiq.common.dto.PortfolioChartResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioSummaryResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
 import io.swagger.v3.oas.annotations.Operation
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -47,4 +49,21 @@ class PortfolioController(
     @GetMapping("/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPortfolioSummary(): ResponseEntity<PortfolioSummaryResponse> =
         ResponseEntity.ok(portfolioService.getPortfolioSummary())
+
+    @Operation(
+        operationId = "getPortfolioPerformanceChart",
+        summary = "Get portfolio value time series",
+        description = "Returns daily market value and invested amount for the specified time period"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successfully retrieved value series"),
+            ApiResponse(responseCode = "400", description = "Invalid days parameter")
+        ]
+    )
+    @GetMapping("/chart/performance", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getPortfolioPerformanceChart(
+        @RequestParam(required = false) days: Int = 365
+    ): ResponseEntity<PortfolioChartResponse> =
+        ResponseEntity.ok(portfolioService.getPortfolioValueSeries(days))
 }
