@@ -1,0 +1,96 @@
+<!-- Portfolio Overview Metrics (7 cards) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+  <!-- POSTOJEĆI 4 big numbers - OSTAJU -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-start mb-2">
+      <p class="text-sm text-gray-500">Total Portfolio Value</p>
+      <p class="text-xs text-gray-400">as of {{ '2025-02-1' | date : 'yyyy-MM-dd' }}</p>
+    </div>
+    <h3 class="text-3xl font-bold text-gray-800 mb-1">
+      {{ summary()?.totalValue | currency : 'EUR' }}
+    </h3>
+    <p
+      class="text-sm"
+      [ngClass]="
+        (summary()?.periodChange?.changePercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'
+      "
+    >
+      {{ summary()?.periodChange?.changeAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}
+      ({{ (summary()?.periodChange?.changePercentage ?? 0) >= 0 ? '+' : ''
+      }}{{ summary()?.periodChange?.changePercentage | number : '1.2-2' }}%)
+      <span class="text-gray-400 ml-1">{{ summary()?.periodChange?.periodLabel }}</span>
+    </p>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Total Invested</p>
+    <h3 class="text-3xl font-bold text-gray-800 mb-1">
+      {{ summary()?.totalInvested | currency : 'EUR' }}
+    </h3>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Total P/L</p>
+    <h3
+      class="text-3xl font-bold"
+      [ngClass]="(summary()?.totalReturn ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+    >
+      {{ summary()?.totalReturn | currency : 'EUR' }}
+    </h3>
+    <p
+      class="text-sm"
+      [ngClass]="(summary()?.totalReturnPercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+    >
+      {{ (summary()?.totalReturnPercentage ?? 0) >= 0 ? '+' : ''
+      }}{{ summary()?.totalReturnPercentage | number : '1.2-2' }}%
+    </p>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Holdings</p>
+    <h3 class="text-3xl font-bold text-gray-800">{{ summary()?.totalHoldings }}</h3>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-start mb-2">
+      <p class="text-sm text-gray-500 mb-2">Realized P/L</p>
+      <p class="text-xs text-gray-400">without dividends</p>
+    </div>
+    <h3
+      class="text-3xl font-bold"
+      [ngClass]="(summary()?.totalRealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+    >
+      {{ summary()?.totalRealizedPL | currency : 'EUR' }}
+    </h3>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Unrealized P/L</p>
+    <p class="text-xs text-gray-400">without dividends</p>
+    <h3
+      class="text-3xl font-bold"
+      [ngClass]="(summary()?.totalUnrealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+    >
+      {{ summary()?.totalUnrealizedPL | currency : 'EUR' }}
+    </h3>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <p class="text-sm text-gray-500 mb-2">Total Dividends</p>
+    <h3 class="text-3xl font-bold text-gray-800">
+      {{ summary()?.totalDividends | currency : 'EUR' }}
+    </h3>
+  </div>
+</div>
+
+  <div class="space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Profit/Loss Over Time (%)</h3>
+      </div>
+      <div class="h-96">
+        <div echarts [options]="chartOption()" class="w-full h-full"></div>
+      </div>
+    </div>

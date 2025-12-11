@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, signal, Signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject, Input, signal, Signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -10,6 +10,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class HeaderComponent {
   @Input() title!: Signal<string>;
+  private router = inject(Router);
 
   navItems = [
     { label: 'Dashboard', route: '/dashboard' },
@@ -22,5 +23,9 @@ export class HeaderComponent {
 
   selectTab(tabId: string) {
     this.activeTab.set(tabId);
+  }
+
+  isRouteActive(route: string): boolean {
+    return this.router.url === route;
   }
 }

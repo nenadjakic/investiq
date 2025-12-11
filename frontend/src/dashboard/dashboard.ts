@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { PortfolioControllerService, PortfolioSummaryResponse } from '../app/core/api';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { PortfolioChartResponse, PortfolioControllerService, PortfolioSummaryResponse } from '../app/core/api';
 import { ToastService } from '../shared/toast.service';
 import { EChartsCoreOption } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
+import { Overview } from './overview/overview';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, NgxEchartsDirective],
+  imports: [CommonModule, NgxEchartsDirective, Overview],
   templateUrl: './dashboard.html',
 })
 export class DashboardPage implements OnInit {
@@ -16,18 +17,15 @@ export class DashboardPage implements OnInit {
   private toastService = inject(ToastService);
 
   summary = signal<PortfolioSummaryResponse | null>(null);
+  chartData = signal<PortfolioChartResponse | null>(null);
   isLoading = signal(true);
-
-  ngOnInit(): void {
-    this.load();
-    this.loadChartData();
-  }
-
+  activeTab = signal<string>('overview');
   chartOption = signal<EChartsCoreOption>({});
 
-  loadChartData(): void {
-    this.portfolioControllerService.getPortfolioPerformanceChart(365).subscribe({
-      next: (data) => {
+  constructor() {
+    effect(() => {
+      const data = this.chartData();
+      if (data) {
         this.chartOption.set({
           xAxis: {
             type: 'category',
@@ -49,15 +47,28 @@ export class DashboardPage implements OnInit {
               type: 'line',
               smooth: true,
             },
+            {
+              name: 'P/L %',
+              data: data.plPercentage,
+              type: 'line',
+              smooth: true,
+            },
           ],
           tooltip: {
             trigger: 'axis',
-            valueFormatter: (value: number) => {
-              return `€ ${value.toFixed(2)}`;
+            formatter: (params: any) => {
+              let result = `${params[0].axisValue}<br/>`;
+              params.forEach((item: any) => {
+                const value = item.seriesName === 'P/L %' 
+                  ? `${item.value.toFixed(2)} %`
+                  : `€ ${item.value.toFixed(2)}`;
+                result += `${item.marker} ${item.seriesName}: ${value}<br/>`;
+              });
+              return result;
             }
           },
           legend: {
-            data: ['Market Value', 'Invested'],
+            data: ['Market Value', 'Invested', 'P/L %'],
             left: 'center',
           },
           grid: {
@@ -66,6 +77,19 @@ export class DashboardPage implements OnInit {
             containLabel: true,
           },
         });
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.load();
+    this.loadChartData();
+  }
+
+  loadChartData(): void {
+    this.portfolioControllerService.getPortfolioPerformanceChart(365).subscribe({
+      next: (data) => {
+        this.chartData.set(data);
       },
       error: (err) => {
         this.toastService.error('Failed to load chart data', 'Error');
