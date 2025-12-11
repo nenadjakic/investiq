@@ -64,10 +64,26 @@ class PortfolioService(
         val totalValue = dailyData.map { it.totalValue.toDouble() }
         val totalInvested = dailyData.map { it.totalInvested.toDouble() }
 
+        val plPercentage = dailyData.map { dv ->
+            val investedBD = dv.totalInvested
+            val valueBD = dv.totalValue
+            if (investedBD > BigDecimal.ZERO) {
+                valueBD
+                    .subtract(investedBD)
+                    .multiply(BigDecimal(100))
+                    .divide(investedBD, 6, RoundingMode.HALF_UP)
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .toDouble()
+            } else {
+                0.0
+            }
+        }
+
         return PortfolioChartResponse(
             dates = dates,
+            invested = totalInvested,
             marketValue = totalValue,
-            invested = totalInvested
+            plPercentage = plPercentage
         )
     }
 
@@ -92,7 +108,7 @@ class PortfolioService(
             BigDecimal.ZERO
         }
 
-        val periodLabel = generatePeriodLabel(requestedPeriodDays, actualPeriodDays)
+        val periodLabel = generatePeriodLabel(requestedPeriodDays)
 
         return PeriodChangeResponse(
             startDate = startDate,
@@ -104,7 +120,7 @@ class PortfolioService(
         )
     }
 
-    private fun generatePeriodLabel(requestedDays: Int, actualDays: Int): String {
+    private fun generatePeriodLabel(requestedDays: Int): String {
         return when {
             requestedDays == 1 -> "today"
             requestedDays == 7 -> "last week"
