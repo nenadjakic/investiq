@@ -72,18 +72,41 @@ class PortfolioService(
 
         val dailyData = portfolioRepository.findDailyValuesBetween(startDate, endDate)
 
-        val dates = dailyData.map { it.snapshotDate }
-        val totalValue = dailyData.map { it.totalValue.toDouble() }
-        val totalInvested = dailyData.map { it.totalInvested.toDouble() }
+        // If there's no data, return empty series
+        if (dailyData.isEmpty()) {
+            return PortfolioChartResponse(
+                dates = emptyList(),
+                invested = emptyList(),
+                marketValue = emptyList(),
+                plPercentage = emptyList()
+            )
+        }
 
+        // Use the first returned snapshot as the baseline so that the first point is zero
+        val baselineSnapshot = dailyData.first()
+        val baselineValue = baselineSnapshot.totalValue
+        val baselineInvested = baselineSnapshot.totalInvested
+
+        val dates = dailyData.map { it.snapshotDate }
+        val totalValue = dailyData.map { it.totalValue.setScale(2, RoundingMode.HALF_UP).toDouble() }
+        val totalInvested = dailyData.map { it.totalInvested.setScale(2, RoundingMode.HALF_UP).toDouble() }
+
+        // Calculate PL% relative to the baseline day's market value (fallback to baseline invested if value is zero)
         val plPercentage = dailyData.map { dv ->
-            val investedBD = dv.totalInvested
             val valueBD = dv.totalValue
-            if (investedBD > BigDecimal.ZERO) {
+            if (baselineValue > BigDecimal.ZERO) {
                 valueBD
-                    .subtract(investedBD)
+                    .subtract(baselineValue)
                     .multiply(BigDecimal(100))
-                    .divide(investedBD, 6, RoundingMode.HALF_UP)
+                    .divide(baselineValue, 6, RoundingMode.HALF_UP)
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .toDouble()
+            } else if (baselineInvested > BigDecimal.ZERO) {
+                // fallback: if baseline market value is 0, compute relative to invested
+                valueBD
+                    .subtract(baselineInvested)
+                    .multiply(BigDecimal(100))
+                    .divide(baselineInvested, 6, RoundingMode.HALF_UP)
                     .setScale(2, RoundingMode.HALF_UP)
                     .toDouble()
             } else {
