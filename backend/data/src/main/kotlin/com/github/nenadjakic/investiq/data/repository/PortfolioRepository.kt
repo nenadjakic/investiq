@@ -1,9 +1,7 @@
 package com.github.nenadjakic.investiq.data.repository
 
-import com.github.nenadjakic.investiq.data.entity.transaction.Dividend
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
-import org.springframework.jdbc.core.queryForList
 import org.springframework.stereotype.Repository
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -67,6 +65,29 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, portfolioDailyValueMapper, startDate, endDate)
     }
 
+    // New method: aggregate current/latest holdings value by industry and sector
+    fun getValueByIndustrySector(): List<IndustrySectorValue> {
+        val sql = """
+            WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
+            SELECT
+              COALESCE(i.name, 'Unclassified') AS industry,
+              COALESCE(sc.name, 'Unclassified') AS sector,
+              SUM(COALESCE(s.market_value_eur, (s.market_price_eur * s.quantity)::numeric(36,8), 0))::numeric(36,8) AS value_eur
+            FROM asset_daily_snapshots s
+            JOIN latest l ON s.snapshot_date = l.d
+            JOIN assets a ON s.asset_id = a.id
+            LEFT JOIN companies c ON a.company_id = c.id
+            LEFT JOIN industries i ON c.industry_id = i.id
+            LEFT JOIN sectors sc ON i.sector_id = sc.id
+            WHERE a.asset_type = 'STOCK'
+              AND s.quantity <> 0
+            GROUP BY COALESCE(i.name, 'Unclassified'), COALESCE(sc.name, 'Unclassified')
+            ORDER BY value_eur DESC
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, industrySectorValueMapper)
+    }
+
     private val portfolioSnapshotMapper = RowMapper<PortfolioSnapshot> { rs, _ ->
         PortfolioSnapshot(
             snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
@@ -86,6 +107,14 @@ class PortfolioRepository(
             totalValue = rs.getBigDecimal("total_value")
         )
     }
+
+    private val industrySectorValueMapper = RowMapper<IndustrySectorValue> { rs, _ ->
+        IndustrySectorValue(
+            industry = rs.getString("industry"),
+            sector = rs.getString("sector"),
+            valueEur = rs.getBigDecimal("value_eur")
+        )
+    }
 }
 
 data class PortfolioSnapshot(
@@ -102,6 +131,12 @@ data class PortfolioDailyValue(
     val snapshotDate: LocalDate,
     val totalInvested: BigDecimal,
     val totalValue: BigDecimal
+)
+
+data class IndustrySectorValue(
+    val industry: String,
+    val sector: String,
+    val valueEur: BigDecimal
 )
 
 data class AssetSnapshot(

@@ -2,6 +2,7 @@ package com.github.nenadjakic.investiq.restapp.controller
 
 import com.github.nenadjakic.investiq.common.dto.PortfolioChartResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioSummaryResponse
+import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -66,4 +67,25 @@ class PortfolioController(
         @RequestParam(required = false) days: Int = 365
     ): ResponseEntity<PortfolioChartResponse> =
         ResponseEntity.ok(portfolioService.getPortfolioValueSeries(days))
+
+    @Operation(
+        operationId = "getIndustrySectorAllocation",
+        summary = "Get portfolio allocation by industry and sector",
+        description = "Returns aggregated market value grouped by industry and sector for the latest snapshot"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved allocation",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = IndustrySectorValueResponse::class)
+                )]
+            )
+        ]
+    )
+    @GetMapping("/allocation/industry-sector", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getIndustrySectorAllocation(): ResponseEntity<List<IndustrySectorValueResponse>> =
+        ResponseEntity.ok(portfolioService.getIndustrySectorAllocation())
 }

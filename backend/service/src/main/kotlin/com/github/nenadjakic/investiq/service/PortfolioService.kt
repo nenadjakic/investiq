@@ -3,6 +3,7 @@ package com.github.nenadjakic.investiq.service
 import com.github.nenadjakic.investiq.common.dto.PeriodChangeResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioChartResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioSummaryResponse
+import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -52,6 +53,17 @@ class PortfolioService(
             periodChange = periodChange,
             totalDividends = latestSnapshot.totalDividends
         )
+    }
+
+    fun getIndustrySectorAllocation(): List<IndustrySectorValueResponse> {
+        val rows = portfolioRepository.getValueByIndustrySector()
+        return rows.map { r ->
+            IndustrySectorValueResponse(
+                industry = r.industry,
+                sector = r.sector,
+                valueEur = r.valueEur
+            )
+        }
     }
 
     fun getPortfolioValueSeries(days: Int = 365): PortfolioChartResponse {
