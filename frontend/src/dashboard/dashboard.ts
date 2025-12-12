@@ -5,11 +5,12 @@ import { ToastService } from '../shared/toast.service';
 import { EChartsCoreOption } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { Overview } from './overview/overview';
+import { Allocation } from "./allocation/allocation";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, NgxEchartsDirective, Overview],
+  imports: [CommonModule, NgxEchartsDirective, Overview, Allocation],
   templateUrl: './dashboard.html',
 })
 export class DashboardPage implements OnInit {
@@ -46,13 +47,7 @@ export class DashboardPage implements OnInit {
               data: data.invested,
               type: 'line',
               smooth: true,
-            },
-            {
-              name: 'P/L %',
-              data: data.plPercentage,
-              type: 'line',
-              smooth: true,
-            },
+            }
           ],
           tooltip: {
             trigger: 'axis',

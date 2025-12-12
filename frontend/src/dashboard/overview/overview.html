@@ -1,10 +1,8 @@
-<!-- Portfolio Overview Metrics (7 cards) -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-  <!-- POSTOJEĆI 4 big numbers - OSTAJU -->
   <div class="bg-white rounded-lg shadow p-6">
     <div class="flex justify-between items-start mb-2">
       <p class="text-sm text-gray-500">Total Portfolio Value</p>
-      <p class="text-xs text-gray-400">as of {{ '2025-02-1' | date : 'yyyy-MM-dd' }}</p>
+      <p class="text-xs text-gray-400">as of {{ summary()?.snapshotDate | date : 'yyyy-MM-dd' }}</p>
     </div>
     <h3 class="text-3xl font-bold text-gray-800 mb-1">
       {{ summary()?.totalValue | currency : 'EUR' }}
@@ -67,8 +65,9 @@
   </div>
 
   <div class="bg-white rounded-lg shadow p-6">
-    <p class="text-sm text-gray-500 mb-2">Unrealized P/L</p>
-    <p class="text-xs text-gray-400">without dividends</p>
+    <div class="flex justify-between items-start mb-2">
+      <p class="text-sm text-gray-500 mb-2">Unrealized P/L</p>
+    </div>
     <h3
       class="text-3xl font-bold"
       [ngClass]="(summary()?.totalUnrealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
@@ -85,12 +84,13 @@
   </div>
 </div>
 
-  <div class="space-y-6">
-    <div class="bg-white rounded-lg shadow p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Profit/Loss Over Time (%)</h3>
-      </div>
-      <div class="h-96">
-        <div echarts [options]="chartOption()" class="w-full h-full"></div>
-      </div>
+<div class="space-y-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Profit/Loss Over Time (%)</h3>
     </div>
+    <div class="h-96">
+      <div echarts [options]="chartOption()" class="w-full h-full"></div>
+    </div>
+  </div>
+</div>

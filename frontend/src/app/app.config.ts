@@ -2,7 +2,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter } from '@angular/router';
 
 import * as echarts from 'echarts/core';
-import { BarChart, LineChart } from 'echarts/charts';
+import { BarChart, LineChart, SunburstChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 
@@ -17,6 +17,7 @@ echarts.use([
   LineChart,
   TooltipComponent,
   LegendComponent,
+  SunburstChart
 ]);
 
 export const appConfig: ApplicationConfig = {

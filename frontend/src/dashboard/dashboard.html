@@ -1,6 +1,5 @@
 <h2 class="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
 
-<!-- Tab Navigation -->
 <nav class="border-b border-gray-200 mb-6">
   <div class="flex space-x-8">
     <button (click)="activeTab.set('overview')"
@@ -46,7 +45,6 @@
   </div>
 </nav>
 
-<!-- OVERVIEW TAB -->
 @if (activeTab() === 'overview') {
   <app-overview [summary]="summary()" [chartData]="chartData()"></app-overview>
 }
@@ -89,32 +87,7 @@
 
 <!-- ALLOCATION TAB -->
 @if (activeTab() === 'allocation') {
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Sector Allocation</h3>
-      <div class="h-82 bg-gray-50 rounded flex items-center justify-center">
-        <p class="text-gray-400">Donut chart placeholder</p>
-      </div>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Country Allocation</h3>
-      <div class="h-82 bg-gray-50 rounded flex items-center justify-center">
-        <p class="text-gray-400">Donut chart placeholder</p>
-      </div>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Currency Exposure</h3>
-      <div class="h-82 bg-gray-50 rounded flex items-center justify-center">
-        <p class="text-gray-400">Donut chart placeholder</p>
-      </div>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Asset Type</h3>
-      <div class="h-82 bg-gray-50 rounded flex items-center justify-center">
-        <p class="text-gray-400">Donut chart placeholder</p>
-      </div>
-    </div>
-  </div>
+  <app-allocation [summary]="summary()" [chartData]="chartData()"></app-allocation>
 }
 
 <!-- HOLDINGS TAB -->

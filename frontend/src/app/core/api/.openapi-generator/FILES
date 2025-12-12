@@ -17,6 +17,7 @@ model/country-response.ts
 model/currency-response.ts
 model/exchange-response.ts
 model/industry-response.ts
+model/industry-sector-value-response.ts
 model/models.ts
 model/page-asset-response.ts
 model/page-staging-transaction-response.ts

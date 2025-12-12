@@ -4,6 +4,7 @@ export * from './country-response';
 export * from './currency-response';
 export * from './exchange-response';
 export * from './industry-response';
+export * from './industry-sector-value-response';
 export * from './page-asset-response';
 export * from './page-staging-transaction-response';
 export * from './pageable-object';

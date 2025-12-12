@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal, Signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.html',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink],
 })
 export class HeaderComponent {
   @Input() title!: Signal<string>;
