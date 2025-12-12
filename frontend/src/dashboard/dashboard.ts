@@ -81,8 +81,8 @@ export class DashboardPage implements OnInit {
     this.loadChartData();
   }
 
-  loadChartData(): void {
-    this.portfolioControllerService.getPortfolioPerformanceChart(365).subscribe({
+  loadChartData(days: number = 365): void {
+    this.portfolioControllerService.getPortfolioPerformanceChart(days).subscribe({
       next: (data) => {
         this.chartData.set(data);
       },

@@ -46,7 +46,7 @@
 </nav>
 
 @if (activeTab() === 'overview') {
-  <app-overview [summary]="summary()" [chartData]="chartData()"></app-overview>
+  <app-overview [summary]="summary()" [chartData]="chartData()" (periodChange)="loadChartData($event)"></app-overview>
 }
 
 <!-- PERFORMANCE TAB -->

@@ -88,6 +88,26 @@
   <div class="bg-white rounded-lg shadow p-6">
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-lg font-semibold text-gray-800">Profit/Loss Over Time (%)</h3>
+            <div class="flex gap-2">
+        <button (click)="setPeriod('MTD')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="selectedPeriod() === 'MTD' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">MTD</button>
+        <button (click)="setPeriod('YTD')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="selectedPeriod() === 'YTD' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">YTD</button>
+        <button (click)="setPeriod('1M')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="selectedPeriod() === '1M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">1M</button>
+        <button (click)="setPeriod('3M')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="selectedPeriod() === '3M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">3M</button>
+        <button (click)="setPeriod('6M')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="selectedPeriod() === '6M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">6M</button>
+        <button (click)="setPeriod('1Y')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="selectedPeriod() === '1Y' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">1Y</button>
+            </div>
     </div>
     <div class="h-96">
       <div echarts [options]="chartOption()" class="w-full h-full"></div>
