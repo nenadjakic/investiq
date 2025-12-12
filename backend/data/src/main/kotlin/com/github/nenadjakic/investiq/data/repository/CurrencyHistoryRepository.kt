@@ -1,6 +1,5 @@
 package com.github.nenadjakic.investiq.data.repository
 
-import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.entity.history.CurrencyHistory
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDate
@@ -32,4 +31,9 @@ interface CurrencyHistoryRepository: JpaRepository<CurrencyHistory, UUID> {
         toCurrency: String,
         date: LocalDate
     ): Boolean
+
+    fun findTopByFromCurrency_CodeAndToCurrency_CodeOrderByValidDateDesc(
+        fromCurrency: String,
+        toCurrency: String
+    ): CurrencyHistory?
 }

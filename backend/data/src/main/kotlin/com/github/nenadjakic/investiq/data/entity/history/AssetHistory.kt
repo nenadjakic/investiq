@@ -6,10 +6,10 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
+import java.time.LocalDate
 import java.util.UUID
 
 /**
@@ -24,7 +24,7 @@ data class AssetHistory(
      */
     @Id
     @Column(name = "id", nullable = false)
-    val id: UUID? = null,
+    var id: UUID? = null,
 
     /**
      * The asset for which price history is being tracked.
@@ -33,18 +33,8 @@ data class AssetHistory(
     @JoinColumn(name = "asset_id", nullable = false)
     val asset: Asset,
 
-    /**
-     * The start date and time when this price became valid.
-     */
-    @Column(name = "valid_from", nullable = false)
-    val validFrom: OffsetDateTime,
-
-    /**
-     * The end date and time when this price stopped being valid.
-     * Null indicates this is the current price.
-     */
-    @Column(name = "valid_to")
-    val validTo: OffsetDateTime? = null,
+    @Column(name = "valid_date", nullable = false)
+    var validDate: LocalDate,
 
     /**
      * Trading volume during this period.
@@ -86,5 +76,11 @@ data class AssetHistory(
      */
     @Column(name = "adjusted_close", precision = 20, scale = 6)
     val adjustedClose: BigDecimal? = null,
-
-)
+) {
+    @PrePersist
+    fun prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID()
+        }
+    }
+}

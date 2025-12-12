@@ -1,0 +1,41 @@
+<nav class="bg-white shadow-md">
+  <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo -->
+      <div class="flex items-center space-x-3">
+        <div
+          class="w-10 h-10 bg-linear-to-br from-blue-100 to-blue-900 rounded-lg flex items-center justify-center"
+        >
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+            />
+          </svg>
+        </div>
+        <span class="text-xl font-bold text-gray-800">{{ title() }}</span>
+      </div>
+
+      <ul class="flex space-x-8 border-gray-200">
+        @for (item of navItems; track item.route) {
+        <li>
+          <a
+            [routerLink]="item.route"
+            class="inline-block pb-4 px-1 border-b-2 border-transparent font-semibold text-base text-gray-600 hover:text-gray-700 hover:border-gray-300 transition-colors duration-200"
+            [ngClass]="{
+              'border-blue-500 text-blue-600': isRouteActive(item.route),
+              'text-gray-600 border-transparent': !isRouteActive(item.route)
+            }"
+          >
+            {{ item.label }}
+          </a>
+        </li>
+        } @empty {
+        <li class="text-gray-500">No navigation items.</li>
+        }
+      </ul>
+    </div>
+  </div>
+</nav>

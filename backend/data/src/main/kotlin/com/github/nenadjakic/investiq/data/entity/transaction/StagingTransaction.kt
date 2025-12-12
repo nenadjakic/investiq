@@ -42,7 +42,7 @@ class StagingTransaction(
     var price: Double? = null,
 
     @Column(name = "quantity")
-    val quantity: Double? = null,
+    var quantity: Double? = null,
 
     @Column(name = "amount")
     var amount: Double? = null,
