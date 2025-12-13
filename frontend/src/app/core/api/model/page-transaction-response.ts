@@ -8,15 +8,15 @@
  * Do not edit the class manually.
  */
 import { PageableObject } from './pageable-object';
-import { StagingTransactionResponse } from './staging-transaction-response';
+import { TransactionResponse } from './transaction-response';
 import { SortObject } from './sort-object';
 
 
-export interface PageStagingTransactionResponse { 
+export interface PageTransactionResponse { 
     totalPages?: number;
     totalElements?: number;
     size?: number;
-    content?: Array<StagingTransactionResponse>;
+    content?: Array<TransactionResponse>;
     number?: number;
     first?: boolean;
     last?: boolean;

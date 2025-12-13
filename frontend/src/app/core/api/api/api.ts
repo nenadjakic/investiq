@@ -6,4 +6,6 @@ export * from './portfolio-controller.service';
 import { PortfolioControllerService } from './portfolio-controller.service';
 export * from './staging-transaction-controller.service';
 import { StagingTransactionControllerService } from './staging-transaction-controller.service';
-export const APIS = [AssetControllerService, CurrencyControllerService, PortfolioControllerService, StagingTransactionControllerService];
+export * from './transaction-controller.service';
+import { TransactionControllerService } from './transaction-controller.service';
+export const APIS = [AssetControllerService, CurrencyControllerService, PortfolioControllerService, StagingTransactionControllerService, TransactionControllerService];

@@ -16,7 +16,7 @@ export class HeaderComponent {
     { label: 'Dashboard', route: '/dashboard' },
     { label: 'Transactions', route: '/transactions' },
     { label: 'Assets', route: '/assets' },
-    { label: 'Basic data', route: '/basicdata' },
+    { label: 'Reference Data', route: '/reference-data' },
   ];
 
   activeTab = signal('dashboard');

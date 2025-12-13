@@ -20,6 +20,10 @@
       "description": "Portfolio overview, holdings and performance analytics"
     },
     {
+      "name": "Transaction Controller",
+      "description": "Endpoints for managing transactions"
+    },
+    {
       "name": "Asset Controller",
       "description": "Endpoints for managing assets"
     },
@@ -241,6 +245,67 @@
           },
           "404": {
             "description": "One or more ids not found"
+          }
+        }
+      }
+    },
+    "/transaction": {
+      "get": {
+        "tags": [
+          "Transaction Controller"
+        ],
+        "summary": "Find all transactions",
+        "description": "Returns a paginated list of transactions",
+        "operationId": "findAllTransactions",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "default": [
+                "date,DESC"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageTransactionResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -792,6 +857,20 @@
           }
         }
       },
+      "CurrencyResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
       "ExchangeResponse": {
         "type": "object",
         "properties": {
@@ -822,6 +901,155 @@
           },
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "PageTransactionResponse": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unpaged": {
+            "type": "boolean"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TransactionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "transactionType": {
+            "type": "string",
+            "enum": [
+              "BUY",
+              "FEE",
+              "SELL",
+              "DEPOSIT",
+              "WITHDRAWAL",
+              "DIVIDEND",
+              "DIVIDEND_ADJUSTMENT",
+              "UNKNOWN"
+            ]
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/CurrencyResponse"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AssetResponse"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "price": {
+            "type": "number"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "relatedTransactionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "grossAmount": {
+            "type": "number"
+          },
+          "taxAmount": {
+            "type": "number"
+          },
+          "taxPercentage": {
+            "type": "number"
           }
         }
       },
@@ -860,53 +1088,13 @@
             "type": "integer",
             "format": "int32"
           },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "empty": {
-            "type": "boolean"
-          }
-        }
-      },
-      "PageableObject": {
-        "type": "object",
-        "properties": {
-          "offset": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paged": {
-            "type": "boolean"
-          },
-          "pageNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
-          "unpaged": {
-            "type": "boolean"
-          }
-        }
-      },
-      "SortObject": {
-        "type": "object",
-        "properties": {
-          "empty": {
-            "type": "boolean"
-          },
-          "sorted": {
-            "type": "boolean"
-          },
-          "unsorted": {
             "type": "boolean"
           }
         }
@@ -1217,20 +1405,6 @@
           }
         }
       },
-      "CurrencyResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "symbol": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
       "PageAssetResponse": {
         "type": "object",
         "properties": {
@@ -1266,11 +1440,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"

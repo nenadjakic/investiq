@@ -7,6 +7,7 @@ api/asset-controller.service.ts
 api/currency-controller.service.ts
 api/portfolio-controller.service.ts
 api/staging-transaction-controller.service.ts
+api/transaction-controller.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
@@ -27,6 +28,7 @@ model/monthly-invested-entry.ts
 model/monthly-invested-response.ts
 model/page-asset-response.ts
 model/page-staging-transaction-response.ts
+model/page-transaction-response.ts
 model/pageable-object.ts
 model/period-change-response.ts
 model/portfolio-allocation-response.ts
@@ -36,6 +38,7 @@ model/portfolio-summary-response.ts
 model/sort-object.ts
 model/staging-transaction-edit-request.ts
 model/staging-transaction-response.ts
+model/transaction-response.ts
 param.ts
 provide-api.ts
 variables.ts
