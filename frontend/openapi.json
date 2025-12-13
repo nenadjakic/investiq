@@ -1,0 +1,1174 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Currency Controller",
+      "description": "Endpoints for managing currencies"
+    },
+    {
+      "name": "Portfolio Controller",
+      "description": "Portfolio overview, holdings and performance analytics"
+    },
+    {
+      "name": "Asset Controller",
+      "description": "Endpoints for managing assets"
+    },
+    {
+      "name": "Staging Transaction Controller",
+      "description": "Endpoints for managing staging transaction"
+    }
+  ],
+  "paths": {
+    "/staging-transaction": {
+      "get": {
+        "tags": [
+          "Staging Transaction Controller"
+        ],
+        "summary": "Find all staging transactions",
+        "description": "Return a paginated list of staging transactions filtered by optional parameters",
+        "operationId": "findAllStagingTransactions",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          },
+          {
+            "name": "importStatus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "VALIDATED",
+                "FAILED",
+                "IMPORTED"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 25,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of staging transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageStagingTransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageStagingTransactionResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Staging Transaction Controller"
+        ],
+        "summary": "Update staging transaction",
+        "description": "Update a single staging transaction using DTO",
+        "operationId": "updateStagingTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StagingTransactionEditRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Updated successfully"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Staging Transaction Controller"
+        ],
+        "summary": "Import staging transactions (file upload)",
+        "description": "Upload a file for a given platform to import staging transactions. Returns 201 Created on success.",
+        "operationId": "import",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Import accepted/created"
+          },
+          "400": {
+            "description": "Bad request / validation error"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/staging-transaction/status": {
+      "put": {
+        "tags": [
+          "Staging Transaction Controller"
+        ],
+        "summary": "Bulk update staging transactions status",
+        "description": "Bulk update status of multiple staging transactions (and related ones), expects list of UUIDs in body",
+        "operationId": "bulkUpdateStagingTransactionStatus",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Status updated"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "One or more ids not found"
+          }
+        }
+      }
+    },
+    "/staging-transaction/{id}": {
+      "get": {
+        "tags": [
+          "Staging Transaction Controller"
+        ],
+        "summary": "Find staging transaction by id",
+        "description": "Return a staging transactions filtered by id",
+        "operationId": "findStagingTransactionById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Staging transaction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StagingTransactionResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StagingTransactionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/summary": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get portfolio summary",
+        "description": "Returns aggregated portfolio statistics including total value, returns, and changes",
+        "operationId": "getPortfolioSummary",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved portfolio summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioSummaryResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/portfolio/performance-data": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get combined performance data",
+        "description": "Returns the portfolio chart series and monthly invested amounts together",
+        "operationId": "getPortfolioPerformanceData",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "months",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 12
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved performance data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioPerformanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioPerformanceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/monthly-invested": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get monthly invested amounts",
+        "description": "Returns invested euros per month for the last N months",
+        "operationId": "getMonthlyInvested",
+        "parameters": [
+          {
+            "name": "months",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 12
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved monthly invested amounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthlyInvestedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/chart/performance": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get portfolio value time series",
+        "description": "Returns daily market value and invested amount for the specified time period",
+        "operationId": "getPortfolioPerformanceChart",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved value series",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioChartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid days parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioChartResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/allocation": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get combined allocation",
+        "description": "Returns allocations by currency, industry/sector and country together",
+        "operationId": "getCombinedAllocation",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved allocation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioAllocationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/allocation/industry-sector": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get portfolio allocation by industry and sector",
+        "description": "Returns aggregated market value grouped by industry and sector for the latest snapshot",
+        "operationId": "getIndustrySectorAllocation",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved allocation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndustrySectorValueResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/allocation/currency": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get portfolio exposure by currency",
+        "description": "Returns aggregated market value grouped by asset currency for the latest snapshot",
+        "operationId": "getCurrencyExposure",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved exposure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrencyValueResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/allocation/country": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get portfolio allocation by country",
+        "description": "Returns aggregated market value grouped by company country for the latest snapshot",
+        "operationId": "getCountryAllocation",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved allocation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryValueResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/currency": {
+      "get": {
+        "tags": [
+          "Currency Controller"
+        ],
+        "summary": "Find all currencies",
+        "description": "Returns a list of currencies",
+        "operationId": "findAllCurrencies",
+        "responses": {
+          "200": {
+            "description": "List of currencies",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CurrencyResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/asset": {
+      "get": {
+        "tags": [
+          "Asset Controller"
+        ],
+        "summary": "Find all assets",
+        "description": "Returns a paginated list of transactions filtered by optional parameters",
+        "operationId": "findAllAssets",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "exchange",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "company",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 25,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of assets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageAssetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StagingTransactionEditRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "asset": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "grossAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxPercentage": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxAmount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "asset",
+          "id"
+        ]
+      },
+      "AssetResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STOCK",
+              "ETF"
+            ]
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyResponse"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "exchange": {
+            "$ref": "#/components/schemas/ExchangeResponse"
+          }
+        }
+      },
+      "CompanyResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "country": {
+            "$ref": "#/components/schemas/CountryResponse"
+          },
+          "industry": {
+            "$ref": "#/components/schemas/IndustryResponse"
+          }
+        }
+      },
+      "CountryResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "ExchangeResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mic": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "country": {
+            "$ref": "#/components/schemas/CountryResponse"
+          }
+        }
+      },
+      "IndustryResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "PageStagingTransactionResponse": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StagingTransactionResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "unpaged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "StagingTransactionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUY",
+              "FEE",
+              "SELL",
+              "DEPOSIT",
+              "WITHDRAWAL",
+              "DIVIDEND",
+              "DIVIDEND_ADJUSTMENT",
+              "UNKNOWN"
+            ]
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "resolvedAsset": {
+            "$ref": "#/components/schemas/AssetResponse"
+          },
+          "importStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "VALIDATED",
+              "FAILED",
+              "IMPORTED"
+            ]
+          }
+        }
+      },
+      "PeriodChangeResponse": {
+        "type": "object",
+        "description": "Change information for a specific period",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changeAmount": {
+            "type": "number"
+          },
+          "changePercentage": {
+            "type": "number"
+          },
+          "periodLabel": {
+            "type": "string"
+          }
+        }
+      },
+      "PortfolioSummaryResponse": {
+        "type": "object",
+        "description": "Portfolio summary with total value and returns",
+        "properties": {
+          "snapshotDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "totalValue": {
+            "type": "number"
+          },
+          "totalInvested": {
+            "type": "number"
+          },
+          "totalReturn": {
+            "type": "number"
+          },
+          "totalReturnPercentage": {
+            "type": "number"
+          },
+          "totalUnrealizedPL": {
+            "type": "number"
+          },
+          "totalRealizedPL": {
+            "type": "number"
+          },
+          "totalHoldings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalDividends": {
+            "type": "number"
+          },
+          "periodChange": {
+            "$ref": "#/components/schemas/PeriodChangeResponse"
+          }
+        }
+      },
+      "MonthlyInvestedEntry": {
+        "type": "object",
+        "properties": {
+          "yearMonth": {
+            "type": "string"
+          },
+          "invested": {
+            "type": "number"
+          }
+        }
+      },
+      "MonthlyInvestedResponse": {
+        "type": "object",
+        "properties": {
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonthlyInvestedEntry"
+            }
+          }
+        }
+      },
+      "PortfolioChartResponse": {
+        "type": "object",
+        "properties": {
+          "dates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "invested": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "marketValue": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "plPercentage": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        }
+      },
+      "PortfolioPerformanceResponse": {
+        "type": "object",
+        "properties": {
+          "chart": {
+            "$ref": "#/components/schemas/PortfolioChartResponse"
+          },
+          "monthlyInvested": {
+            "$ref": "#/components/schemas/MonthlyInvestedResponse"
+          }
+        }
+      },
+      "CountryValueResponse": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "valueEur": {
+            "type": "number"
+          }
+        }
+      },
+      "CurrencyValueResponse": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "valueEur": {
+            "type": "number"
+          }
+        }
+      },
+      "IndustrySectorValueResponse": {
+        "type": "object",
+        "properties": {
+          "industry": {
+            "type": "string"
+          },
+          "sector": {
+            "type": "string"
+          },
+          "valueEur": {
+            "type": "number"
+          }
+        }
+      },
+      "PortfolioAllocationResponse": {
+        "type": "object",
+        "properties": {
+          "byCurrency": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrencyValueResponse"
+            }
+          },
+          "byIndustrySector": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IndustrySectorValueResponse"
+            }
+          },
+          "byCountry": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountryValueResponse"
+            }
+          }
+        }
+      },
+      "CurrencyResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "PageAssetResponse": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}
