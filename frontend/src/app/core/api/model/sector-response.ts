@@ -7,14 +7,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { CurrencySimpleResponse } from './currency-simple-response';
+import { IndustrySimpleResponse } from './industry-simple-response';
 
 
-export interface CurrencyResponse { 
-    code?: string;
-    symbol?: string;
+export interface SectorResponse { 
+    id?: string;
     name?: string;
-    parent?: CurrencySimpleResponse;
-    parentFactor?: number;
+    industries?: Array<IndustrySimpleResponse>;
 }
 

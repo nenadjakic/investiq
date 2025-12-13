@@ -17,7 +17,7 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { CurrencyResponse } from '../model/currency-response';
+import { IndustryResponse } from '../model/industry-response';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -29,23 +29,23 @@ import { BaseService } from '../api.base.service';
 @Injectable({
   providedIn: 'root'
 })
-export class CurrencyControllerService extends BaseService {
+export class IndustryControllerService extends BaseService {
 
     constructor(protected httpClient: HttpClient, @Optional() @Inject(BASE_PATH) basePath: string|string[], @Optional() configuration?: Configuration) {
         super(basePath, configuration);
     }
 
     /**
-     * Find all currencies
-     * Returns a list of currencies
-     * @endpoint get /currency
+     * Find all industries
+     * Returns a list of industries
+     * @endpoint get /industry
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAllCurrencies(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<CurrencyResponse>>;
-    public findAllCurrencies(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<CurrencyResponse>>>;
-    public findAllCurrencies(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<CurrencyResponse>>>;
-    public findAllCurrencies(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public findAllIndustries(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<IndustryResponse>>;
+    public findAllIndustries(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<IndustryResponse>>>;
+    public findAllIndustries(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<IndustryResponse>>>;
+    public findAllIndustries(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -72,9 +72,9 @@ export class CurrencyControllerService extends BaseService {
             }
         }
 
-        let localVarPath = `/currency`;
+        let localVarPath = `/industry`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<CurrencyResponse>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<IndustryResponse>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

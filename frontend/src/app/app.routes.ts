@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
-import { DashboardPage } from '../dashboard/dashboard';
+import { Dashboard } from '../dashboard/dashboard';
 import { AssetPage } from '../asset/asset';
 import { Transactions } from '../transactions/transactions';
+import { ReferenceData } from './reference-data/reference-data';
 
 export const routes: Routes = [
   {
@@ -11,7 +12,7 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardPage,
+    component: Dashboard,
   },
   {
     path: 'transactions',
@@ -24,6 +25,12 @@ export const routes: Routes = [
     path: 'assets',
     component: AssetPage,
     data: { title: 'Assets' },
+    pathMatch: 'full',
+  },
+  {
+    path: 'reference-data',
+    component: ReferenceData,
+    data: { title: 'Reference Data' },
     pathMatch: 'full',
   },
 ];

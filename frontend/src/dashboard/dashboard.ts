@@ -12,7 +12,7 @@ import { Holdings } from "./holdings/holdings";
   imports: [CommonModule, Overview, Allocation, Performance, Holdings],
   templateUrl: './dashboard.html',
 })
-export class DashboardPage {
+export class Dashboard {
   activeTab = signal<string>('overview');
   ngOnInit(): void {}
 }

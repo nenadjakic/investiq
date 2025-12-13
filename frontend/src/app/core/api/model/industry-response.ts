@@ -7,10 +7,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { SectorSimpleResponse } from './sector-simple-response';
 
 
 export interface IndustryResponse { 
     id?: string;
     name?: string;
+    sector?: SectorSimpleResponse;
 }
 

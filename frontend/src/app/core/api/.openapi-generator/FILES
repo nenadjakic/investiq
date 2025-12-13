@@ -4,8 +4,13 @@ api.base.service.ts
 api.module.ts
 api/api.ts
 api/asset-controller.service.ts
+api/company-controller.service.ts
+api/country-controller.service.ts
 api/currency-controller.service.ts
+api/exchange-controller.service.ts
+api/industry-controller.service.ts
 api/portfolio-controller.service.ts
+api/sector-controller.service.ts
 api/staging-transaction-controller.service.ts
 api/transaction-controller.service.ts
 configuration.ts
@@ -19,10 +24,12 @@ model/company-response.ts
 model/country-response.ts
 model/country-value-response.ts
 model/currency-response.ts
+model/currency-simple-response.ts
 model/currency-value-response.ts
 model/exchange-response.ts
 model/industry-response.ts
 model/industry-sector-value-response.ts
+model/industry-simple-response.ts
 model/models.ts
 model/monthly-invested-entry.ts
 model/monthly-invested-response.ts
@@ -35,6 +42,8 @@ model/portfolio-allocation-response.ts
 model/portfolio-chart-response.ts
 model/portfolio-performance-response.ts
 model/portfolio-summary-response.ts
+model/sector-response.ts
+model/sector-simple-response.ts
 model/sort-object.ts
 model/staging-transaction-edit-request.ts
 model/staging-transaction-response.ts

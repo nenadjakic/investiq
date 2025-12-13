@@ -1,0 +1,339 @@
+<div class="px-6 py-8 lg:px-10 space-y-8">
+  <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    @for (stat of stats(); track stat.label) {
+    <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+      <div class="text-sm font-medium text-gray-500">{{ stat.label }}</div>
+      <div class="mt-2 text-3xl font-semibold text-gray-900">{{ stat.value }}</div>
+    </div>
+    }
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+
+	  <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div class="flex items-center justify-between gap-4 px-5 pt-5">
+        <div class="shrink-0">
+          <h2 class="text-lg font-semibold text-gray-900">Countries</h2>
+          <p class="text-sm text-gray-500">Countries, and related data.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Search countries..."
+            class="w-48 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            [value]="countriesSearchTerm()"
+            (input)="onCountriesSearch($event)"
+          />
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="prevCountriesPage()"
+              [disabled]="!canGoToPrevCountriesPage"
+            >
+              Previous
+            </button>
+            <span class="text-sm font-semibold text-gray-500">{{ countriesCurrentPage() }} / {{ totalCountriesPages }}</span>
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="nextCountriesPage()"
+              [disabled]="!canGoToNextCountriesPage"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 divide-y divide-gray-100">
+        @for (country of paginatedCountries; track $index) {
+        <div class="px-5 py-3 flex items-start justify-between">
+          <div>
+            <div class="text-sm font-semibold text-gray-900">{{ country.name }}</div>
+          </div>
+          <span
+            class="text-xs font-mono text-gray-500 bg-gray-50 border border-gray-200 rounded px-2 py-1"
+            >{{ country.code }}</span
+          >
+        </div>
+        }
+      </div>
+    </div>
+
+	  <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div class="flex items-center justify-between gap-4 px-5 pt-5">
+        <div class="shrink-0">
+          <h2 class="text-lg font-semibold text-gray-900">Currencies</h2>
+          <p class="text-sm text-gray-500">Fiat list.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Search currencies..."
+            class="w-48 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            [value]="currenciesSearchTerm()"
+            (input)="onCurrenciesSearch($event)"
+          />
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="prevCurrenciesPage()"
+              [disabled]="!canGoToPrevCurrenciesPage"
+            >
+              Previous
+            </button>
+            <span class="text-sm font-semibold text-gray-500">{{ currenciesCurrentPage() }} / {{ totalCurrenciesPages }}</span>
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="nextCurrenciesPage()"
+              [disabled]="!canGoToNextCurrenciesPage"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 divide-y divide-gray-100">
+        @for (currency of paginatedCurrencies; track $index) {
+        <div class="px-5 py-3 flex items-start justify-between">
+          <div>
+            <div class="text-sm font-semibold text-gray-900">
+              {{ currency.name }}
+              <span class="text-xs font-semibold text-gray-500">({{ currency.symbol || '-' }})</span>
+            </div>
+	        @if (currency.parent) {
+	        <div class="text-xs text-gray-500">
+	          Parent {{ currency.parent.code || currency.parent }} · factor {{ currency.parentFactor || 1 }}
+	        </div>
+	        }
+          </div>
+          <span
+            class="text-xs font-mono text-gray-500 bg-gray-50 border border-gray-200 rounded px-2 py-1"
+            >{{ currency.code }}</span
+          >
+        </div>
+        }
+      </div>
+    </div>
+
+	  <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div class="flex items-center justify-between gap-4 px-5 pt-5">
+        <div class="shrink-0">
+          <h2 class="text-lg font-semibold text-gray-900">Exchanges</h2>
+          <p class="text-sm text-gray-500">Trading venues and markets.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Search exchanges..."
+            class="w-48 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            [value]="exchangesSearchTerm()"
+            (input)="onExchangesSearch($event)"
+          />
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="prevExchangesPage()"
+              [disabled]="!canGoToPrevExchangesPage"
+            >
+              Previous
+            </button>
+            <span class="text-sm font-semibold text-gray-500">{{ exchangesCurrentPage() }} / {{ totalExchangesPages }}</span>
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="nextExchangesPage()"
+              [disabled]="!canGoToNextExchangesPage"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 divide-y divide-gray-100">
+        @for (exchange of paginatedExchanges; track $index) {
+        <div class="px-5 py-3 flex items-start justify-between">
+          <div>
+            <div class="text-sm font-semibold text-gray-900">
+              {{ exchange.name }}
+              @if (exchange.country) {
+              <span class="text-xs font-semibold text-gray-500">({{ exchange.country.name }})</span>
+              }
+            </div>
+            @if (exchange.mic) {
+            <div class="text-xs text-gray-500">MIC: {{ exchange.mic }}</div>
+            }
+          </div>
+          <span
+            class="text-xs font-mono text-gray-500 bg-gray-50 border border-gray-200 rounded px-2 py-1"
+            >{{ exchange.symbol || '-' }}</span
+          >
+        </div>
+        }
+      </div>
+    </div>
+
+	  <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div class="flex items-center justify-between gap-4 px-5 pt-5">
+        <div class="shrink-0">
+          <h2 class="text-lg font-semibold text-gray-900">Companies</h2>
+          <p class="text-sm text-gray-500">Issuer master data.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Search companies..."
+            class="w-48 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            [value]="companiesSearchTerm()"
+            (input)="onCompaniesSearch($event)"
+          />
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="prevCompaniesPage()"
+              [disabled]="!canGoToPrevCompaniesPage"
+            >
+              Previous
+            </button>
+            <span class="text-sm font-semibold text-gray-500">{{ companiesCurrentPage() }} / {{ totalCompaniesPages }}</span>
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="nextCompaniesPage()"
+              [disabled]="!canGoToNextCompaniesPage"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 divide-y divide-gray-100">
+        @for (company of paginatedCompanies; track $index) {
+        <div class="px-5 py-3 flex items-start justify-between">
+          <div>
+            <div class="text-sm font-semibold text-gray-900">{{ company.name || 'Unknown' }}</div>
+	        @if (company.country?.name || company.industry?.name) {
+            <div class="text-xs text-gray-500">
+              {{ company.country?.name || 'N/A' }}
+              @if (company.industry?.name) {
+              · {{ company.industry?.name }}
+              }
+            </div>
+	        }
+          </div>
+          <span
+            class="text-xs font-mono text-gray-500 bg-gray-50 border border-gray-200 rounded px-2 py-1"
+            >{{ company.country?.code || '-' }}</span
+          >
+        </div>
+        }
+      </div>
+    </div>
+
+	  <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div class="flex items-center justify-between gap-4 px-5 pt-5">
+        <div class="shrink-0">
+          <h2 class="text-lg font-semibold text-gray-900">Sectors</h2>
+          <p class="text-sm text-gray-500">Top-level grouping.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Search sectors..."
+            class="w-48 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            [value]="sectorsSearchTerm()"
+            (input)="onSectorsSearch($event)"
+          />
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="prevSectorsPage()"
+              [disabled]="!canGoToPrevSectorsPage"
+            >
+              Previous
+            </button>
+            <span class="text-sm font-semibold text-gray-500">{{ sectorsCurrentPage() }} / {{ totalSectorsPages }}</span>
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="nextSectorsPage()"
+              [disabled]="!canGoToNextSectorsPage"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 divide-y divide-gray-100">
+        @for (sector of paginatedSectors; track $index) {
+        <div class="px-5 py-3 flex items-start justify-between">
+          <div>
+            <div class="text-sm font-semibold text-gray-900">{{ sector.name }}</div>
+            <div class="text-xs text-gray-500">Industries: {{ sector.industries?.length || 0 }}</div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+	  <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div class="flex items-center justify-between gap-4 px-5 pt-5">
+        <div class="shrink-0">
+          <h2 class="text-lg font-semibold text-gray-900">Industries</h2>
+          <p class="text-sm text-gray-500">Sector taxonomy.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Search industries..."
+            class="w-48 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            [value]="industriesSearchTerm()"
+            (input)="onIndustriesSearch($event)"
+          />
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="prevIndustriesPage()"
+              [disabled]="!canGoToPrevIndustriesPage"
+            >
+              Previous
+            </button>
+            <span class="text-sm font-semibold text-gray-500">{{ industriesCurrentPage() }} / {{ totalIndustriesPages }}</span>
+            <button
+              type="button"
+              class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              (click)="nextIndustriesPage()"
+              [disabled]="!canGoToNextIndustriesPage"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 divide-y divide-gray-100">
+        @for (industry of paginatedIndustries; track $index) {
+        <div class="px-5 py-3 flex items-start justify-between">
+          <div>
+            <div class="text-sm font-semibold text-gray-900">{{ industry.name }}</div>
+            @if (industry.sector?.name) {
+            <div class="text-xs text-gray-500">Sector: {{ industry.sector?.name }}</div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

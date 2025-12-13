@@ -12,8 +12,28 @@
   ],
   "tags": [
     {
+      "name": "Country Controller",
+      "description": "Endpoints for managing countries"
+    },
+    {
+      "name": "Company Controller",
+      "description": "Endpoints for managing companies"
+    },
+    {
       "name": "Currency Controller",
       "description": "Endpoints for managing currencies"
+    },
+    {
+      "name": "Exchange Controller",
+      "description": "Endpoints for managing exchanges"
+    },
+    {
+      "name": "Industry Controller",
+      "description": "Endpoints for managing industries"
+    },
+    {
+      "name": "Sector Controller",
+      "description": "Endpoints for managing sectors"
     },
     {
       "name": "Portfolio Controller",
@@ -353,6 +373,31 @@
         }
       }
     },
+    "/sector": {
+      "get": {
+        "tags": [
+          "Sector Controller"
+        ],
+        "summary": "Find all sectors",
+        "description": "Returns a list of sectors",
+        "operationId": "findAllSectors",
+        "responses": {
+          "200": {
+            "description": "List of sectors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SectorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/portfolio/summary": {
       "get": {
         "tags": [
@@ -641,6 +686,56 @@
         }
       }
     },
+    "/industry": {
+      "get": {
+        "tags": [
+          "Industry Controller"
+        ],
+        "summary": "Find all industries",
+        "description": "Returns a list of industries",
+        "operationId": "findAllIndustries",
+        "responses": {
+          "200": {
+            "description": "List of industries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IndustryResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/exchange": {
+      "get": {
+        "tags": [
+          "Exchange Controller"
+        ],
+        "summary": "Find all exchanges",
+        "description": "Returns a list of exchanges",
+        "operationId": "findAllExchanges",
+        "responses": {
+          "200": {
+            "description": "List of exchanges",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExchangeResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/currency": {
       "get": {
         "tags": [
@@ -653,11 +748,61 @@
           "200": {
             "description": "List of currencies",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/CurrencyResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/country": {
+      "get": {
+        "tags": [
+          "Country Controller"
+        ],
+        "summary": "Find all countries",
+        "description": "Returns a list of countries",
+        "operationId": "findAllCountries",
+        "responses": {
+          "200": {
+            "description": "List of countries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CountryResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/company": {
+      "get": {
+        "tags": [
+          "Company Controller"
+        ],
+        "summary": "Find all companies",
+        "description": "Returns a list of companies",
+        "operationId": "findAllCompanies",
+        "responses": {
+          "200": {
+            "description": "List of companies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyResponse"
                   }
                 }
               }
@@ -868,6 +1013,26 @@
           },
           "name": {
             "type": "string"
+          },
+          "parent": {
+            "$ref": "#/components/schemas/CurrencySimpleResponse"
+          },
+          "parentFactor": {
+            "type": "number"
+          }
+        }
+      },
+      "CurrencySimpleResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
           }
         }
       },
@@ -901,6 +1066,9 @@
           },
           "name": {
             "type": "string"
+          },
+          "sector": {
+            "$ref": "#/components/schemas/SectorSimpleResponse"
           }
         }
       },
@@ -957,14 +1125,11 @@
             "type": "integer",
             "format": "int64"
           },
-          "unpaged": {
-            "type": "boolean"
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "paged": {
             "type": "boolean"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
           },
           "pageNumber": {
             "type": "integer",
@@ -973,6 +1138,21 @@
           "pageSize": {
             "type": "integer",
             "format": "int32"
+          },
+          "unpaged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SectorSimpleResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
           }
         }
       },
@@ -982,10 +1162,10 @@
           "empty": {
             "type": "boolean"
           },
-          "unsorted": {
+          "sorted": {
             "type": "boolean"
           },
-          "sorted": {
+          "unsorted": {
             "type": "boolean"
           }
         }
@@ -1149,6 +1329,36 @@
               "FAILED",
               "IMPORTED"
             ]
+          }
+        }
+      },
+      "IndustrySimpleResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "SectorResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "industries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IndustrySimpleResponse"
+            }
           }
         }
       },

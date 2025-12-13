@@ -7,14 +7,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { CurrencySimpleResponse } from './currency-simple-response';
 
 
-export interface CurrencyResponse { 
+export interface CurrencySimpleResponse { 
     code?: string;
     symbol?: string;
     name?: string;
-    parent?: CurrencySimpleResponse;
-    parentFactor?: number;
 }
 
