@@ -20,7 +20,7 @@ data class Company(
      */
     @Id
     @Column(name = "id", nullable = false)
-    val companyId: UUID? = null,
+    val id: UUID? = null,
 
     /**
      * Company name (e.g., "Acme Corp.", "Example Technologies, Inc.").

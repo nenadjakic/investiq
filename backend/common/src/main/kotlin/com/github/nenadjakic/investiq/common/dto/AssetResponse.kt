@@ -6,7 +6,7 @@ import com.github.nenadjakic.investiq.data.entity.asset.Stock
 import com.github.nenadjakic.investiq.data.enum.AssetType
 import java.util.UUID
 
-data class AssetResponse (
+data class AssetResponse(
     val id: UUID,
     val type: AssetType,
     val symbol: String,
@@ -15,7 +15,7 @@ data class AssetResponse (
     var exchange: ExchangeResponse?,
 )
 
-fun Asset.toAssetResponse(): AssetResponse  {
+fun Asset.toAssetResponse(): AssetResponse {
     // One-line unwrap: try to reflectively unwrap Hibernate proxy, otherwise fall back to `this`
     val realAsset: Asset = runCatching {
         Class.forName("org.hibernate.proxy.HibernateProxy")
@@ -32,10 +32,14 @@ fun Asset.toAssetResponse(): AssetResponse  {
         val company = realAsset.company
 
         companyResponse = CompanyResponse(
-            company.companyId!!,
+            company.id!!,
             company.name,
             CountryResponse(company.country.iso2Code!!, company.country.name),
-            industry = IndustryResponse(company.industry.id!!, company.industry.name)
+            industry = IndustryResponse(
+                company.industry.id!!,
+                company.industry.name,
+                SectorSimpleResponse(company.industry.sector.id!!, company.industry.sector.name)
+            )
         )
     }
     if (realAsset is ListedAsset) {
