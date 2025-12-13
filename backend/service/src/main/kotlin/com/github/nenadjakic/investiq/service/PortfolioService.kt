@@ -1,15 +1,21 @@
 package com.github.nenadjakic.investiq.service
 
+import com.github.nenadjakic.investiq.common.dto.AssetTypeValueResponse
 import com.github.nenadjakic.investiq.common.dto.PeriodChangeResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioChartResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioSummaryResponse
 import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
+import com.github.nenadjakic.investiq.common.dto.MonthlyInvestedEntry
+import com.github.nenadjakic.investiq.common.dto.MonthlyInvestedResponse
+import com.github.nenadjakic.investiq.common.dto.CountryValueResponse
+import com.github.nenadjakic.investiq.common.dto.CurrencyValueResponse
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.time.YearMonth
 
 @Service
 class PortfolioService(
@@ -66,6 +72,36 @@ class PortfolioService(
         }
     }
 
+    fun getCountryAllocation(): List<CountryValueResponse> {
+        val rows = portfolioRepository.getValueByCountry()
+        return rows.map { r ->
+            CountryValueResponse(
+                country = r.country,
+                valueEur = r.valueEur
+            )
+        }
+    }
+
+    fun getCurrencyExposure(): List<CurrencyValueResponse> {
+        val rows = portfolioRepository.getValueByCurrency()
+        return rows.map { r ->
+            CurrencyValueResponse(
+                currency = r.currency,
+                valueEur = r.valueEur
+            )
+        }
+    }
+
+    fun getAssetTypeAllocation(): List<AssetTypeValueResponse> {
+        val rows = portfolioRepository.getValueByAssetType()
+        return rows.map { r ->
+            com.github.nenadjakic.investiq.common.dto.AssetTypeValueResponse(
+                assetType = r.assetType,
+                valueEur = r.valueEur
+            )
+        }
+    }
+
     fun getPortfolioValueSeries(days: Int = 365): PortfolioChartResponse {
         val endDate = LocalDate.now()
         val startDate = endDate.minusDays(days.toLong())
@@ -82,31 +118,19 @@ class PortfolioService(
             )
         }
 
-        // Use the first returned snapshot as the baseline so that the first point is zero
-        val baselineSnapshot = dailyData.first()
-        val baselineValue = baselineSnapshot.totalValue
-        val baselineInvested = baselineSnapshot.totalInvested
-
         val dates = dailyData.map { it.snapshotDate }
         val totalValue = dailyData.map { it.totalValue.setScale(2, RoundingMode.HALF_UP).toDouble() }
         val totalInvested = dailyData.map { it.totalInvested.setScale(2, RoundingMode.HALF_UP).toDouble() }
 
-        // Calculate PL% relative to the baseline day's market value (fallback to baseline invested if value is zero)
-        val plPercentage = dailyData.map { dv ->
+        // Calculate PL% per day (original logic)
+        val rawPlPercentage = dailyData.map { dv ->
+            val investedBD = dv.totalInvested
             val valueBD = dv.totalValue
-            if (baselineValue > BigDecimal.ZERO) {
+            if (investedBD > BigDecimal.ZERO) {
                 valueBD
-                    .subtract(baselineValue)
+                    .subtract(investedBD)
                     .multiply(BigDecimal(100))
-                    .divide(baselineValue, 6, RoundingMode.HALF_UP)
-                    .setScale(2, RoundingMode.HALF_UP)
-                    .toDouble()
-            } else if (baselineInvested > BigDecimal.ZERO) {
-                // fallback: if baseline market value is 0, compute relative to invested
-                valueBD
-                    .subtract(baselineInvested)
-                    .multiply(BigDecimal(100))
-                    .divide(baselineInvested, 6, RoundingMode.HALF_UP)
+                    .divide(investedBD, 6, RoundingMode.HALF_UP)
                     .setScale(2, RoundingMode.HALF_UP)
                     .toDouble()
             } else {
@@ -114,12 +138,34 @@ class PortfolioService(
             }
         }
 
+        // Normalize to start at 0% - subtract the first day's PL%
+        val firstDayPL = rawPlPercentage.firstOrNull() ?: 0.0
+        val plPercentage = rawPlPercentage.map { it - firstDayPL }
+
         return PortfolioChartResponse(
             dates = dates,
             invested = totalInvested,
             marketValue = totalValue,
             plPercentage = plPercentage
         )
+    }
+
+    fun getMonthlyInvested(months: Int = 12): MonthlyInvestedResponse {
+        val startYearMonth = YearMonth.now().minusMonths(months.toLong() - 1)
+        val fromDate = startYearMonth.atDay(1)
+
+        val raw = portfolioRepository.findMonthlyInvestedFrom(fromDate)
+
+        val map = raw.associateBy({ YearMonth.of(it.year, it.month).toString() }, { it.invested })
+
+        val series = (0 until months).map { offset ->
+            val ym = startYearMonth.plusMonths(offset.toLong())
+            val key = ym.toString()
+            val invested = map[key] ?: BigDecimal.ZERO
+            MonthlyInvestedEntry(key, invested)
+        }
+
+        return MonthlyInvestedResponse(series)
     }
 
     private fun calculatePeriodChange(
@@ -143,7 +189,7 @@ class PortfolioService(
             BigDecimal.ZERO
         }
 
-        val periodLabel = generatePeriodLabel(requestedPeriodDays)
+        val periodLabel = generatePeriodLabel(requestedDays = requestedPeriodDays)
 
         return PeriodChangeResponse(
             startDate = startDate,

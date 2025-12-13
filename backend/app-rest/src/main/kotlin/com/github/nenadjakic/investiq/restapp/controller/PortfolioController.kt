@@ -1,8 +1,14 @@
 package com.github.nenadjakic.investiq.restapp.controller
 
+import com.github.nenadjakic.investiq.common.dto.AssetTypeValueResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioChartResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioSummaryResponse
 import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
+import com.github.nenadjakic.investiq.common.dto.MonthlyInvestedResponse
+import com.github.nenadjakic.investiq.common.dto.CountryValueResponse
+import com.github.nenadjakic.investiq.common.dto.CurrencyValueResponse
+import com.github.nenadjakic.investiq.common.dto.PortfolioPerformanceResponse
+import com.github.nenadjakic.investiq.common.dto.PortfolioAllocationResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -16,8 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.math.BigDecimal
-import java.time.LocalDate
 
 @Tag(name = "Portfolio Controller", description = "Portfolio overview, holdings and performance analytics")
 @RestController
@@ -88,4 +92,130 @@ class PortfolioController(
     @GetMapping("/allocation/industry-sector", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getIndustrySectorAllocation(): ResponseEntity<List<IndustrySectorValueResponse>> =
         ResponseEntity.ok(portfolioService.getIndustrySectorAllocation())
+
+    @Operation(
+        operationId = "getMonthlyInvested",
+        summary = "Get monthly invested amounts",
+        description = "Returns invested euros per month for the last N months"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved monthly invested amounts",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = MonthlyInvestedResponse::class)
+                )]
+            )
+        ]
+    )
+    @GetMapping("/monthly-invested", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getMonthlyInvested(
+        @RequestParam(required = false, defaultValue = "12") months: Int = 12
+    ): ResponseEntity<MonthlyInvestedResponse> =
+        ResponseEntity.ok(portfolioService.getMonthlyInvested(months))
+
+    @Operation(
+        operationId = "getPortfolioPerformanceData",
+        summary = "Get combined performance data",
+        description = "Returns the portfolio chart series and monthly invested amounts together"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successfully retrieved performance data"),
+            ApiResponse(responseCode = "400", description = "Invalid parameters")
+        ]
+    )
+    @GetMapping("/performance-data", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getPortfolioPerformanceData(
+        @RequestParam(required = false) days: Int = 365,
+        @RequestParam(required = false, defaultValue = "12") months: Int = 12
+    ): ResponseEntity<PortfolioPerformanceResponse> {
+        val chart = portfolioService.getPortfolioValueSeries(days)
+        val monthly = portfolioService.getMonthlyInvested(months)
+        return ResponseEntity.ok(PortfolioPerformanceResponse(chart = chart, monthlyInvested = monthly))
+    }
+
+    @Operation(
+        operationId = "getCombinedAllocation",
+        summary = "Get combined allocation",
+        description = "Returns allocations by currency, industry/sector and country together"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successfully retrieved allocation")
+        ]
+    )
+    @GetMapping("/allocation", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getAllocation(): ResponseEntity<PortfolioAllocationResponse> {
+        val currency = portfolioService.getCurrencyExposure()
+        val industry = portfolioService.getIndustrySectorAllocation()
+        val country = portfolioService.getCountryAllocation()
+        val assetType = portfolioService.getAssetTypeAllocation()
+        return ResponseEntity.ok(
+            PortfolioAllocationResponse(
+                byCurrency = currency,
+                byIndustrySector = industry,
+                byCountry = country,
+                byAssetType = assetType
+            )
+        )
+    }
+
+    @Operation(
+        operationId = "getCountryAllocation",
+        summary = "Get portfolio allocation by country",
+        description = "Returns aggregated market value grouped by company country for the latest snapshot"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved allocation",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = CountryValueResponse::class)
+                )]
+            )
+        ]
+    )
+    @GetMapping("/allocation/country", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getCountryAllocation(): ResponseEntity<List<CountryValueResponse>> =
+        ResponseEntity.ok(portfolioService.getCountryAllocation())
+
+    @Operation(
+        operationId = "getCurrencyExposure",
+        summary = "Get portfolio exposure by currency",
+        description = "Returns aggregated market value grouped by asset currency for the latest snapshot"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved exposure",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = CurrencyValueResponse::class)
+                )]
+            )
+        ]
+    )
+    @GetMapping("/allocation/currency", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getCurrencyExposure(): ResponseEntity<List<CurrencyValueResponse>> =
+        ResponseEntity.ok(portfolioService.getCurrencyExposure())
+
+    @Operation(
+        operationId = "getAssetTypeAllocation",
+        summary = "Get portfolio allocation by asset type",
+        description = "Returns aggregated market value grouped by asset type for the latest snapshot"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successfully retrieved allocation", content = [Content(mediaType = "application/json", schema = Schema(implementation = AssetTypeValueResponse::class))])
+        ]
+    )
+    @GetMapping("/allocation/asset-type", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getAssetTypeAllocation(): ResponseEntity<List<AssetTypeValueResponse>> =
+        ResponseEntity.ok(portfolioService.getAssetTypeAllocation())
 }
