@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.jakarta.persistence.api)
     implementation(libs.jakarta.transaction.api)
     implementation(libs.spring.data.jpa)
+    implementation(libs.hibernate.core)
 
     implementation(libs.apache.commons.csv)
     implementation(libs.apache.poi)

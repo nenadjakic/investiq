@@ -16,6 +16,7 @@ jakarta-persistence = "3.2.0"
 jakarta-transaction = "2.0.1"
 jakarta-validation = "4.0.0-M1"
 kotlinx-coroutines = "1.10.2"
+hibernate = "7.1.11.Final"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -46,6 +47,7 @@ jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-ap
 jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jakarta-transaction" }
 jakarta-validation-api  = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+hibernate-core = { module = "org.hibernate:hibernate-core", version.ref = "hibernate" }
 
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }

@@ -1,5 +1,7 @@
 package com.github.nenadjakic.investiq.service
 
+import com.github.nenadjakic.investiq.common.dto.TransactionResponse
+import com.github.nenadjakic.investiq.common.extension.toTransactionResponse
 import com.github.nenadjakic.investiq.data.entity.transaction.Buy
 import com.github.nenadjakic.investiq.data.entity.transaction.Deposit
 import com.github.nenadjakic.investiq.data.entity.transaction.Dividend
@@ -12,13 +14,15 @@ import com.github.nenadjakic.investiq.data.enum.TransactionType
 import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
 import com.github.nenadjakic.investiq.data.repository.TransactionRepository
 import jakarta.transaction.Transactional
+import org.hibernate.Hibernate
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
 class TransactionService(
-    private val currencyHistoryService: CurrencyHistoryService,
     private val stagingTransactionRepository: StagingTransactionRepository,
     private val transactionRepository: TransactionRepository
 ) {
@@ -183,5 +187,14 @@ class TransactionService(
         }
 
         transactionRepository.saveAll(transactions)
+    }
+
+    @Transactional
+    fun findAll(
+        pageable: Pageable
+    ): Page<TransactionResponse> {
+        return transactionRepository.findAll(pageable)
+            .map { Hibernate.unproxy(it, Transaction::class.java) }
+            .map { it.toTransactionResponse() }
     }
 }

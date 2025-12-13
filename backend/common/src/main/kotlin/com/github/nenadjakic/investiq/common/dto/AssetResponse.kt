@@ -16,20 +16,30 @@ data class AssetResponse (
 )
 
 fun Asset.toAssetResponse(): AssetResponse  {
+    // One-line unwrap: try to reflectively unwrap Hibernate proxy, otherwise fall back to `this`
+    val realAsset: Asset = runCatching {
+        Class.forName("org.hibernate.proxy.HibernateProxy")
+            .takeIf { it.isInstance(this) }
+            ?.getMethod("getHibernateLazyInitializer")
+            ?.invoke(this)
+            ?.let { it.javaClass.getMethod("getImplementation").invoke(it) as? Asset }
+    }.getOrNull() ?: this
+
     var companyResponse: CompanyResponse? = null
     var exchangeResponse: ExchangeResponse? = null
-    if (this is Stock) {
-            val company = this.company
 
-            companyResponse = CompanyResponse(
-                company.companyId!!,
-                company.name,
-                CountryResponse(company.country.iso2Code!!, company.country.name),
-                industry = IndustryResponse(company.industry.id!!, company.industry.name)
-            )
+    if (realAsset is Stock) {
+        val company = realAsset.company
+
+        companyResponse = CompanyResponse(
+            company.companyId!!,
+            company.name,
+            CountryResponse(company.country.iso2Code!!, company.country.name),
+            industry = IndustryResponse(company.industry.id!!, company.industry.name)
+        )
     }
-    if (this is ListedAsset) {
-        val exchange = this.exchange
+    if (realAsset is ListedAsset) {
+        val exchange = realAsset.exchange
         exchangeResponse = ExchangeResponse(
             exchange.id!!,
             exchange.mic,
@@ -39,11 +49,11 @@ fun Asset.toAssetResponse(): AssetResponse  {
         )
     }
     return AssetResponse(
-        id = this.id!!,
-        symbol = this.symbol,
+        id = realAsset.id!!,
+        symbol = realAsset.symbol,
         company = companyResponse,
-        currency = this.currency.code!!,
+        currency = realAsset.currency.code!!,
         exchange = exchangeResponse,
-        type = this.assetType,
+        type = realAsset.assetType,
     )
 }
