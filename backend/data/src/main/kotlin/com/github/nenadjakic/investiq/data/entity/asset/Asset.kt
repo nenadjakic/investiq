@@ -2,6 +2,7 @@ package com.github.nenadjakic.investiq.data.entity.asset
 
 import com.github.nenadjakic.investiq.data.entity.core.Currency
 import com.github.nenadjakic.investiq.data.enum.AssetType
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorColumn
 import jakarta.persistence.DiscriminatorType
@@ -13,6 +14,7 @@ import jakarta.persistence.Inheritance
 import jakarta.persistence.InheritanceType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import java.util.UUID
@@ -65,6 +67,6 @@ abstract class Asset {
     //@OneToMany(mappedBy = "asset")
     //val priceHistory: MutableSet<AssetPriceHistory> = mutableSetOf(),
 
-    //@OneToMany(mappedBy = "asset", cascade = [CascadeType.ALL])
-    //val aliases: MutableSet<AssetAlias> = mutableSetOf()
+    @OneToMany(mappedBy = "asset", cascade = [CascadeType.ALL])
+    val aliases: MutableSet<AssetAlias> = mutableSetOf()
 }

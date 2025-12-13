@@ -1,7 +1,6 @@
 package com.github.nenadjakic.investiq.common.dto
 
 import com.github.nenadjakic.investiq.data.entity.core.Currency
-import jakarta.xml.bind.Binder
 import java.math.BigDecimal
 
 data class CurrencyResponse (

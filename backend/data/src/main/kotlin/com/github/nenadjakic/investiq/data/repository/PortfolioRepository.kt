@@ -320,7 +320,7 @@ class PortfolioRepository(
     private val assetSnapshotMapper = RowMapper<AssetSnapshot> { rs, _ ->
         AssetSnapshot(
             snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
-            assetId = rs.getObject("asset_id", java.util.UUID::class.java),
+            assetId = rs.getObject("asset_id", UUID::class.java),
             platform = rs.getString("platform") ?: "",
             quantity = rs.getBigDecimal("quantity"),
             avgCostPerShareEur = rs.getBigDecimal("avg_cost_per_share_eur"),

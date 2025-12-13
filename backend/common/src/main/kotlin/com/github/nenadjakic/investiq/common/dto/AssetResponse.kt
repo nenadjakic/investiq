@@ -4,6 +4,7 @@ import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.asset.ListedAsset
 import com.github.nenadjakic.investiq.data.entity.asset.Stock
 import com.github.nenadjakic.investiq.data.enum.AssetType
+import com.github.nenadjakic.investiq.data.enum.Platform
 import java.util.UUID
 
 data class AssetResponse(
@@ -13,23 +14,22 @@ data class AssetResponse(
     val company: CompanyResponse?,
     val currency: String,
     var exchange: ExchangeResponse?,
+    var aliases: List<AssetAliasResponse>? = null
+)
+
+data class AssetAliasResponse(
+    val id: UUID,
+    val platform: Platform,
+    val symbol: String
 )
 
 fun Asset.toAssetResponse(): AssetResponse {
-    // One-line unwrap: try to reflectively unwrap Hibernate proxy, otherwise fall back to `this`
-    val realAsset: Asset = runCatching {
-        Class.forName("org.hibernate.proxy.HibernateProxy")
-            .takeIf { it.isInstance(this) }
-            ?.getMethod("getHibernateLazyInitializer")
-            ?.invoke(this)
-            ?.let { it.javaClass.getMethod("getImplementation").invoke(it) as? Asset }
-    }.getOrNull() ?: this
 
     var companyResponse: CompanyResponse? = null
     var exchangeResponse: ExchangeResponse? = null
 
-    if (realAsset is Stock) {
-        val company = realAsset.company
+    if (this is Stock) {
+        val company = this.company
 
         companyResponse = CompanyResponse(
             company.id!!,
@@ -42,8 +42,8 @@ fun Asset.toAssetResponse(): AssetResponse {
             )
         )
     }
-    if (realAsset is ListedAsset) {
-        val exchange = realAsset.exchange
+    if (this is ListedAsset) {
+        val exchange = this.exchange
         exchangeResponse = ExchangeResponse(
             exchange.id!!,
             exchange.mic,
@@ -53,11 +53,18 @@ fun Asset.toAssetResponse(): AssetResponse {
         )
     }
     return AssetResponse(
-        id = realAsset.id!!,
-        symbol = realAsset.symbol,
+        id = this.id!!,
+        symbol = this.symbol,
         company = companyResponse,
-        currency = realAsset.currency.code!!,
+        currency = this.currency.code!!,
         exchange = exchangeResponse,
-        type = realAsset.assetType,
+        type = this.assetType,
+        aliases = this.aliases.map {
+            AssetAliasResponse(
+                id = it.id!!,
+                platform = it.platform,
+                symbol = it.externalSymbol
+            )
+        }
     )
 }

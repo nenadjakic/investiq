@@ -1,8 +1,6 @@
 package com.github.nenadjakic.investiq.restapp.controller
 
-import com.github.nenadjakic.investiq.common.dto.CompanyResponse
 import com.github.nenadjakic.investiq.common.dto.SectorResponse
-import com.github.nenadjakic.investiq.service.CompanyService
 import com.github.nenadjakic.investiq.service.SectorService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
