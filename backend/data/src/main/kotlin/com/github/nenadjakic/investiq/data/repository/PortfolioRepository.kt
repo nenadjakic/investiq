@@ -149,7 +149,7 @@ class PortfolioRepository(
 
     fun findMonthlyInvestedFrom(fromDate: LocalDate): List<MonthlyInvestedRow> {
         val sql = """
-            SELECT year, month, SUM(transaction_value_eur + COALESCE(fee_amount,0)) AS invested
+            SELECT year, month, SUM(transaction_value_eur + COALESCE(fee_amount_eur,0)) AS invested
             FROM vw_transaction_analytics
             WHERE transaction_type = 'BUY' AND transaction_date_only >= ?
             GROUP BY year, month
