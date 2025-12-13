@@ -1,32 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CountryControllerService, CurrencyControllerService, ExchangeControllerService, CompanyControllerService, SectorControllerService, IndustryControllerService } from '../core/api';
-import { CountryResponse } from '../core/api/model/country-response';
-import { CurrencyResponse } from '../core/api/model/currency-response';
-import { ExchangeResponse } from '../core/api/model/exchange-response';
-import { CompanyResponse } from '../core/api/model/company-response';
-import { SectorResponse } from '../core/api/model/sector-response';
-import { IndustryResponse } from '../core/api/model/industry-response';
-import { ToastService } from '../../shared/toast.service';
-
-type ReferenceItem = {
-	name: string;
-	code?: string;
-	note?: string;
-};
-
-type ReferenceSection = {
-	key: 'countries' | 'currencies' | 'exchanges' | 'companies' | 'sectors' | 'industries';
-	title: string;
-	description: string;
-	ctaLabel: string;
-	items: ReferenceItem[];
-};
+import { CountryControllerService, CurrencyControllerService, ExchangeControllerService, CompanyControllerService, SectorControllerService, IndustryControllerService } from '../app/core/api';
+import { CountryResponse } from '../app/core/api/model/country-response';
+import { CurrencyResponse } from '../app/core/api/model/currency-response';
+import { ExchangeResponse } from '../app/core/api/model/exchange-response';
+import { CompanyResponse } from '../app/core/api/model/company-response';
+import { SectorResponse } from '../app/core/api/model/sector-response';
+import { IndustryResponse } from '../app/core/api/model/industry-response';
+import { ToastService } from '../shared/toast.service';
 
 type ReferenceStat = {
 	label: string;
 	value: string;
-	hint: string;
 };
 
 @Component({
@@ -70,12 +55,12 @@ private toast = inject(ToastService);
 
 
 	stats = signal<ReferenceStat[]>([
-		{ label: 'Countries', value: '0', hint: '' },
-		{ label: 'Currencies', value: '0', hint: 'Major + exotics' },
-		{ label: 'Exchanges', value: '0', hint: 'Primary + alt markets' },
-		{ label: 'Companies', value: '1,240', hint: 'Tickers and ISINs' },
-		{ label: 'Sectors', value: '11', hint: 'Top-level sector view' },
-		{ label: 'Industries', value: '27', hint: 'GICS inspired mapping' },
+		{ label: 'Countries', value: '0' },
+		{ label: 'Currencies', value: '0' },
+		{ label: 'Exchanges', value: '0' },
+		{ label: 'Companies', value: '1,240' },
+		{ label: 'Sectors', value: '11' },
+		{ label: 'Industries', value: '27' },
 	]);
 
 

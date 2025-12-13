@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { AssetAliasResponse } from './asset-alias-response';
 import { CompanyResponse } from './company-response';
 import { ExchangeResponse } from './exchange-response';
 
@@ -18,6 +19,7 @@ export interface AssetResponse {
     company?: CompanyResponse;
     currency?: string;
     exchange?: ExchangeResponse;
+    aliases?: Array<AssetAliasResponse>;
 }
 export namespace AssetResponse {
     export const TypeEnum = {

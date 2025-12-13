@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from '../dashboard/dashboard';
-import { AssetPage } from '../asset/asset';
+import { AssetPage } from '../assets/assets';
 import { Transactions } from '../transactions/transactions';
-import { ReferenceData } from './reference-data/reference-data';
+import { ReferenceData } from '../reference-data/reference-data';
 
 export const routes: Routes = [
   {

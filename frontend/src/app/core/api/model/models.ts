@@ -1,3 +1,4 @@
+export * from './asset-alias-response';
 export * from './asset-holding-response';
 export * from './asset-response';
 export * from './asset-type-value-response';

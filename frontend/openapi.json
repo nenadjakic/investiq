@@ -945,6 +945,27 @@
           "id"
         ]
       },
+      "AssetAliasResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
+          },
+          "symbol": {
+            "type": "string"
+          }
+        }
+      },
       "AssetResponse": {
         "type": "object",
         "properties": {
@@ -970,6 +991,12 @@
           },
           "exchange": {
             "$ref": "#/components/schemas/ExchangeResponse"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetAliasResponse"
+            }
           }
         }
       },
@@ -1107,11 +1134,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "empty": {
             "type": "boolean"
@@ -1125,9 +1152,6 @@
             "type": "integer",
             "format": "int64"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "paged": {
             "type": "boolean"
           },
@@ -1138,6 +1162,9 @@
           "pageSize": {
             "type": "integer",
             "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "unpaged": {
             "type": "boolean"
@@ -1268,11 +1295,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "empty": {
             "type": "boolean"
@@ -1650,11 +1677,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "empty": {
             "type": "boolean"

@@ -1,0 +1,166 @@
+<div class="px-6 py-8 lg:px-10 space-y-8">
+	<div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+		<div></div>
+		<div class="flex flex-wrap gap-3">
+			<div class="flex flex-col gap-1">
+				<input
+					class="w-44 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					[ngModel]="symbolTerm()"
+					(ngModelChange)="symbolTerm.set($event); onSearchChange()"
+					placeholder="Search symbol..."
+				/>
+			</div>
+			<div class="flex flex-col gap-1">
+				<input
+					class="w-44 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					[ngModel]="companyTerm()"
+					(ngModelChange)="companyTerm.set($event); onSearchChange()"
+					placeholder="Search company..."
+				/>
+			</div>
+			<div class="flex flex-col gap-1">
+				<input
+					class="w-44 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					[ngModel]="exchangeTerm()"
+					(ngModelChange)="exchangeTerm.set($event); onSearchChange()"
+					placeholder="Search exchange..."
+				/>
+			</div>
+			<div class="flex flex-col gap-1">
+				<input
+					class="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					[ngModel]="currencyTerm()"
+					(ngModelChange)="currencyTerm.set($event); onSearchChange()"
+					placeholder="Search currency..."
+				/>
+			</div>
+		</div>
+	</div>
+
+	<div class="bg-white rounded-lg shadow">
+		<div class="overflow-x-auto">
+			<table class="min-w-full">
+				<thead class="border-b border-gray-100">
+					<tr>
+						<th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Symbol</th>
+						<th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Company</th>
+						<th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Exchange</th>
+						<th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Currency</th>
+						<th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Aliases</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-gray-100">
+					@if (assets().length === 0) {
+					<tr>
+						<td colspan="5" class="px-5 py-4 text-center text-gray-500 text-sm">No assets found.</td>
+					</tr>
+					}
+					@for (asset of assets(); track $index) {
+					<tr class="hover:bg-gray-50">
+						<td class="px-5 py-3 text-start text-sm align-top">
+							<div class="flex items-center gap-2">
+								<span class="font-semibold text-gray-900">{{ asset.symbol || '-' }}</span>
+								<span class="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800">{{ asset.type }}</span>
+							</div>
+						</td>
+						<td class="px-5 py-3 text-start text-sm align-top">
+							<div class="text-gray-900 font-semibold">{{ asset.company?.name || '-' }}</div>
+							@if (asset.company?.country?.name) {
+							<div class="text-xs text-gray-500">{{ asset.company?.country?.name }}</div>
+							}
+						</td>
+						<td class="px-5 py-3 text-start text-sm align-top">
+							<div class="text-gray-900 font-semibold">{{ asset.exchange?.name || '-' }}</div>
+							@if (asset.exchange?.mic) {
+							<div class="text-xs text-gray-500">MIC: {{ asset.exchange?.mic }}</div>
+							}
+						</td>
+						<td class="px-5 py-3 text-start text-sm align-top text-gray-900">{{ asset.currency || '-' }}</td>
+						<td class="px-5 py-3 text-start text-sm align-top">
+							<div class="flex flex-wrap gap-2">
+								@for (alias of asset.aliases || []; track $index) {
+								<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-700 border border-gray-200">
+									{{ alias.platform || 'Alias' }}: {{ alias.symbol || '-' }}
+								</span>
+								}
+							</div>
+						</td>
+					</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+
+		<div class="px-6 py-4 border-t border-gray-200">
+			<div class="flex flex-col items-center gap-2">
+				<div class="flex items-center gap-2">
+					<button
+						type="button"
+						(click)="firstPage()"
+						[disabled]="!canPrev()"
+						class="flex items-center justify-center h-8 w-9 border border-gray-300 rounded-md text-xs text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						<span class="text-sm leading-none">«</span>
+					</button>
+					<button
+						type="button"
+						(click)="prevPage()"
+						[disabled]="!canPrev()"
+						class="flex items-center justify-center h-8 w-9 border border-gray-300 rounded-md text-xs text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						<span class="text-sm leading-none">‹</span>
+					</button>
+
+					<div class="flex items-center gap-1">
+						@if (hasLeadingGap()) {
+						<button
+							(click)="goToPage(1)"
+							class="h-8 w-9 border border-gray-300 rounded-md text-xs text-gray-700 hover:bg-gray-50"
+						>1</button>
+						<span class="px-1 text-xs text-gray-400">…</span>
+						}
+						@for (page of pageNumbers(); track page) {
+						<button
+							(click)="goToPage(page)"
+							[ngClass]="{
+								'bg-blue-600 text-white border-blue-600': page === currentPage(),
+								'bg-white text-gray-700 border-gray-300 hover:bg-gray-50': page !== currentPage()
+							}"
+							class="h-8 w-9 border rounded-md text-xs transition-colors"
+						>
+							{{ page }}
+						</button>
+						}
+						@if (hasTrailingGap()) {
+						<span class="px-1 text-xs text-gray-400">…</span>
+						<button
+							(click)="goToPage(totalPages())"
+							class="h-8 w-9 border border-gray-300 rounded-md text-xs text-gray-700 hover:bg-gray-50"
+						>{{ totalPages() }}</button>
+						}
+					</div>
+
+					<button
+						type="button"
+						(click)="nextPage()"
+						[disabled]="!canNext()"
+						class="flex items-center justify-center h-8 w-9 border border-gray-300 rounded-md text-xs text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						<span class="text-sm leading-none">›</span>
+					</button>
+					<button
+						type="button"
+						(click)="lastPage()"
+						[disabled]="!canNext()"
+						class="flex items-center justify-center h-8 w-9 border border-gray-300 rounded-md text-xs text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						<span class="text-sm leading-none">»</span>
+					</button>
+				</div>
+				<div class="text-xs font-semibold text-gray-500">
+					Page {{ currentPage() }} of {{ totalPages() }} • {{ totalElements() }} total
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

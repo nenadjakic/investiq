@@ -2,8 +2,6 @@
   <div class="p-6 border-b border-gray-200">
     <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <div>
-        <h3 class="text-lg font-semibold text-gray-800">All Holdings</h3>
-        <p class="text-sm text-gray-500">Current portfolio positions</p>
       </div>
       <div class="flex gap-2">
         <input
@@ -12,9 +10,6 @@
           class="px-3 py-2 border rounded text-sm w-48"
           (input)="onSearch($any($event.target).value)"
         />
-        <button class="px-3 py-2 text-sm bg-gray-100 rounded" disabled title="Export coming soon">
-          Export
-        </button>
       </div>
     </div>
   </div>
@@ -113,7 +108,7 @@
               <tr class="hover:bg-gray-50">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-semibold text-gray-900">{{ holding.ticker || '-' }}</div>
-                  <div class="text-xs text-gray-500">{{ holding.name || '—' }}</div>
+                  <div class="text-xs text-gray-500">{{ holding.name || '-' }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.shares ?? 0) | number:'1.0-2' }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.avgPrice ?? 0) | number:'1.2-2' }}</td>
