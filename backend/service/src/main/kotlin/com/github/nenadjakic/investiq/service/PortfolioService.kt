@@ -35,7 +35,6 @@ class PortfolioService(
             BigDecimal.ZERO
         }
 
-        // Calculate period change
         val periodStartDate = latestSnapshot.snapshotDate.minusDays(periodDays.toLong())
         val periodSnapshot = portfolioRepository.getSnapshotOnOrBefore(periodStartDate)
 
@@ -95,20 +94,19 @@ class PortfolioService(
     fun getAssetTypeAllocation(): List<AssetTypeValueResponse> {
         val rows = portfolioRepository.getValueByAssetType()
         return rows.map { r ->
-            com.github.nenadjakic.investiq.common.dto.AssetTypeValueResponse(
+            AssetTypeValueResponse(
                 assetType = r.assetType,
                 valueEur = r.valueEur
             )
         }
     }
 
-    fun getPortfolioValueSeries(days: Int = 365): PortfolioChartResponse {
+    fun getPortfolioValueSeries(days: Int?): PortfolioChartResponse {
         val endDate = LocalDate.now()
-        val startDate = endDate.minusDays(days.toLong())
+        val startDate = if (days == null) null else endDate.minusDays(days.toLong())
 
         val dailyData = portfolioRepository.findDailyValuesBetween(startDate, endDate)
 
-        // If there's no data, return empty series
         if (dailyData.isEmpty()) {
             return PortfolioChartResponse(
                 dates = emptyList(),
@@ -122,7 +120,7 @@ class PortfolioService(
         val totalValue = dailyData.map { it.totalValue.setScale(2, RoundingMode.HALF_UP).toDouble() }
         val totalInvested = dailyData.map { it.totalInvested.setScale(2, RoundingMode.HALF_UP).toDouble() }
 
-        // Calculate PL% per day (original logic)
+        // Calculate PL% per day
         val rawPlPercentage = dailyData.map { dv ->
             val investedBD = dv.totalInvested
             val valueBD = dv.totalValue
@@ -150,19 +148,11 @@ class PortfolioService(
         )
     }
 
-    fun getMonthlyInvested(months: Int = 12): MonthlyInvestedResponse {
-        val startYearMonth = YearMonth.now().minusMonths(months.toLong() - 1)
-        val fromDate = startYearMonth.atDay(1)
-
-        val raw = portfolioRepository.findMonthlyInvestedFrom(fromDate)
-
-        val map = raw.associateBy({ YearMonth.of(it.year, it.month).toString() }, { it.invested })
-
-        val series = (0 until months).map { offset ->
-            val ym = startYearMonth.plusMonths(offset.toLong())
-            val key = ym.toString()
-            val invested = map[key] ?: BigDecimal.ZERO
-            MonthlyInvestedEntry(key, invested)
+    fun getMonthlyInvested(months: Int?): MonthlyInvestedResponse {
+         val series = portfolioRepository.findMonthlyInvested(months)
+            .map {
+                val yearMonth = YearMonth.of(it.year, it.month)
+            MonthlyInvestedEntry(yearMonth.toString(), it.invested)
         }
 
         return MonthlyInvestedResponse(series)

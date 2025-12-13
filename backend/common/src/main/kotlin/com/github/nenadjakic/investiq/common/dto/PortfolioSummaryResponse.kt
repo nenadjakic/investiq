@@ -1,6 +1,5 @@
 package com.github.nenadjakic.investiq.common.dto
 
-import com.github.nenadjakic.investiq.data.entity.transaction.Dividend
 import io.swagger.v3.oas.annotations.media.Schema
 import java.math.BigDecimal
 import java.time.LocalDate

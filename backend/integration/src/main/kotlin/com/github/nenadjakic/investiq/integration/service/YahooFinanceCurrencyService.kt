@@ -2,7 +2,6 @@ package com.github.nenadjakic.investiq.integration.service
 
 import com.github.nenadjakic.investiq.integration.dto.CurrencyHistoryList
 import com.github.nenadjakic.investiq.integration.dto.DateExchangeRate
-import com.github.nenadjakic.investiq.integration.dto.YahooChartResponse
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import tools.jackson.databind.ObjectMapper
@@ -11,12 +10,11 @@ import java.math.RoundingMode
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.ZoneOffset
 
 @Service
 class YahooFinanceCurrencyService(
-    private val restTemplate: RestTemplate,
-    private val objectMapper: ObjectMapper
+    restTemplate: RestTemplate,
+    objectMapper: ObjectMapper
 ): AbstractYahooFinanceService(
     restTemplate,
     objectMapper
@@ -31,8 +29,6 @@ class YahooFinanceCurrencyService(
     ): CurrencyHistoryList {
         require(!fromCode.isBlank() && !toCode.isBlank()) { "currency codes must be provided" }
         require(!toDate.isBefore(fromDate)) { "toDate must be >= fromDate" }
-
-        val utcZone = ZoneOffset.UTC
 
         val symbolCandidate = "${fromCode}${toCode}=X"
         val inverseCandidate = "${toCode}${fromCode}=X"

@@ -384,29 +384,44 @@ inline fun <reified T> Cell.getCell(): T? {
         }
 
         LocalDate::class -> {
-            if (this.cellType == CellType.NUMERIC && DateUtil.isCellDateFormatted(this)) {
-                LocalDate.ofInstant(this.dateCellValue.toInstant(), ZoneId.systemDefault())
-            } else if (this.cellType == CellType.STRING) {
-                try {
-                    LocalDate.parse(this.stringCellValue, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                } catch (e: Exception) {
-                    null
+            when (this.cellType) {
+                CellType.NUMERIC -> {
+                    if (DateUtil.isCellDateFormatted(this)) {
+                        LocalDate.ofInstant(this.dateCellValue.toInstant(), ZoneId.systemDefault())
+                    } else {
+                        null
+                    }
                 }
-            } else null
+                CellType.STRING -> {
+                    try {
+                        LocalDate.parse(this.stringCellValue, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+                else -> null
+            }
         }
 
         LocalDateTime::class -> {
-            if (this.cellType == CellType.NUMERIC && DateUtil.isCellDateFormatted(this)) {
-                LocalDateTime.ofInstant(this.dateCellValue.toInstant(), ZoneId.systemDefault())
-            } else if (this.cellType == CellType.STRING) {
-                try {
-                    LocalDateTime.parse(this.stringCellValue, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
-                } catch (e: Exception) {
-                    null
+            when (this.cellType) {
+                CellType.NUMERIC -> {
+                    if (DateUtil.isCellDateFormatted(this)) {
+                        LocalDateTime.ofInstant(this.dateCellValue.toInstant(), ZoneId.systemDefault())
+                    } else {
+                        null
+                    }
                 }
-            } else null
+                CellType.STRING -> {
+                    try {
+                        LocalDateTime.parse(this.stringCellValue, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+                else -> null
+            }
         }
-
         else -> null
     } as T?
 }

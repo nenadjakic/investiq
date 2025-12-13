@@ -1,19 +1,16 @@
 package com.github.nenadjakic.investiq.scheduler
 
 import jakarta.transaction.Transactional
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcCall
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Propagation
 import java.time.LocalDate
 
 @Service
@@ -25,7 +22,7 @@ class SnapshotScheduler(
 
     private val parallelism = 2
 
-    @Scheduled(fixedDelayString = "PT24H")
+    @Scheduled(cron = "0 0 0 ? * MON")
     fun scheduleSnapshotGeneration() {
         runBlocking {
             generateSnapshots()

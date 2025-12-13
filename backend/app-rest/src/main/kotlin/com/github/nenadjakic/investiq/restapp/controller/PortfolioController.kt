@@ -68,7 +68,7 @@ class PortfolioController(
     )
     @GetMapping("/chart/performance", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPortfolioPerformanceChart(
-        @RequestParam(required = false) days: Int = 365
+        @RequestParam(required = false) days: Int?
     ): ResponseEntity<PortfolioChartResponse> =
         ResponseEntity.ok(portfolioService.getPortfolioValueSeries(days))
 
@@ -112,8 +112,7 @@ class PortfolioController(
     )
     @GetMapping("/monthly-invested", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getMonthlyInvested(
-        @RequestParam(required = false, defaultValue = "12") months: Int = 12
-    ): ResponseEntity<MonthlyInvestedResponse> =
+        @RequestParam(required = false) months: Int?): ResponseEntity<MonthlyInvestedResponse> =
         ResponseEntity.ok(portfolioService.getMonthlyInvested(months))
 
     @Operation(
@@ -129,8 +128,8 @@ class PortfolioController(
     )
     @GetMapping("/performance-data", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPortfolioPerformanceData(
-        @RequestParam(required = false) days: Int = 365,
-        @RequestParam(required = false, defaultValue = "12") months: Int = 12
+        @RequestParam(required = false) days: Int?,
+        @RequestParam(required = false) months: Int?
     ): ResponseEntity<PortfolioPerformanceResponse> {
         val chart = portfolioService.getPortfolioValueSeries(days)
         val monthly = portfolioService.getMonthlyInvested(months)

@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.YearMonth
 import java.util.UUID
 import java.sql.Date
 
@@ -53,7 +54,17 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, portfolioSnapshotMapper, date).firstOrNull()
     }
 
-    fun findDailyValuesBetween(startDate: LocalDate, endDate: LocalDate): List<PortfolioDailyValue> {
+    fun findDailyValuesBetween(startDate: LocalDate?, endDate: LocalDate): List<PortfolioDailyValue> {
+        val fromDate: LocalDate = if (startDate != null) {
+            startDate
+        } else {
+            val minSql = "SELECT MIN(snapshot_date) FROM asset_daily_snapshots"
+            val minDate = jdbcTemplate.queryForObject(minSql, Date::class.java)
+            minDate?.toLocalDate() ?: return emptyList()
+        }
+
+        if (fromDate.isAfter(endDate)) return emptyList()
+
         val sql = """
             SELECT snapshot_date,
                 SUM(cost_basis_eur) as total_invested, 
@@ -63,10 +74,14 @@ class PortfolioRepository(
             GROUP BY snapshot_date
             order by snapshot_date
         """.trimIndent()
-        return jdbcTemplate.query(sql, portfolioDailyValueMapper, startDate, endDate)
+
+        return jdbcTemplate.query(sql, portfolioDailyValueMapper, Date.valueOf(fromDate), Date.valueOf(endDate))
     }
 
-    // New method: aggregate current/latest holdings value by industry and sector
+    /**
+     * Returns a list of IndustrySectorValue representing the total market value of holdings
+     * grouped by industry and sector as of the latest snapshot date.
+     */
     fun getValueByIndustrySector(): List<IndustrySectorValue> {
         val sql = """
             WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
@@ -89,7 +104,10 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, industrySectorValueMapper)
     }
 
-    // New: aggregate by company country
+    /**
+     * Returns a list of CountryValue representing the total market value of holdings
+     * grouped by country as of the latest snapshot date.
+     */
     fun getValueByCountry(): List<CountryValue> {
         val sql = """
             WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
@@ -110,7 +128,10 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, countryValueMapper)
     }
 
-    // New: aggregate by asset currency
+    /**
+     * Returns a list of CurrencyValue representing the total market value of holdings
+     * grouped by asset currency as of the latest snapshot date.
+     */
     fun getValueByCurrency(): List<CurrencyValue> {
         val sql = """
             WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
@@ -129,6 +150,10 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, currencyValueMapper)
     }
 
+    /**
+     * Returns a list of AssetTypeValue representing the total market value of holdings
+     * grouped by asset type as of the latest snapshot date.
+     */
     fun getValueByAssetType(): List<AssetTypeValue> {
         val sql = """
             WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
@@ -147,6 +172,12 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, assetTypeValueMapper)
     }
 
+    /**
+     * Finds the total amount invested per month starting from the specified date.
+     *
+     * @param fromDate The date from which to start calculating monthly investments.
+     * @return A list of MonthlyInvestedRow representing the total invested amount per month.
+     */
     fun findMonthlyInvestedFrom(fromDate: LocalDate): List<MonthlyInvestedRow> {
         val sql = """
             SELECT year, month, SUM(transaction_value_eur + COALESCE(fee_amount_eur,0)) AS invested
@@ -156,7 +187,49 @@ class PortfolioRepository(
             ORDER BY year, month
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, monthlyInvestedRowMapper, Date.valueOf(fromDate),)
+        return jdbcTemplate.query(sql, monthlyInvestedRowMapper, Date.valueOf(fromDate))
+    }
+
+    /**
+     * Returns the date of the first BUY transaction (transaction_date_only) or null if none.
+     */
+    fun getFirstInvestmentDate(): LocalDate? {
+        val sql = "SELECT MIN(transaction_date_only) FROM vw_transaction_analytics WHERE transaction_type = 'BUY'"
+        val date = jdbcTemplate.queryForObject(sql, Date::class.java)
+        return date?.toLocalDate()
+    }
+
+    /**
+     * Returns monthly invested rows for the given number of months ending this month.
+     * If months is null, the range starts from the first BUY transaction date.
+     * This method fills missing months with zero invested.
+     */
+    fun findMonthlyInvested(months: Int?): List<MonthlyInvestedRow> {
+        if (months != null && months <= 0) return emptyList()
+
+        val fromDate: LocalDate = if (months == null) {
+            // start from the first investment date
+            getFirstInvestmentDate() ?: return emptyList()
+        } else {
+            val startYM = YearMonth.now().minusMonths((months - 1).toLong())
+            startYM.atDay(1)
+        }
+
+        val raw = findMonthlyInvestedFrom(fromDate)
+
+        val startYM = YearMonth.from(fromDate)
+        val actualMonths = if (months == null) {
+            val nowYM = YearMonth.now()
+            ((nowYM.year - startYM.year) * 12) + (nowYM.monthValue - startYM.monthValue) + 1
+        } else months
+
+        val map = raw.associateBy({ YearMonth.of(it.year, it.month) }, { it.invested })
+
+        return (0 until actualMonths).map { offset ->
+            val ym = startYM.plusMonths(offset.toLong())
+            val invested = map[ym] ?: BigDecimal.ZERO
+            MonthlyInvestedRow(ym.year, ym.monthValue, invested)
+        }
     }
 
     private val portfolioSnapshotMapper = RowMapper<PortfolioSnapshot> { rs, _ ->

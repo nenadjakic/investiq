@@ -31,7 +31,7 @@ class CurrencyScheduler(
     @Value($$"${investiq.scheduler.currency.fetch-delay-ms}")
     private var fetchDelayMs: Long? = null
 
-    @Scheduled(fixedDelayString = "PT168H")
+    @Scheduled(cron = "0 0 0 ? * SUN")
     fun fetchCurrencyHistories() {
         val currencyHistories = mutableListOf<CurrencyHistory>()
         fromCurrencies.forEach { fromCurrency ->

@@ -25,7 +25,7 @@ class AssetScheduler(
     @Value($$"${investiq.scheduler.asset.fetch-delay-ms}")
     private var fetchDelayMs: Long? = null
 
-    @Scheduled(fixedDelayString = "PT168H")
+    @Scheduled(cron = "0 0 0 ? * SUN")
     fun fetchAssetHistories() {
         val assetHistories = mutableListOf<AssetHistory>()
         assetRepository

@@ -70,7 +70,7 @@ class AssetService(
             }
 
             if (!exchange.isNullOrBlank()) {
-                val listedAssetRoot = cb.treat(root, ListedAsset::class.java)
+                cb.treat(root, ListedAsset::class.java)
                 predicate = cb.and(
                     predicate,
                     cb.equal(root.get<Exchange>("exchange").get<String>("acronym"), exchange)
