@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.restapp.controller
 
+import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.AssetTypeValueResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioChartResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioSummaryResponse
@@ -217,4 +218,29 @@ class PortfolioController(
     @GetMapping("/allocation/asset-type", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getAssetTypeAllocation(): ResponseEntity<List<AssetTypeValueResponse>> =
         ResponseEntity.ok(portfolioService.getAssetTypeAllocation())
+
+    @Operation(
+    summary = "Get current portfolio holdings",
+    description = "Returns a list of all current portfolio positions with detailed information."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved holdings list",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = AssetHoldingResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal server error",
+                content = [Content()]
+            )
+        ]
+    )
+    @GetMapping("/holdings", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getHoldings(): ResponseEntity<List<AssetHoldingResponse>> =
+         ResponseEntity.ok(portfolioService.getPortfolioHoldings())
 }

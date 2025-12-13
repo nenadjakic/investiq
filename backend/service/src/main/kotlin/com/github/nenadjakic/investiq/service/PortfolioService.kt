@@ -9,6 +9,9 @@ import com.github.nenadjakic.investiq.common.dto.MonthlyInvestedEntry
 import com.github.nenadjakic.investiq.common.dto.MonthlyInvestedResponse
 import com.github.nenadjakic.investiq.common.dto.CountryValueResponse
 import com.github.nenadjakic.investiq.common.dto.CurrencyValueResponse
+import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
+import com.github.nenadjakic.investiq.data.enum.AssetType
+import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -156,6 +159,75 @@ class PortfolioService(
         }
 
         return MonthlyInvestedResponse(series)
+    }
+
+    /**
+     * Returns the list of current holdings (positions) with calculated P/L and portfolio percentages.
+     */
+    fun getPortfolioHoldings(): List<AssetHoldingResponse> {
+        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
+            ?: return emptyList()
+
+        val assetSnapshots = portfolioRepository.getLatestAssetSnapshots()
+
+        val totalValue = portfolioSnapshot.totalValue
+        if (totalValue <= BigDecimal.ZERO) {
+            return emptyList()
+        }
+
+        return assetSnapshots.mapNotNull { snapshot ->
+            if (snapshot.quantity <= BigDecimal.ZERO) {
+                return@mapNotNull null
+            }
+
+            val shares = snapshot.quantity
+            val currentPrice = snapshot.marketPriceEur
+            val marketValue = snapshot.marketValueEur ?: BigDecimal.ZERO
+
+            // Calculate average price with fallback
+            val avgPrice = when {
+                snapshot.avgCostPerShareEur != null && snapshot.avgCostPerShareEur!! > BigDecimal.ZERO ->
+                    snapshot.avgCostPerShareEur
+                snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO && shares > BigDecimal.ZERO ->
+                    snapshot.costBasisEur!!.divide(shares, 8, RoundingMode.HALF_UP)
+                else -> null
+            }
+
+            // Calculate P/L absolute and percentage
+            val (plAbsolute, plPercentage) = if (currentPrice != null && avgPrice != null && avgPrice > BigDecimal.ZERO) {
+                val plAbs = (currentPrice - avgPrice) * shares
+                val plPct = ((currentPrice - avgPrice) / avgPrice * BigDecimal(100))
+                    .setScale(2, RoundingMode.HALF_UP)
+                plAbs.setScale(2, RoundingMode.HALF_UP) to plPct
+            } else {
+                // Fallback to unrealized P/L from snapshot if available
+                val plAbs = snapshot.unrealizedPlEur?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
+                val plPct = if (avgPrice != null && avgPrice > BigDecimal.ZERO && currentPrice != null) {
+                    ((currentPrice - avgPrice) / avgPrice * BigDecimal(100))
+                        .setScale(2, RoundingMode.HALF_UP)
+                } else {
+                    BigDecimal.ZERO
+                }
+                plAbs to plPct
+            }
+
+            // Calculate portfolio percentage
+            val portfolioPercentage = (marketValue / totalValue * BigDecimal(100))
+                .setScale(2, RoundingMode.HALF_UP)
+
+            AssetHoldingResponse(
+                ticker = snapshot.ticker,
+                name = snapshot.name,
+                shares = shares,
+                avgPrice = avgPrice?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO,
+                currentPrice = currentPrice?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO,
+                profitLoss = plAbsolute,
+                profitLossPercentage = plPercentage,
+                portfolioPercentage = portfolioPercentage,
+                platform = Platform.valueOf(snapshot.platform),
+                type = AssetType.valueOf(snapshot.type!!)
+            )
+        }.sortedByDescending { it.currentPrice * it.shares }
     }
 
     private fun calculatePeriodChange(

@@ -232,6 +232,35 @@ class PortfolioRepository(
         }
     }
 
+    /**
+     * Returns latest asset snapshots (one row per asset for the latest snapshot_date).
+     */
+    fun getLatestAssetSnapshots(): List<AssetSnapshot> {
+        val sql = """
+            WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
+            SELECT
+              s.snapshot_date,
+              s.asset_id,
+              COALESCE(s.platform, '') AS platform,
+              s.quantity,
+              s.avg_cost_per_share_eur,
+              s.cost_basis_eur,
+              s.market_price_eur,
+              s.market_value_eur,
+              s.unrealized_pl_eur,
+              a.symbol AS ticker,
+              a.name AS name,
+              a.asset_type AS asset_type
+            FROM asset_daily_snapshots s
+            JOIN latest l ON s.snapshot_date = l.d
+            JOIN assets a ON s.asset_id = a.id
+            WHERE s.quantity <> 0
+            ORDER BY COALESCE(s.market_value_eur, 0) DESC
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, assetSnapshotMapper)
+    }
+
     private val portfolioSnapshotMapper = RowMapper<PortfolioSnapshot> { rs, _ ->
         PortfolioSnapshot(
             snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
@@ -267,7 +296,6 @@ class PortfolioRepository(
         MonthlyInvestedRow(year, month, invested)
     }
 
-    // New mappers and data classes for country and currency
     private val countryValueMapper = RowMapper<CountryValue> { rs, _ ->
         CountryValue(
             country = rs.getString("country"),
@@ -286,6 +314,23 @@ class PortfolioRepository(
         AssetTypeValue(
             assetType = rs.getString("asset_type"),
             valueEur = rs.getBigDecimal("value_eur")
+        )
+    }
+
+    private val assetSnapshotMapper = RowMapper<AssetSnapshot> { rs, _ ->
+        AssetSnapshot(
+            snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
+            assetId = rs.getObject("asset_id", java.util.UUID::class.java),
+            platform = rs.getString("platform") ?: "",
+            quantity = rs.getBigDecimal("quantity"),
+            avgCostPerShareEur = rs.getBigDecimal("avg_cost_per_share_eur"),
+            costBasisEur = rs.getBigDecimal("cost_basis_eur"),
+            marketPriceEur = rs.getBigDecimal("market_price_eur"),
+            marketValueEur = rs.getBigDecimal("market_value_eur"),
+            unrealizedPlEur = rs.getBigDecimal("unrealized_pl_eur"),
+            ticker = rs.getString("ticker"),
+            name = rs.getString("name"),
+            type = rs.getString("asset_type")
         )
     }
 
@@ -322,7 +367,8 @@ class PortfolioRepository(
         val marketValueEur: BigDecimal?,
         val unrealizedPlEur: BigDecimal?,
         val ticker: String,
-        val name: String
+        val name: String,
+        val type: String? = null
     )
 
     data class MonthlyInvestedRow(
@@ -331,7 +377,6 @@ class PortfolioRepository(
         val invested: BigDecimal
     )
 
-    // New result types
     data class CountryValue(
         val country: String,
         val valueEur: BigDecimal
