@@ -1,4 +1,7 @@
 /**/build/
 /**/.gradle/
-/.idea/
-/backend/.kotlin/
+/**/.idea/
+
+/**/node_modules/
+/**/build/
+/**/.vscode/

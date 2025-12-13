@@ -337,8 +337,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": 12
+              "format": "int32"
             }
           }
         ],
@@ -381,8 +380,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": 12
+              "format": "int32"
             }
           }
         ],
@@ -396,6 +394,31 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/portfolio/holdings": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get current portfolio holdings",
+        "description": "Returns a list of all current portfolio positions with detailed information.",
+        "operationId": "getHoldings",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved holdings list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetHoldingResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -524,6 +547,28 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CountryValueResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/allocation/asset-type": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get portfolio allocation by asset type",
+        "description": "Returns aggregated market value grouped by asset type for the latest snapshot",
+        "operationId": "getAssetTypeAllocation",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved allocation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetTypeValueResponse"
                 }
               }
             }
@@ -805,6 +850,12 @@
             "type": "integer",
             "format": "int32"
           },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
           "numberOfElements": {
             "type": "integer",
             "format": "int32"
@@ -814,12 +865,6 @@
           },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
-          },
-          "first": {
-            "type": "boolean"
-          },
-          "last": {
-            "type": "boolean"
           },
           "empty": {
             "type": "boolean"
@@ -1050,6 +1095,63 @@
           }
         }
       },
+      "AssetHoldingResponse": {
+        "type": "object",
+        "description": "Individual stock/etf holding details",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STOCK",
+              "ETF"
+            ]
+          },
+          "ticker": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shares": {
+            "type": "number"
+          },
+          "avgPrice": {
+            "type": "number"
+          },
+          "currentPrice": {
+            "type": "number"
+          },
+          "profitLoss": {
+            "type": "number"
+          },
+          "profitLossPercentage": {
+            "type": "number"
+          },
+          "portfolioPercentage": {
+            "type": "number"
+          }
+        }
+      },
+      "AssetTypeValueResponse": {
+        "type": "object",
+        "properties": {
+          "assetType": {
+            "type": "string"
+          },
+          "valueEur": {
+            "type": "number"
+          }
+        }
+      },
       "CountryValueResponse": {
         "type": "object",
         "properties": {
@@ -1106,6 +1208,12 @@
             "items": {
               "$ref": "#/components/schemas/CountryValueResponse"
             }
+          },
+          "byAssetType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetTypeValueResponse"
+            }
           }
         }
       },
@@ -1148,6 +1256,12 @@
             "type": "integer",
             "format": "int32"
           },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
           "numberOfElements": {
             "type": "integer",
             "format": "int32"
@@ -1157,12 +1271,6 @@
           },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
-          },
-          "first": {
-            "type": "boolean"
-          },
-          "last": {
-            "type": "boolean"
           },
           "empty": {
             "type": "boolean"

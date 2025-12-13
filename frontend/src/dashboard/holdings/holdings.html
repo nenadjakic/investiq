@@ -1,0 +1,132 @@
+<div class="bg-white rounded-lg shadow">
+  <div class="p-6 border-b border-gray-200">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800">All Holdings</h3>
+        <p class="text-sm text-gray-500">Current portfolio positions</p>
+      </div>
+      <div class="flex gap-2">
+        <input
+          type="text"
+          placeholder="Search ticker or name..."
+          class="px-3 py-2 border rounded text-sm w-48"
+          (input)="onSearch($any($event.target).value)"
+        />
+        <button class="px-3 py-2 text-sm bg-gray-100 rounded" disabled title="Export coming soon">
+          Export
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="p-6">
+      <p class="text-sm text-gray-600">Loading holdings...</p>
+    </div>
+  }
+
+  @if (!loading() && loadError()) {
+    <div class="p-6">
+      <div class="flex items-center justify-between">
+        <p class="text-sm text-red-600">Failed to load holdings.</p>
+        <button class="px-3 py-1 text-sm bg-gray-100 rounded" (click)="retry()">Retry</button>
+      </div>
+    </div>
+  }
+
+  @if (!loading() && !loadError()) {
+    @if (filteredHoldings().length === 0) {
+      <div class="p-6">
+        <p class="text-sm text-gray-500">No holdings to display.</p>
+      </div>
+    }
+
+    @if (filteredHoldings().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button class="flex items-center gap-1" (click)="toggleSort('ticker')">
+                  Ticker
+                  @if (sortState().column === 'ticker') {
+                    <span class="text-[10px] text-gray-500">
+                      {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                    </span>
+                  }
+                </button>
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button class="flex items-center gap-1" (click)="toggleSort('shares')">
+                  Shares
+                  @if (sortState().column === 'shares') {
+                    <span class="text-[10px] text-gray-500">
+                      {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                    </span>
+                  }
+                </button>
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button class="flex items-center gap-1" (click)="toggleSort('avgPrice')">
+                  Avg Price
+                  @if (sortState().column === 'avgPrice') {
+                    <span class="text-[10px] text-gray-500">
+                      {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                    </span>
+                  }
+                </button>
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button class="flex items-center gap-1" (click)="toggleSort('currentPrice')">
+                  Current Price
+                  @if (sortState().column === 'currentPrice') {
+                    <span class="text-[10px] text-gray-500">
+                      {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                    </span>
+                  }
+                </button>
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button class="flex items-center gap-1" (click)="toggleSort('profitLoss')">
+                  P/L
+                  @if (sortState().column === 'profitLoss') {
+                    <span class="text-[10px] text-gray-500">
+                      {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                    </span>
+                  }
+                </button>
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button class="flex items-center gap-1" (click)="toggleSort('portfolioPercentage')">
+                  % Portfolio
+                  @if (sortState().column === 'portfolioPercentage') {
+                    <span class="text-[10px] text-gray-500">
+                      {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                    </span>
+                  }
+                </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (holding of sortedHoldings(); track $index) {
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-semibold text-gray-900">{{ holding.ticker || '-' }}</div>
+                  <div class="text-xs text-gray-500">{{ holding.name || '—' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.shares ?? 0) | number:'1.0-2' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.avgPrice ?? 0) | number:'1.2-2' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.currentPrice ?? 0) | number:'1.2-2' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm" [ngClass]="(holding.profitLoss ?? 0) < 0 ? 'text-red-600' : 'text-green-600'">
+                  {{ (holding.profitLoss ?? 0) | number:'1.2-2' }} ({{ (holding.profitLossPercentage ?? 0) | number:'1.1-2' }}%)
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.portfolioPercentage ?? 0) | number:'1.1-2' }}%</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>

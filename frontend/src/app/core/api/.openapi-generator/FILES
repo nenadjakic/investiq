@@ -11,7 +11,9 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/asset-holding-response.ts
 model/asset-response.ts
+model/asset-type-value-response.ts
 model/company-response.ts
 model/country-response.ts
 model/country-value-response.ts

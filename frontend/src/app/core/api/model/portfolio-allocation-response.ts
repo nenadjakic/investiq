@@ -9,6 +9,7 @@
  */
 import { IndustrySectorValueResponse } from './industry-sector-value-response';
 import { CountryValueResponse } from './country-value-response';
+import { AssetTypeValueResponse } from './asset-type-value-response';
 import { CurrencyValueResponse } from './currency-value-response';
 
 
@@ -16,5 +17,6 @@ export interface PortfolioAllocationResponse {
     byCurrency?: Array<CurrencyValueResponse>;
     byIndustrySector?: Array<IndustrySectorValueResponse>;
     byCountry?: Array<CountryValueResponse>;
+    byAssetType?: Array<AssetTypeValueResponse>;
 }
 

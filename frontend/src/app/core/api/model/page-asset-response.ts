@@ -18,11 +18,11 @@ export interface PageAssetResponse {
     size?: number;
     content?: Array<AssetResponse>;
     number?: number;
+    first?: boolean;
+    last?: boolean;
     numberOfElements?: number;
     pageable?: PageableObject;
     sort?: SortObject;
-    first?: boolean;
-    last?: boolean;
     empty?: boolean;
 }
 
