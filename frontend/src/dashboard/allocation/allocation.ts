@@ -4,6 +4,8 @@ import {
   PortfolioChartResponse,
   PortfolioControllerService,
   PortfolioSummaryResponse,
+  CountryValueResponse,
+  CurrencyValueResponse,
 } from '../../app/core/api';
 import { CommonModule } from '@angular/common';
 import { EChartsCoreOption } from 'echarts/core';
@@ -17,12 +19,17 @@ import { NgxEchartsDirective } from 'ngx-echarts';
 })
 export class Allocation implements OnInit {
   private portfolioControllerService = inject(PortfolioControllerService);
-  summary = input<PortfolioSummaryResponse | null>();
-  chartData = input<PortfolioChartResponse | null>();
 
   sectorData = signal<IndustrySectorValueResponse[]>([]);
+  countryData = signal<CountryValueResponse[]>([]);
+  currencyData = signal<CurrencyValueResponse[]>([]);
+  assetTypeData = signal<Array<{ assetType?: string; valueEur?: number }>>([]);
   sectorOption = signal<EChartsCoreOption>({});
   sectorIndustryOption = signal<EChartsCoreOption>({});
+  countryOption = signal<EChartsCoreOption>({});
+  currencyOption = signal<EChartsCoreOption>({});
+  assetTypeOption = signal<EChartsCoreOption>({});
+  dataError = signal(false);
 
   constructor() {
     effect(() => {
@@ -59,10 +66,10 @@ export class Allocation implements OnInit {
           .sort((a, b) => b.value - a.value);
 
         this.sectorOption.set({
-          legend: {            
+          legend: {
             orient: 'horizontal',
             bottom: 30,
-            type: 'scroll'
+            type: 'scroll',
           },
           tooltip: {
             trigger: 'item',
@@ -96,14 +103,16 @@ export class Allocation implements OnInit {
         this.sectorIndustryOption.set({
           series: [
             {
-              type: 'sunburst',
+              type: 'treemap',
               data: sunburstData,
-              radius: ['0', '90%'],
-              center: ['50%', '45%'],
+              visibleMin: 300,
               label: {
-                rotate: 'radial',
-                minAngle: 20,
-                fontSize: 10,
+                show: true,
+                formatter: '{b}',
+              },
+              upperLabel: {
+                show: true,
+                height: 30,
               },
             },
           ],
@@ -132,6 +141,150 @@ export class Allocation implements OnInit {
         });
       }
     });
+
+    effect(() => {
+      const data = this.countryData();
+      if (data && data.length > 0) {
+        const totalValue = data.reduce((sum, i) => sum + (i.valueEur || 0), 0);
+        const pieData = data
+          .map((item) => ({
+            name: item.country || 'Unknown',
+            value: item.valueEur || 0,
+          }))
+          .sort((a, b) => b.value - a.value);
+
+        this.countryOption.set({
+          legend: {
+            orient: 'horizontal',
+            bottom: 30,
+            type: 'scroll',
+          },
+          tooltip: {
+            trigger: 'item',
+            formatter: (params: any) => {
+              const val = Number(params.value) || 0;
+              const pct = totalValue > 0 ? (val / totalValue) * 100 : 0;
+              return `${params.name}<br/>€ ${val.toFixed(2)}<br/>${pct.toFixed(2)} %`;
+            },
+          },
+          series: [
+            {
+              name: 'Country Allocation',
+              type: 'pie',
+              radius: ['60%', '90%'],
+              startAngle: 180,
+              endAngle: 360,
+              label: {
+                show: false,
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  formatter: '{b}: {d}%',
+                },
+              },
+              data: pieData,
+            },
+          ],
+        });
+      }
+    });
+
+    effect(() => {
+      const data = this.currencyData();
+      if (data && data.length > 0) {
+        const totalValue = data.reduce((sum, i) => sum + (i.valueEur || 0), 0);
+        const pieData = data
+          .map((item) => ({
+            name: item.currency || 'Unknown',
+            value: item.valueEur || 0,
+          }))
+          .sort((a, b) => b.value - a.value);
+
+        this.currencyOption.set({
+          legend: {
+            orient: 'horizontal',
+            bottom: 30,
+            type: 'scroll',
+          },
+          tooltip: {
+            trigger: 'item',
+            formatter: (params: any) => {
+              const val = Number(params.value) || 0;
+              const pct = totalValue > 0 ? (val / totalValue) * 100 : 0;
+              return `${params.name}<br/>€ ${val.toFixed(2)}<br/>${pct.toFixed(2)} %`;
+            },
+          },
+          series: [
+            {
+              name: 'Currency Exposure',
+              type: 'pie',
+              radius: ['60%', '90%'],
+              startAngle: 180,
+              endAngle: 360,
+              label: {
+                show: false,
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  formatter: '{b}: {d}%',
+                },
+              },
+              data: pieData,
+            },
+          ],
+        });
+      }
+    });
+
+    effect(() => {
+      const data = this.assetTypeData();
+      if (data && data.length > 0) {
+        const totalValue = data.reduce((sum, i) => sum + (i.valueEur || 0), 0);
+        const pieData = data
+          .map((item) => ({
+            name: item.assetType || 'Unknown',
+            value: item.valueEur || 0,
+          }))
+          .sort((a, b) => b.value - a.value);
+
+        this.assetTypeOption.set({
+          legend: {
+            orient: 'horizontal',
+            bottom: 30,
+            type: 'scroll',
+          },
+          tooltip: {
+            trigger: 'item',
+            formatter: (params: any) => {
+              const val = Number(params.value) || 0;
+              const pct = totalValue > 0 ? (val / totalValue) * 100 : 0;
+              return `${params.name}<br/>€ ${val.toFixed(2)}<br/>${pct.toFixed(2)} %`;
+            },
+          },
+          series: [
+            {
+              name: 'Asset Type',
+              type: 'pie',
+              radius: ['60%', '90%'],
+              startAngle: 180,
+              endAngle: 360,
+              label: {
+                show: false,
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  formatter: '{b}: {d}%',
+                },
+              },
+              data: pieData,
+            },
+          ],
+        });
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -139,12 +292,23 @@ export class Allocation implements OnInit {
   }
 
   loadSectorAllocation(): void {
-    this.portfolioControllerService.getIndustrySectorAllocation().subscribe({
+    this.dataError.set(false);
+
+    this.portfolioControllerService.getCombinedAllocation().subscribe({
       next: (data) => {
-        this.sectorData.set(Array.isArray(data) ? data : [data]);
+        this.sectorData.set(Array.isArray(data.byIndustrySector) ? data.byIndustrySector : []);
+        this.countryData.set(Array.isArray(data.byCountry) ? data.byCountry : []);
+        this.currencyData.set(Array.isArray(data.byCurrency) ? data.byCurrency : []);
+        const byAssetType = (data as any)?.byAssetType;
+        this.assetTypeData.set(Array.isArray(byAssetType) ? byAssetType : []);
       },
       error: (err) => {
-        console.error('Error loading sector allocation:', err);
+        this.dataError.set(true);
+        this.sectorData.set([]);
+        this.countryData.set([]);
+        this.currencyData.set([]);
+        this.assetTypeData.set([]);
+        console.error('Error loading allocation data:', err);
       },
     });
   }

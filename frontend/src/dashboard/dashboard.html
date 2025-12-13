@@ -1,5 +1,3 @@
-<h2 class="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
-
 <nav class="border-b border-gray-200 mb-6">
   <div class="flex space-x-8">
     <button (click)="activeTab.set('overview')"
@@ -46,48 +44,17 @@
 </nav>
 
 @if (activeTab() === 'overview') {
-  <app-overview [summary]="summary()" [chartData]="chartData()" (periodChange)="loadChartData($event)"></app-overview>
+  <app-overview></app-overview>
 }
 
 <!-- PERFORMANCE TAB -->
 @if (activeTab() === 'performance') {
-  <div class="space-y-6">
-    <!-- Big Performance Chart -->
-    <div class="bg-white rounded-lg shadow p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Portfolio Performance Over Time</h3>
-        <div class="flex space-x-2">
-          <button class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded">1Y</button>
-          <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">3Y</button>
-          <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded">All</button>
-        </div>
-      </div>
-      <div class="h-96">
-        <div echarts [options]="chartOption()" class="w-full h-full"></div>
-      </div>
-    </div>
-
-    <!-- Placeholder for more charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Cumulative P/L</h3>
-        <div class="h-64 bg-gray-50 rounded flex items-center justify-center">
-          <p class="text-gray-400">Chart coming soon</p>
-        </div>
-      </div>
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Monthly P/L</h3>
-        <div class="h-64 bg-gray-50 rounded flex items-center justify-center">
-          <p class="text-gray-400">Chart coming soon</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <app-performance></app-performance>
 }
 
 <!-- ALLOCATION TAB -->
 @if (activeTab() === 'allocation') {
-  <app-allocation [summary]="summary()" [chartData]="chartData()"></app-allocation>
+  <app-allocation></app-allocation>
 }
 
 <!-- HOLDINGS TAB -->

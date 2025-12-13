@@ -1,87 +1,111 @@
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-  <div class="bg-white rounded-lg shadow p-6">
-    <div class="flex justify-between items-start mb-2">
-      <p class="text-sm text-gray-500">Total Portfolio Value</p>
-      <p class="text-xs text-gray-400">as of {{ summary()?.snapshotDate | date : 'yyyy-MM-dd' }}</p>
+  @if (!summaryError() && summary()) {
+    <ng-container>
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex justify-between items-start mb-2">
+          <p class="text-sm text-gray-500">Total Portfolio Value</p>
+          <p class="text-xs text-gray-400">as of {{ summary()?.snapshotDate | date : 'yyyy-MM-dd' }}</p>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-800 mb-1">
+          {{ summary()?.totalValue | currency : 'EUR' }}
+        </h3>
+        <p
+          class="text-sm"
+          [ngClass]="
+            (summary()?.periodChange?.changePercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'
+          "
+        >
+          {{ summary()?.periodChange?.changeAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}
+          ({{ (summary()?.periodChange?.changePercentage ?? 0) >= 0 ? '+' : ''
+          }}{{ summary()?.periodChange?.changePercentage | number : '1.2-2' }}%)
+          <span class="text-gray-400 ml-1">{{ summary()?.periodChange?.periodLabel }}</span>
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <p class="text-sm text-gray-500 mb-2">Total Invested</p>
+        <h3 class="text-3xl font-bold text-gray-800 mb-1">
+          {{ summary()?.totalInvested | currency : 'EUR' }}
+        </h3>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <p class="text-sm text-gray-500 mb-2">Total P/L</p>
+        <h3
+          class="text-3xl font-bold"
+          [ngClass]="(summary()?.totalReturn ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+        >
+          {{ summary()?.totalReturn | currency : 'EUR' }}
+        </h3>
+        <p
+          class="text-sm"
+          [ngClass]="(summary()?.totalReturnPercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+        >
+          {{ (summary()?.totalReturnPercentage ?? 0) >= 0 ? '+' : ''
+          }}{{ summary()?.totalReturnPercentage | number : '1.2-2' }}%
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <p class="text-sm text-gray-500 mb-2">Holdings</p>
+        <h3 class="text-3xl font-bold text-gray-800">{{ summary()?.totalHoldings }}</h3>
+      </div>
+    </ng-container>
+  } @else if (summaryError()) {
+    <div class="bg-red-50 text-red-700 rounded-lg shadow p-6 md:col-span-4 flex items-center justify-center">
+      Summary data not available.
     </div>
-    <h3 class="text-3xl font-bold text-gray-800 mb-1">
-      {{ summary()?.totalValue | currency : 'EUR' }}
-    </h3>
-    <p
-      class="text-sm"
-      [ngClass]="
-        (summary()?.periodChange?.changePercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'
-      "
-    >
-      {{ summary()?.periodChange?.changeAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}
-      ({{ (summary()?.periodChange?.changePercentage ?? 0) >= 0 ? '+' : ''
-      }}{{ summary()?.periodChange?.changePercentage | number : '1.2-2' }}%)
-      <span class="text-gray-400 ml-1">{{ summary()?.periodChange?.periodLabel }}</span>
-    </p>
-  </div>
-
-  <div class="bg-white rounded-lg shadow p-6">
-    <p class="text-sm text-gray-500 mb-2">Total Invested</p>
-    <h3 class="text-3xl font-bold text-gray-800 mb-1">
-      {{ summary()?.totalInvested | currency : 'EUR' }}
-    </h3>
-  </div>
-
-  <div class="bg-white rounded-lg shadow p-6">
-    <p class="text-sm text-gray-500 mb-2">Total P/L</p>
-    <h3
-      class="text-3xl font-bold"
-      [ngClass]="(summary()?.totalReturn ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
-    >
-      {{ summary()?.totalReturn | currency : 'EUR' }}
-    </h3>
-    <p
-      class="text-sm"
-      [ngClass]="(summary()?.totalReturnPercentage ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
-    >
-      {{ (summary()?.totalReturnPercentage ?? 0) >= 0 ? '+' : ''
-      }}{{ summary()?.totalReturnPercentage | number : '1.2-2' }}%
-    </p>
-  </div>
-
-  <div class="bg-white rounded-lg shadow p-6">
-    <p class="text-sm text-gray-500 mb-2">Holdings</p>
-    <h3 class="text-3xl font-bold text-gray-800">{{ summary()?.totalHoldings }}</h3>
-  </div>
+  } @else {
+    <div class="bg-gray-50 text-gray-600 rounded-lg shadow p-6 md:col-span-4 flex items-center justify-center">
+      No data available for portfolio summary.
+    </div>
+  }
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-  <div class="bg-white rounded-lg shadow p-6">
-    <div class="flex justify-between items-start mb-2">
-      <p class="text-sm text-gray-500 mb-2">Realized P/L</p>
-      <p class="text-xs text-gray-400">without dividends</p>
-    </div>
-    <h3
-      class="text-3xl font-bold"
-      [ngClass]="(summary()?.totalRealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
-    >
-      {{ summary()?.totalRealizedPL | currency : 'EUR' }}
-    </h3>
-  </div>
+  @if (!summaryError() && summary()) {
+    <ng-container>
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex justify-between items-start mb-2">
+          <p class="text-sm text-gray-500 mb-2">Realized P/L</p>
+          <p class="text-xs text-gray-400">without dividends</p>
+        </div>
+        <h3
+          class="text-3xl font-bold"
+          [ngClass]="(summary()?.totalRealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+        >
+          {{ summary()?.totalRealizedPL | currency : 'EUR' }}
+        </h3>
+      </div>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <div class="flex justify-between items-start mb-2">
-      <p class="text-sm text-gray-500 mb-2">Unrealized P/L</p>
-    </div>
-    <h3
-      class="text-3xl font-bold"
-      [ngClass]="(summary()?.totalUnrealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
-    >
-      {{ summary()?.totalUnrealizedPL | currency : 'EUR' }}
-    </h3>
-  </div>
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex justify-between items-start mb-2">
+          <p class="text-sm text-gray-500 mb-2">Unrealized P/L</p>
+        </div>
+        <h3
+          class="text-3xl font-bold"
+          [ngClass]="(summary()?.totalUnrealizedPL ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'"
+        >
+          {{ summary()?.totalUnrealizedPL | currency : 'EUR' }}
+        </h3>
+      </div>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <p class="text-sm text-gray-500 mb-2">Total Dividends</p>
-    <h3 class="text-3xl font-bold text-gray-800">
-      {{ summary()?.totalDividends | currency : 'EUR' }}
-    </h3>
-  </div>
+      <div class="bg-white rounded-lg shadow p-6">
+        <p class="text-sm text-gray-500 mb-2">Total Dividends</p>
+        <h3 class="text-3xl font-bold text-gray-800">
+          {{ summary()?.totalDividends | currency : 'EUR' }}
+        </h3>
+      </div>
+    </ng-container>
+  } @else if (summaryError()) {
+    <div class="bg-red-50 text-red-700 rounded-lg shadow p-6 md:col-span-3 flex items-center justify-center">
+      P/L data not available.
+    </div>
+  } @else {
+    <div class="bg-gray-50 text-gray-600 rounded-lg shadow p-6 md:col-span-3 flex items-center justify-center">
+      No data available for P/L.
+    </div>
+  }
 </div>
 
 <div class="space-y-6">
@@ -89,6 +113,9 @@
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-lg font-semibold text-gray-800">Profit/Loss Over Time (%)</h3>
             <div class="flex gap-2">
+        <button (click)="setPeriod('ALL')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="selectedPeriod() === 'ALL' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">ALL</button>
         <button (click)="setPeriod('MTD')"
           class="px-2 py-1 text-sm rounded"
           [ngClass]="selectedPeriod() === 'MTD' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">MTD</button>
@@ -110,7 +137,17 @@
             </div>
     </div>
     <div class="h-96">
-      <div echarts [options]="chartOption()" class="w-full h-full"></div>
+      @if (chartError()) {
+        <div class="w-full h-full flex items-center justify-center bg-red-50 text-red-700 rounded">
+          Chart not available.
+        </div>
+      } @else if (!chartData()) {
+        <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-600 rounded">
+          No data available for selected period.
+        </div>
+      } @else {
+        <div echarts [options]="chartOption()" class="w-full h-full"></div>
+      }
     </div>
   </div>
 </div>
