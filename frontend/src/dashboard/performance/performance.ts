@@ -2,7 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { EChartsCoreOption } from 'echarts/core';
-import { PortfolioChartResponse, PortfolioControllerService } from '../../app/core/api';
+import {
+  MonthlyInvestedResponse,
+  PortfolioChartResponse,
+  PortfolioControllerService,
+} from '../../app/core/api';
 import { ToastService } from '../../shared/toast.service';
 
 @Component({
@@ -16,8 +20,13 @@ export class Performance implements OnInit {
   private toastService = inject(ToastService);
 
   chartData = signal<PortfolioChartResponse | null>(null);
+  monthlyInvested = signal<MonthlyInvestedResponse | null>(null);
   chartError = signal(false);
+  monthlyError = signal(false);
   chartOption = signal<EChartsCoreOption>({});
+  monthlyOption = signal<EChartsCoreOption>({});
+  selectedPeriod = signal<'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'>('ALL');
+  selectedMonths = signal<'6M' | '1Y' | '3Y' | 'ALL'>('6M');
 
   constructor() {
     effect(() => {
@@ -68,6 +77,47 @@ export class Performance implements OnInit {
         });
       }
     });
+
+    effect(() => {
+      const monthly = this.monthlyInvested();
+      if (monthly?.series && monthly.series.length > 0 && !this.monthlyError()) {
+        const categories = monthly.series.map((item) => item.yearMonth ?? '');
+        const values = monthly.series.map((item) => item.invested ?? 0);
+
+        this.monthlyOption.set({
+          xAxis: {
+            type: 'category',
+            data: categories,
+          },
+          yAxis: {
+            type: 'value',
+          },
+          series: [
+            {
+              name: 'Invested',
+              data: values,
+              type: 'bar',
+              itemStyle: {
+                color: '#3B82F6',
+              },
+            },
+          ],
+          tooltip: {
+            trigger: 'axis',
+            formatter: (params: any) => {
+              const item = params[0];
+              const value = `€ ${Number(item.value).toFixed(2)}`;
+              return `${item.axisValue}<br/>${item.marker} ${item.seriesName}: ${value}`;
+            },
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            containLabel: true,
+          },
+        });
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -76,13 +126,88 @@ export class Performance implements OnInit {
 
   loadChartData(days: number | undefined = undefined): void {
     this.chartError.set(false);
+    this.chartData.set(null);
+    this.loadPerformanceChart(days);
+    this.loadMonthlyInvested(this.mapMonthsToNumber(this.selectedMonths()));
+  }
+
+  private loadPerformanceChart(days: number | undefined): void {
     this.portfolioControllerService.getPortfolioPerformanceChart(days).subscribe({
-      next: (data) => this.chartData.set(data),
+      next: (data) => this.chartData.set(data ?? null),
       error: (err) => {
         this.chartError.set(true);
         this.toastService.error('Failed to load performance data', 'Error');
         console.error('Error loading performance data:', err);
       },
     });
+  }
+
+  private loadMonthlyInvested(months: number | undefined): void {
+    this.monthlyError.set(false);
+    this.monthlyInvested.set(null);
+
+    this.portfolioControllerService.getMonthlyInvested(months).subscribe({
+      next: (data) => this.monthlyInvested.set(data ?? null),
+      error: (err) => {
+        this.monthlyError.set(true);
+        this.toastService.error('Failed to load monthly investments', 'Error');
+        console.error('Error loading monthly investments:', err);
+      },
+    });
+  }
+
+  setPeriod(period: 'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y') {
+    this.selectedPeriod.set(period);
+    const days = this.mapPeriodToDays(period);
+    this.loadChartData(days);
+  }
+
+  setMonthsPeriod(period: '6M' | '1Y' | '3Y' | 'ALL') {
+    this.selectedMonths.set(period);
+    const months = this.mapMonthsToNumber(period);
+    this.loadMonthlyInvested(months);
+  }
+
+  private mapPeriodToDays(period: 'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'): number | undefined {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const startOfYear = new Date(today.getFullYear(), 0, 1);
+
+    switch (period) {
+      case 'ALL':
+        return undefined; // backend returns all by default
+      case 'MTD': {
+        const diff = Math.ceil((today.getTime() - startOfMonth.getTime()) / (1000 * 60 * 60 * 24));
+        return Math.max(diff, 1);
+      }
+      case 'YTD': {
+        const diff = Math.ceil((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24));
+        return Math.max(diff, 1);
+      }
+      case '1M':
+        return 30;
+      case '3M':
+        return 90;
+      case '6M':
+        return 180;
+      case '1Y':
+        return 365;
+      default:
+        return undefined;
+    }
+  }
+
+  private mapMonthsToNumber(period: '6M' | '1Y' | '3Y' | 'ALL'): number | undefined {
+    switch (period) {
+      case '6M':
+        return 6;
+      case '1Y':
+        return 12;
+      case '3Y':
+        return 36;
+      case 'ALL':
+      default:
+        return undefined;
+    }
   }
 }
