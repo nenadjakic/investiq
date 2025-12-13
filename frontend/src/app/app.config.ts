@@ -7,8 +7,10 @@ import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/compon
 import { CanvasRenderer } from 'echarts/renderers';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideEchartsCore } from 'ngx-echarts';
+import { cacheInterceptor } from './core/http/cache.interceptor';
+import { retryInterceptor } from './core/http/retry.interceptor';
 
 echarts.use([
   BarChart,
@@ -26,7 +28,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([cacheInterceptor, retryInterceptor])),
     provideEchartsCore({ echarts }),
   ],
 };
