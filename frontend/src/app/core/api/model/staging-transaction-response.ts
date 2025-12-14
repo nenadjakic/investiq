@@ -12,6 +12,7 @@ import { AssetResponse } from './asset-response';
 
 export interface StagingTransactionResponse { 
     id?: string;
+    platform?: StagingTransactionResponse.PlatformEnum;
     date?: string;
     type?: StagingTransactionResponse.TypeEnum;
     symbol?: string;
@@ -22,6 +23,13 @@ export interface StagingTransactionResponse {
     importStatus?: StagingTransactionResponse.ImportStatusEnum;
 }
 export namespace StagingTransactionResponse {
+    export const PlatformEnum = {
+        Trading212: 'TRADING212',
+        Etoro: 'ETORO',
+        Ibkr: 'IBKR',
+        Revolut: 'REVOLUT'
+    } as const;
+    export type PlatformEnum = typeof PlatformEnum[keyof typeof PlatformEnum];
     export const TypeEnum = {
         Buy: 'BUY',
         Fee: 'FEE',

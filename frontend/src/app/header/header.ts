@@ -15,6 +15,7 @@ export class HeaderComponent {
   navItems = [
     { label: 'Dashboard', route: '/dashboard' },
     { label: 'Transactions', route: '/transactions' },
+    { label: 'Staging Transactions', route: '/staging-transactions' },
     { label: 'Assets', route: '/assets' },
     { label: 'Reference Data', route: '/reference-data' },
   ];

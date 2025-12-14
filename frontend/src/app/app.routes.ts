@@ -3,6 +3,7 @@ import { Dashboard } from '../dashboard/dashboard';
 import { AssetPage } from '../assets/assets';
 import { Transactions } from '../transactions/transactions';
 import { ReferenceData } from '../reference-data/reference-data';
+import { StagingTransactions } from '../staging-transactions/staging-transactions';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,12 @@ export const routes: Routes = [
     path: 'transactions',
     component: Transactions,
     data: { title: 'Transactions' },
+    pathMatch: 'full',
+  },
+  {
+    path: 'staging-transactions',
+    component: StagingTransactions,
+    data: { title: 'Staging Transactions' },
     pathMatch: 'full',
   },
 

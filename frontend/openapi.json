@@ -108,7 +108,7 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "default": 25,
+              "default": 50,
               "minimum": 1
             }
           },
@@ -119,6 +119,9 @@
             "required": false,
             "schema": {
               "type": "array",
+              "default": [
+                "transactionDate,DESC"
+              ],
               "items": {
                 "type": "string"
               }
@@ -817,7 +820,7 @@
           "Asset Controller"
         ],
         "summary": "Find all assets",
-        "description": "Returns a paginated list of transactions filtered by optional parameters",
+        "description": "Returns a paginated list of assets filtered by optional parameters",
         "operationId": "findAllAssets",
         "parameters": [
           {
@@ -894,6 +897,31 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PageAssetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/asset/list": {
+      "get": {
+        "tags": [
+          "Asset Controller"
+        ],
+        "summary": "Find all assets",
+        "description": "Returns a list of assets.",
+        "operationId": "findAllAssetsAsList",
+        "responses": {
+          "200": {
+            "description": "List of assets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AssetResponse"
+                  }
                 }
               }
             }
@@ -1134,11 +1162,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"
@@ -1152,6 +1180,12 @@
             "type": "integer",
             "format": "int64"
           },
+          "unpaged": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
           "paged": {
             "type": "boolean"
           },
@@ -1162,12 +1196,6 @@
           "pageSize": {
             "type": "integer",
             "format": "int32"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
-          "unpaged": {
-            "type": "boolean"
           }
         }
       },
@@ -1295,11 +1323,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"
@@ -1312,6 +1340,15 @@
           "id": {
             "type": "string",
             "format": "uuid"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
           },
           "date": {
             "type": "string",
@@ -1677,11 +1714,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"
