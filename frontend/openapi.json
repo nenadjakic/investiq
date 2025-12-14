@@ -186,7 +186,7 @@
         ],
         "summary": "Import staging transactions (file upload)",
         "description": "Upload a file for a given platform to import staging transactions. Returns 201 Created on success.",
-        "operationId": "import",
+        "operationId": "importStagingTransactions",
         "parameters": [
           {
             "name": "platform",
@@ -1162,11 +1162,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "empty": {
             "type": "boolean"
@@ -1180,12 +1180,6 @@
             "type": "integer",
             "format": "int64"
           },
-          "unpaged": {
-            "type": "boolean"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "paged": {
             "type": "boolean"
           },
@@ -1196,6 +1190,12 @@
           "pageSize": {
             "type": "integer",
             "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "unpaged": {
+            "type": "boolean"
           }
         }
       },
@@ -1323,11 +1323,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "empty": {
             "type": "boolean"
@@ -1714,11 +1714,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "empty": {
             "type": "boolean"

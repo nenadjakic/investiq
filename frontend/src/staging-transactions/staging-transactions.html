@@ -1,29 +1,59 @@
 <div class="px-6 py-8 lg:px-10 space-y-8">	
 
-	<!-- Filters -->
-	<div class="flex justify-end gap-3">
-		<select
-			[(ngModel)]="platformFilter"
-			(ngModelChange)="loadTransactions(0)"
-			class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-		>
-			<option value="">All Platforms</option>
-			<option value="TRADING212">Trading 212</option>
-			<option value="ETORO">eToro</option>
-			<option value="IBKR">Interactive Brokers</option>
-			<option value="REVOLUT">Revolut</option>
-		</select>
-		<select
-			[(ngModel)]="statusFilter"
-			(ngModelChange)="loadTransactions(0)"
-			class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-		>
-			<option value="">All Statuses</option>
-			<option value="PENDING">Pending</option>
-			<option value="VALIDATED">Validated</option>
-			<option value="FAILED">Failed</option>
-			<option value="IMPORTED">Imported</option>
-		</select>
+	<!-- Import and Filters -->
+	<div class="flex justify-between items-center gap-3">
+		<!-- Import Section -->
+		<div class="flex items-center gap-2">			
+			<select
+				[(ngModel)]="importPlatform"
+				class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+			>
+				<option value="">Select Platform</option>
+				<option value="TRADING212">Trading 212</option>
+				<option value="ETORO">eToro</option>
+				<option value="IBKR">Interactive Brokers</option>
+				<option value="REVOLUT">Revolut</option>
+			</select>
+			<input
+				type="file"
+				(change)="onFileSelected($event)"
+				class="text-sm text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
+			/>
+			<button
+				type="button"
+				(click)="importTransactions()"
+				[disabled]="importLoading() || !importPlatform() || !importFile()"
+				class="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+			>
+				@if (importLoading()) { Importing... } @else { Import }
+			</button>
+		</div>
+
+		<!-- Filters -->
+		<div class="flex gap-3">
+			<select
+				[(ngModel)]="platformFilter"
+				(ngModelChange)="loadTransactions(0)"
+				class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+			>
+				<option value="">All Platforms</option>
+				<option value="TRADING212">Trading 212</option>
+				<option value="ETORO">eToro</option>
+				<option value="IBKR">Interactive Brokers</option>
+				<option value="REVOLUT">Revolut</option>
+			</select>
+			<select
+				[(ngModel)]="statusFilter"
+				(ngModelChange)="loadTransactions(0)"
+				class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+			>
+				<option value="">All Statuses</option>
+				<option value="PENDING">Pending</option>
+				<option value="VALIDATED">Validated</option>
+				<option value="FAILED">Failed</option>
+				<option value="IMPORTED">Imported</option>
+			</select>
+		</div>
 	</div>
 	@if (loading()) {
 		<div class="bg-white rounded-lg shadow p-6">

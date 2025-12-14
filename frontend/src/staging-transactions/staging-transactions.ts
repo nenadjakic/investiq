@@ -34,6 +34,11 @@ export class StagingTransactions implements OnInit {
   platformFilter = signal<'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT' | ''>('');
   statusFilter = signal<'PENDING' | 'VALIDATED' | 'FAILED' | 'IMPORTED' | ''>('');
 
+  // Import
+  importPlatform = signal<'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT' | ''>('');
+  importFile = signal<File | null>(null);
+  importLoading = signal(false);
+
   // Detail panel state
   selectedId = signal<string | null>(null);
   selectedDetail = signal<StagingTransactionResponse | null>(null);
@@ -283,6 +288,38 @@ export class StagingTransactions implements OnInit {
 
   onAssetSearchBlur() {
     setTimeout(() => this.assetDropdownOpen.set(false), 200);
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.importFile.set(input.files[0]);
+    }
+  }
+
+  importTransactions() {
+    if (!this.importPlatform() || !this.importFile()) {
+      this.toast.error('Please select platform and file', 'Validation');
+      return;
+    }
+
+    this.importLoading.set(true);
+    this.stagingTransactionControllerService
+      .importStagingTransactions(this.importPlatform() as any, this.importFile()!)
+      .subscribe({
+        next: () => {
+          this.toast.success('File imported successfully', 'Success');
+          this.importLoading.set(false);
+          this.importPlatform.set('');
+          this.importFile.set(null);
+          this.loadTransactions(0);
+        },
+        error: (err) => {
+          this.toast.error('Import failed', 'Error');
+          this.importLoading.set(false);
+          console.error(err);
+        },
+      });
   }
 
   private setFormValues(detail: StagingTransactionResponse) {
