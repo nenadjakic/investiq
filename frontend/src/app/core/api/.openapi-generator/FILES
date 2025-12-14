@@ -20,6 +20,7 @@ index.ts
 model/asset-alias-response.ts
 model/asset-holding-response.ts
 model/asset-response.ts
+model/asset-simple-response.ts
 model/asset-type-value-response.ts
 model/company-response.ts
 model/country-response.ts
@@ -38,6 +39,7 @@ model/page-asset-response.ts
 model/page-staging-transaction-response.ts
 model/page-transaction-response.ts
 model/pageable-object.ts
+model/performer-response.ts
 model/period-change-response.ts
 model/portfolio-allocation-response.ts
 model/portfolio-chart-response.ts
@@ -48,6 +50,7 @@ model/sector-simple-response.ts
 model/sort-object.ts
 model/staging-transaction-edit-request.ts
 model/staging-transaction-response.ts
+model/top-bottom-performers-response.ts
 model/transaction-response.ts
 param.ts
 provide-api.ts

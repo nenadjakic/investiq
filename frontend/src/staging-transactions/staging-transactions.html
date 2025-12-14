@@ -192,16 +192,22 @@
 									<div class="text-xs text-gray-500 mt-1">{{ transaction.resolvedAsset?.company?.name }}</div>
 								</td>
 								<td class="px-4 py-3 text-end">
-									<button
-										type="button"
-										class="inline-flex items-center justify-center h-8 w-8 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100"
-										aria-label="Open details"
-										(click)="openDetails(transaction)"
-									>
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-2 4h2m-2 4h2m3.586-9.414a2 2 0 010 2.828l-7.172 7.172a2 2 0 01-.878.517l-3.121.78a.5.5 0 01-.606-.606l.78-3.121a2 2 0 01.517-.878l7.172-7.172a2 2 0 012.828 0z" />
-										</svg>
-									</button>
+									<div class="relative inline-block">
+										<button
+											type="button"
+											class="inline-flex items-center justify-center h-8 w-8 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100"
+											aria-label="Open details"
+											(click)="openDetails(transaction)"
+											[disabled]="transaction.importStatus !== 'PENDING'"
+										>
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-2 4h2m-2 4h2m3.586-9.414a2 2 0 010 2.828l-7.172 7.172a2 2 0 01-.878.517l-3.121.78a.5.5 0 01-.606-.606l.78-3.121a2 2 0 01.517-.878l7.172-7.172a2 2 0 012.828 0z" />
+											</svg>
+										</button>
+										@if (transaction.importStatus !== 'PENDING') {
+											<span class="absolute -top-1 -right-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-white text-[10px]">⦸</span>
+										}
+									</div>
 								</td>
 							</tr>
 						} @empty {
@@ -350,6 +356,7 @@
 							formControlName="quantity"
 							type="number"
 							step="any"
+							[disabled]="!canEdit()"
 							class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
 						/>
 					</label>
@@ -360,6 +367,7 @@
 							formControlName="price"
 							type="number"
 							step="any"
+							[disabled]="!canEdit()"
 							class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
 						/>
 					</label>
@@ -370,6 +378,7 @@
 							formControlName="amount"
 							type="number"
 							step="any"
+							[disabled]="!canEdit()"
 							class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
 						/>
 					</label>
@@ -380,6 +389,7 @@
 							formControlName="grossAmount"
 							type="number"
 							step="any"
+							[disabled]="!canEdit()"
 							class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
 						/>
 					</label>
@@ -390,6 +400,7 @@
 							formControlName="taxPercentage"
 							type="number"
 							step="any"
+							[disabled]="!canEdit()"
 							class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
 							placeholder="e.g. 15"
 						/>
@@ -401,6 +412,7 @@
 							formControlName="taxAmount"
 							type="number"
 							step="any"
+							[disabled]="!canEdit()"
 							class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
 						/>
 					</label>
@@ -418,6 +430,7 @@
 										(focus)="assetDropdownOpen.set(true)"
 										(blur)="onAssetSearchBlur()"
 										placeholder="Search assets..."
+										[disabled]="!canEdit()"
 										class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
 									/>
 								} @else {
@@ -426,6 +439,7 @@
 										<button
 											type="button"
 											(click)="clearAsset()"
+											[disabled]="!canEdit()"
 											class="text-gray-500 hover:text-gray-700 ml-2"
 										>
 											✕
@@ -471,7 +485,7 @@
 						<button
 							type="submit"
 							class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-60"
-							[disabled]="updateLoading()"
+							[disabled]="updateLoading() || !canEdit()"
 						>
 							@if (updateLoading()) { Saving... } @else { Save changes }
 						</button>

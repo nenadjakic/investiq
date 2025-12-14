@@ -333,6 +333,43 @@
         }
       }
     },
+    "/transaction/last": {
+      "get": {
+        "tags": [
+          "Transaction Controller"
+        ],
+        "summary": "Find last N transactions",
+        "description": "Returns the last N transactions; defaults to 10 when n is not provided",
+        "operationId": "findLastTransactions",
+        "parameters": [
+          {
+            "name": "n",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of recent transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/staging-transaction/{id}": {
       "get": {
         "tags": [
@@ -422,6 +459,51 @@
           },
           "500": {
             "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/portfolio/performers": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get top and bottom performers",
+        "description": "Returns top and bottom performing assets with their percentage change",
+        "operationId": "getTopBottomPerformers",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 5,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved performers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopBottomPerformersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid limit parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopBottomPerformersResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -1488,6 +1570,45 @@
           },
           "periodChange": {
             "$ref": "#/components/schemas/PeriodChangeResponse"
+          }
+        }
+      },
+      "AssetSimpleResponse": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "PerformerResponse": {
+        "type": "object",
+        "properties": {
+          "asset": {
+            "$ref": "#/components/schemas/AssetSimpleResponse"
+          },
+          "percentageChange": {
+            "type": "number"
+          }
+        }
+      },
+      "TopBottomPerformersResponse": {
+        "type": "object",
+        "properties": {
+          "top": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PerformerResponse"
+            }
+          },
+          "bottom": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PerformerResponse"
+            }
           }
         }
       },

@@ -5,11 +5,12 @@ import { Overview } from './overview/overview';
 import { Allocation } from './allocation/allocation';
 import { Performance } from './performance/performance';
 import { Holdings } from "./holdings/holdings";
+import { Insights } from "./insights/insights";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, Overview, Allocation, Performance, Holdings],
+  imports: [CommonModule, Overview, Allocation, Performance, Holdings, Insights],
   templateUrl: './dashboard.html',
 })
 export class Dashboard {

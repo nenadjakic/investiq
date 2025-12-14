@@ -95,6 +95,7 @@ export class StagingTransactions implements OnInit {
       a.company?.name?.toLowerCase().includes(query)
     );
   });
+  canEdit = computed(() => this.selectedDetail()?.importStatus === 'PENDING');
 
   editForm = this.fb.group({
     asset: ['', Validators.required],

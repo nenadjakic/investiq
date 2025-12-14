@@ -1,0 +1,97 @@
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Recent Transactions</h3>
+    </div>
+
+    @if (txLoading()) {
+      <p class="text-sm text-gray-600">Loading recent transactions...</p>
+    } @else if (txError()) {
+      <div class="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <span>{{ txError() }}</span>
+      </div>
+    } @else {
+      @if (recentTransactions().length === 0) {
+        <p class="text-sm text-gray-500">No recent transactions found.</p>
+      }
+
+      @if (recentTransactions().length > 0) {
+        <div class="space-y-3">
+          @for (transaction of recentTransactions(); track transaction.id || $index) {
+            <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+              <div>
+                <p class="text-sm font-medium text-gray-900">
+                  {{ transaction.asset?.symbol || '-' }}
+                  <span class="uppercase text-gray-500">- {{ transaction.transactionType }}</span>
+                </p>
+                <p class="text-xs text-gray-500">{{ transaction.date | date:'dd.MM.yyyy, HH:mm' }}</p>
+              </div>
+              <div class="text-right">
+                @if (transaction.transactionType === 'BUY' || transaction.transactionType === 'SELL') {
+                  <p class="text-sm font-medium text-gray-900">
+                    {{ (transaction.quantity ?? 0) | number:'1.0-2' }} shares
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    @ {{ (transaction.price ?? 0) | number:'1.2-2' }} {{ transaction.currency?.code || '' }}
+                  </p>
+                } @else {
+                  <p class="text-sm font-medium text-gray-900">
+                    {{ (transaction.amount ?? 0) | number:'1.2-2' }} {{ transaction.currency?.code || '' }}
+                  </p>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Top / Bottom Performers</h3>
+    </div>
+
+    @if (perfLoading()) {
+      <p class="text-sm text-gray-600">Loading performers...</p>
+    } @else if (perfError()) {
+      <div class="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <span>{{ perfError() }}</span>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-3">
+          <h4 class="text-sm font-semibold text-gray-700">Top performers</h4>
+          @if (topPerformers().length === 0) {
+            <p class="text-sm text-gray-500">No top performers yet.</p>
+          }
+          @for (item of topPerformers(); track item.asset?.symbol || $index) {
+            <div class="p-3 rounded bg-gray-50">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-medium text-gray-900">{{ item.asset?.symbol || '-' }}</span>
+                <span class="text-sm font-semibold text-green-600">+{{ (item.percentageChange ?? 0) | number:'1.1-1' }}%</span>
+              </div>
+              <p class="text-xs text-gray-500">{{ item.asset?.name || '—' }}</p>
+            </div>
+          }
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-sm font-semibold text-gray-700">Bottom performers</h4>
+          @if (bottomPerformers().length === 0) {
+            <p class="text-sm text-gray-500">No laggards yet.</p>
+          }
+          @for (item of bottomPerformers(); track item.asset?.symbol || $index) {
+            <div class="p-3 rounded bg-gray-50">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-medium text-gray-900">{{ item.asset?.symbol || '-' }}</span>
+                <span class="text-sm font-semibold text-red-600">{{ (item.percentageChange ?? 0) | number:'1.1-1' }}%</span>
+              </div>
+              <p class="text-xs text-gray-500">{{ item.asset?.name || '—' }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
