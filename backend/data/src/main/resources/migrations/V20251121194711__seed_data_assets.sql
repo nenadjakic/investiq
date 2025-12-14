@@ -322,8 +322,6 @@ VALUES
     ('574cbe05-4932-4823-a705-16e196ffcbae', '194c2afc-ffd3-44c1-8b01-e666864bc59b', 'ETORO', 'AM.PA'),
     ('4820b456-87a7-4655-b4de-fb3cf0fd5c3f', '0fa99474-638a-4313-bb9f-81ebe87bbc65', 'ETORO', 'SPY5.L'),
     ('33f9e08e-19c3-4e53-8c39-b0d62b1aa003', 'c342c045-c36e-49e9-a65c-41dbe1374495', 'ETORO', 'IAU'),
-    ('c65782b7-135a-4203-bbdd-f3fc55e987b5', '113f2f97-ce2f-4556-a0f4-5e7d7ad4506d', 'ETORO', 'BN'),
-    ('74f4f6a0-d803-47b5-989a-3250418ddc4c', '113f2f97-ce2f-4556-a0f4-5e7d7ad4506d', 'ETORO', 'BN.PA'),
     ('4294a6a4-b2c7-4345-827b-a3b04bb08a86', 'd9363770-d91b-4913-8973-b236e0371768', 'ETORO', 'CNDX.L'),
     ('93d7d130-0c5c-4078-af18-c1b866c8f826', '3086c71b-8bc9-42e0-b47e-c6f2c5599ba0', 'ETORO', 'DELL'),
     ('70e0ed28-bbaf-47fb-b99b-d5a08af1603e', '06ee459e-be55-4e9a-ac35-26d1cf8592eb', 'ETORO', 'DTE.DE'),

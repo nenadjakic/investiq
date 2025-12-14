@@ -44,6 +44,10 @@ class AssetService(
             .map { it.toAssetResponse() }
             .getOrNull()
 
+    @Transactional
+    fun findAll(): List<AssetResponse> =
+        assetRepository.findAll().map { it.toAssetResponse() }
+
     private fun getSpecification(
         symbol: String?,
         currency: String?,

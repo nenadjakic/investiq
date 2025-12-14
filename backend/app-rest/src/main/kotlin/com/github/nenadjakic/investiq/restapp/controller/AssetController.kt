@@ -25,7 +25,7 @@ class AssetController(
 
     @Operation(
         summary = "Find all assets",
-        description = "Returns a paginated list of transactions filtered by optional parameters",
+        description = "Returns a paginated list of assets filtered by optional parameters",
         operationId = "findAllAssets",
         responses = [
             ApiResponse(
@@ -45,5 +45,24 @@ class AssetController(
             return ResponseEntity.ok(
                 assetService.findAllPageable(symbol, currency, exchange, company, pageable)
             )
+    }
+
+    @Operation(
+        summary = "Find all assets",
+        description = "Returns a list of assets.",
+        operationId = "findAllAssetsAsList",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "List of assets"
+            )
+        ]
+    )
+    @GetMapping(value = [ "/list" ], produces = [ MediaType.APPLICATION_JSON_VALUE ])
+    fun findAll(
+    ): ResponseEntity<List<AssetResponse>> {
+        return ResponseEntity.ok(
+            assetService.findAll()
+        )
     }
 }

@@ -4,12 +4,14 @@ package com.github.nenadjakic.investiq.service
 import com.github.nenadjakic.investiq.common.dto.StagingTransactionEditRequest
 import com.github.nenadjakic.investiq.common.dto.StagingTransactionResponse
 import com.github.nenadjakic.investiq.common.dto.toStagingTransactionResponse
+import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
 import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
 import jakarta.transaction.Transactional
+import org.hibernate.Hibernate
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
@@ -59,6 +61,20 @@ class StagingTransactionService(
             predicate
         }
         return stagingTransactionRepository.findAll(specification, pageable)
+            .map { Hibernate.unproxy(it, StagingTransaction::class.java) }
+            .map { unproxied ->
+                val stagingTransaction = unproxied as StagingTransaction
+
+                stagingTransaction.resolvedAsset = stagingTransaction.resolvedAsset?.let { Hibernate.unproxy(it, Asset::class.java) as Asset }
+
+                val unproxiedRelated = stagingTransaction.relatedStagingTransactions
+                    .map { Hibernate.unproxy(it, StagingTransaction::class.java) as StagingTransaction }
+                    .toMutableSet()
+                stagingTransaction.relatedStagingTransactions.clear()
+                stagingTransaction.relatedStagingTransactions.addAll(unproxiedRelated)
+
+                stagingTransaction
+            }
             .map { it.toStagingTransactionResponse() }
     }
 
@@ -66,6 +82,7 @@ class StagingTransactionService(
     fun findById(id: UUID): StagingTransactionResponse =
         stagingTransactionRepository.findById(id)
         .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
+        .also {  Hibernate.unproxy(it, StagingTransaction::class.java) }
         .toStagingTransactionResponse()
 
     @Transactional
@@ -105,6 +122,7 @@ class StagingTransactionService(
     fun assignAsset(id: UUID, assetId: UUID): StagingTransactionResponse {
         val stagingTransaction = stagingTransactionRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
+            .also { Hibernate.unproxy(it, StagingTransaction::class.java) }
 
         val stagingTransactions = stagingTransactionRepository.findByRelatedStagingTransaction_Id(id)
 
@@ -126,6 +144,7 @@ class StagingTransactionService(
     fun updateStatus(id: UUID, importStatus: ImportStatus): StagingTransactionResponse {
         val stagingTransaction = stagingTransactionRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }
+            .also { Hibernate.unproxy(it, StagingTransaction::class.java) }
 
         val stagingTransactions = stagingTransactionRepository.findByRelatedStagingTransaction_Id(id)
 

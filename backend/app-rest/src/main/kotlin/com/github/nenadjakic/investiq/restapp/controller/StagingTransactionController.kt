@@ -13,6 +13,7 @@ import jakarta.validation.Valid
 import org.springdoc.core.annotations.ParameterObject
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -71,9 +72,10 @@ class StagingTransactionController(
     @GetMapping(produces = [ MediaType.APPLICATION_JSON_VALUE ])
     fun findAll(@RequestParam platform: Platform?,
                 @RequestParam importStatus: ImportStatus?,
-                @ParameterObject @PageableDefault(size = 25) pageable: Pageable): ResponseEntity<Page<StagingTransactionResponse>> {
+                @ParameterObject @PageableDefault(size = 50, sort = ["transactionDate"], direction = Sort.Direction.DESC) pageable: Pageable): ResponseEntity<Page<StagingTransactionResponse>> {
         return ResponseEntity.ok(stagingTransactionService.findAll(platform, importStatus, pageable))
     }
+
 
     @Operation(
         summary = "Find staging transaction by id",

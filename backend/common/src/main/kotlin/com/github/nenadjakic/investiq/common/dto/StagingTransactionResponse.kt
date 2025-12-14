@@ -2,12 +2,14 @@ package com.github.nenadjakic.investiq.common.dto
 
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
+import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.enum.TransactionType
 import java.time.OffsetDateTime
 import java.util.UUID
 
 data class StagingTransactionResponse (
     val id: UUID,
+    val platform: Platform,
     val date: OffsetDateTime,
     val type: TransactionType,
     val symbol: String?,
@@ -21,6 +23,7 @@ data class StagingTransactionResponse (
 fun StagingTransaction.toStagingTransactionResponse() =
     StagingTransactionResponse(
         id = this.id!!,
+        platform = this.platform,
         date = this.transactionDate,
         type = this.transactionType,
         symbol = this.externalSymbol,
