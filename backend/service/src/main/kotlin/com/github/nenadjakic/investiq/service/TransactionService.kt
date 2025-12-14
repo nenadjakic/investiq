@@ -17,6 +17,8 @@ import jakarta.transaction.Transactional
 import org.hibernate.Hibernate
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -196,5 +198,14 @@ class TransactionService(
         return transactionRepository.findAll(pageable)
             .map { Hibernate.unproxy(it, Transaction::class.java) }
             .map { it.toTransactionResponse() }
+    }
+
+    @Transactional
+    fun findLast(n: Int): List<TransactionResponse> {
+        val pageable = PageRequest.of(0, n, Sort.by(Sort.Direction.DESC, "date"))
+        return transactionRepository.findAll(pageable)
+            .map { Hibernate.unproxy(it, Transaction::class.java) }
+            .map { it.toTransactionResponse() }
+            .content
     }
 }

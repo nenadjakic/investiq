@@ -14,6 +14,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "Transaction Controller", description = "Endpoints for managing transactions")
@@ -36,5 +37,18 @@ class TransactionController(
         @ParameterObject @PageableDefault(size = 50, sort = ["date"], direction = Sort.Direction.DESC) pageable: Pageable
     ): ResponseEntity<Page<TransactionResponse>> {
         return ResponseEntity.ok(transactionService.findAll(pageable))
+    }
+
+    @Operation(
+        summary = "Find last N transactions",
+        description = "Returns the last N transactions; defaults to 10 when n is not provided",
+        operationId = "findLastTransactions",
+        responses = [
+            ApiResponse(responseCode = "200", description = "List of recent transactions")
+        ]
+    )
+    @GetMapping(path = ["/last"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun findLast(@RequestParam(required = false, defaultValue = "10") n: Int): ResponseEntity<List<TransactionResponse>> {
+        return ResponseEntity.ok(transactionService.findLast(n))
     }
 }

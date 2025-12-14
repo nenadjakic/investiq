@@ -17,6 +17,13 @@ data class AssetResponse(
     var aliases: List<AssetAliasResponse>? = null
 )
 
+data class AssetSimpleResponse(
+    val id: UUID,
+    val symbol: String,
+    val name: String,
+    val type: AssetType
+)
+
 data class AssetAliasResponse(
     val id: UUID,
     val platform: Platform,

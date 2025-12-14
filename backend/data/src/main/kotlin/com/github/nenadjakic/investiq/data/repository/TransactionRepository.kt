@@ -6,3 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import java.util.UUID
 
 interface TransactionRepository: JpaRepository<Transaction, UUID>, JpaSpecificationExecutor<Transaction>
+
+

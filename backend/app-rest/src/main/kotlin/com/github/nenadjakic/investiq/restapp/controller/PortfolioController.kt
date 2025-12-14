@@ -17,14 +17,17 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.constraints.Min
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "Portfolio Controller", description = "Portfolio overview, holdings and performance analytics")
+@Validated
 @RestController
 @RequestMapping("/portfolio")
 class PortfolioController(
@@ -243,4 +246,22 @@ class PortfolioController(
     @GetMapping("/holdings", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getHoldings(): ResponseEntity<List<AssetHoldingResponse>> =
          ResponseEntity.ok(portfolioService.getPortfolioHoldings())
+
+    @Operation(
+        operationId = "getTopBottomPerformers",
+        summary = "Get top and bottom performers",
+        description = "Returns top and bottom performing assets with their percentage change"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successfully retrieved performers"),
+            ApiResponse(responseCode = "400", description = "Invalid limit parameter")
+        ]
+    )
+    @GetMapping("/performers", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getTopBottomPerformers(
+         @Min(1) @RequestParam(required = false, defaultValue = "5") limit: Int
+    ): ResponseEntity<com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse> =
+        ResponseEntity.ok(portfolioService.getTopBottomPerformers(limit))
+
 }

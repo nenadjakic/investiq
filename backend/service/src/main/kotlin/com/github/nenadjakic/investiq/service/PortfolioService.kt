@@ -10,6 +10,9 @@ import com.github.nenadjakic.investiq.common.dto.MonthlyInvestedResponse
 import com.github.nenadjakic.investiq.common.dto.CountryValueResponse
 import com.github.nenadjakic.investiq.common.dto.CurrencyValueResponse
 import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
+import com.github.nenadjakic.investiq.common.dto.AssetSimpleResponse
+import com.github.nenadjakic.investiq.common.dto.PerformerResponse
+import com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse
 import com.github.nenadjakic.investiq.data.enum.AssetType
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
@@ -224,7 +227,7 @@ class PortfolioService(
                 profitLoss = plAbsolute,
                 profitLossPercentage = plPercentage,
                 portfolioPercentage = portfolioPercentage,
-                platform = Platform.valueOf(snapshot.platform),
+                platform = null,
                 type = AssetType.valueOf(snapshot.type!!)
             )
         }.sortedByDescending { it.currentPrice * it.shares }
@@ -281,5 +284,34 @@ class PortfolioService(
             }
             else -> "last $requestedDays days"
         }
+    }
+
+    fun getTopBottomPerformers(limit: Int = 5): TopBottomPerformersResponse {
+        if (limit <= 0) {
+            return TopBottomPerformersResponse(emptyList(), emptyList())
+        }
+
+        val rows = portfolioRepository.getLatestAssetPerformances()
+        if (rows.isEmpty()) {
+            return TopBottomPerformersResponse(emptyList(), emptyList())
+        }
+
+        val performers = rows.map { r ->
+            val assetSimple = AssetSimpleResponse(
+                id = r.assetId,
+                symbol = r.ticker,
+                name = r.name,
+                type = AssetType.valueOf(r.type!!)
+            )
+            PerformerResponse(
+                asset = assetSimple,
+                percentageChange = r.percentage.setScale(2, RoundingMode.HALF_UP)
+            )
+        }
+
+        val top = performers.sortedByDescending { it.percentageChange }.take(limit)
+        val bottom = performers.sortedBy { it.percentageChange }.take(limit)
+
+        return TopBottomPerformersResponse(top = top, bottom = bottom)
     }
 }

@@ -233,21 +233,29 @@ class PortfolioRepository(
     }
 
     /**
-     * Returns latest asset snapshots (one row per asset for the latest snapshot_date).
+     * Returns latest asset snapshots aggregated per asset and platform (one row per asset+platform for the latest snapshot_date).
+     * Aggregates quantity, market_value and cost basis and computes weighted averages for per-share fields.
      */
     fun getLatestAssetSnapshots(): List<AssetSnapshot> {
         val sql = """
             WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
             SELECT
-              s.snapshot_date,
+              l.d AS snapshot_date,
               s.asset_id,
-              COALESCE(s.platform, '') AS platform,
-              s.quantity,
-              s.avg_cost_per_share_eur,
-              s.cost_basis_eur,
-              s.market_price_eur,
-              s.market_value_eur,
-              s.unrealized_pl_eur,
+              SUM(s.quantity) AS quantity,
+              -- weighted avg cost per share = SUM(cost_basis_eur) / SUM(quantity)
+              CASE WHEN SUM(s.quantity) > 0 AND SUM(s.cost_basis_eur) IS NOT NULL
+                   THEN (SUM(s.cost_basis_eur) / NULLIF(SUM(s.quantity), 0))
+                   ELSE NULL
+              END::numeric(36,8) AS avg_cost_per_share_eur,
+              SUM(s.cost_basis_eur) AS cost_basis_eur,
+              -- weighted market price = SUM(market_value_eur) / SUM(quantity) when available
+              CASE WHEN SUM(s.quantity) > 0 AND SUM(s.market_value_eur) IS NOT NULL
+                   THEN (SUM(s.market_value_eur) / NULLIF(SUM(s.quantity), 0))
+                   ELSE NULL
+              END::numeric(36,8) AS market_price_eur,
+              SUM(s.market_value_eur) AS market_value_eur,
+              SUM(s.unrealized_pl_eur) AS unrealized_pl_eur,
               a.symbol AS ticker,
               a.name AS name,
               a.asset_type AS asset_type
@@ -255,10 +263,43 @@ class PortfolioRepository(
             JOIN latest l ON s.snapshot_date = l.d
             JOIN assets a ON s.asset_id = a.id
             WHERE s.quantity <> 0
-            ORDER BY COALESCE(s.market_value_eur, 0) DESC
+            GROUP BY l.d, s.asset_id, a.symbol, a.name, a.asset_type
+            ORDER BY SUM(COALESCE(s.market_value_eur,0)) DESC
         """.trimIndent()
 
         return jdbcTemplate.query(sql, assetSnapshotMapper)
+    }
+
+    /**
+     * Returns latest asset performances (percentage change) computed from the latest snapshot rows.
+     * Percentage is computed as:
+     *  - if avg_cost_per_share_eur available and > 0 and market_price_eur available: (market_price - avg_cost)/avg_cost*100
+     *  - else if unrealized_pl_eur and cost_basis_eur available and cost_basis_eur > 0: unrealized_pl / cost_basis * 100
+     *  - else 0
+     */
+    fun getLatestAssetPerformances(): List<LatestAssetPerformance> {
+        val sql = """
+            WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
+            SELECT
+              s.asset_id,
+              a.symbol AS ticker,
+              a.name AS name,
+              a.asset_type AS type,
+              COALESCE(a.currency_code, 'EUR') AS currency_code,
+              CASE
+                WHEN s.avg_cost_per_share_eur IS NOT NULL AND s.avg_cost_per_share_eur > 0 AND s.market_price_eur IS NOT NULL
+                  THEN ((s.market_price_eur - s.avg_cost_per_share_eur) * 100) / s.avg_cost_per_share_eur
+                WHEN s.unrealized_pl_eur IS NOT NULL AND s.cost_basis_eur IS NOT NULL AND s.cost_basis_eur > 0
+                  THEN (s.unrealized_pl_eur * 100) / s.cost_basis_eur
+                ELSE 0
+              END::numeric(36,8) AS percentage
+            FROM asset_daily_snapshots s
+            JOIN latest l ON s.snapshot_date = l.d
+            JOIN assets a ON s.asset_id = a.id
+            WHERE s.quantity <> 0
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, latestAssetPerformanceMapper)
     }
 
     private val portfolioSnapshotMapper = RowMapper<PortfolioSnapshot> { rs, _ ->
@@ -321,7 +362,6 @@ class PortfolioRepository(
         AssetSnapshot(
             snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
             assetId = rs.getObject("asset_id", UUID::class.java),
-            platform = rs.getString("platform") ?: "",
             quantity = rs.getBigDecimal("quantity"),
             avgCostPerShareEur = rs.getBigDecimal("avg_cost_per_share_eur"),
             costBasisEur = rs.getBigDecimal("cost_basis_eur"),
@@ -331,6 +371,17 @@ class PortfolioRepository(
             ticker = rs.getString("ticker"),
             name = rs.getString("name"),
             type = rs.getString("asset_type")
+        )
+    }
+
+    private val latestAssetPerformanceMapper = RowMapper<LatestAssetPerformance> { rs, _ ->
+        LatestAssetPerformance(
+            assetId = rs.getObject("asset_id", UUID::class.java),
+            ticker = rs.getString("ticker"),
+            name = rs.getString("name"),
+            type = rs.getString("type"),
+            percentage = rs.getBigDecimal("percentage") ?: java.math.BigDecimal.ZERO,
+            currencyCode = rs.getString("currency_code")
         )
     }
 
@@ -359,7 +410,6 @@ class PortfolioRepository(
     data class AssetSnapshot(
         val snapshotDate: LocalDate,
         val assetId: UUID,
-        val platform: String,
         val quantity: BigDecimal,
         val avgCostPerShareEur: BigDecimal?,
         val costBasisEur: BigDecimal?,
@@ -390,5 +440,14 @@ class PortfolioRepository(
     data class AssetTypeValue(
         val assetType: String,
         val valueEur: BigDecimal
+    )
+
+    data class LatestAssetPerformance(
+        val assetId: UUID,
+        val ticker: String,
+        val name: String,
+        val type: String?,
+        val percentage: java.math.BigDecimal,
+        val currencyCode: String?
     )
 }

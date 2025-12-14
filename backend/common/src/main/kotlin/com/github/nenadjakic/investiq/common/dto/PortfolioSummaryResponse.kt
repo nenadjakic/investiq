@@ -65,7 +65,7 @@ data class PeriodChangeResponse(
 data class AssetHoldingResponse(
 
     @param:Schema(description = "Trading platform", example = "IBKR", allowableValues = ["TRADING212", "IBKR", "REVOLUT", "ETORO"])
-    val platform: Platform,
+    val platform: Platform?,
 
     @param:Schema(description = "Asset type", example = "STOCK", allowableValues = ["STOCK", "ETF"])
     val type: AssetType,
