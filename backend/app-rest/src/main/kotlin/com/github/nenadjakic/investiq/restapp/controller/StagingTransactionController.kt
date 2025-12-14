@@ -39,6 +39,7 @@ class StagingTransactionController(
 ) {
 
     @Operation(
+        operationId = "importStagingTransactions",
         summary = "Import staging transactions (file upload)",
         description = "Upload a file for a given platform to import staging transactions. Returns 201 Created on success.",
         responses = [
