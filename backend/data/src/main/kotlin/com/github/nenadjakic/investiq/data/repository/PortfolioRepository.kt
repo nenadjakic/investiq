@@ -233,6 +233,63 @@ class PortfolioRepository(
     }
 
     /**
+     * Finds the total dividends per month starting from the specified date.
+     * @param fromDate The date from which to start calculating monthly dividends.
+     */
+    fun findMonthlyDividendsFrom(fromDate: LocalDate): List<MonthlyDividendRow> {
+        val sql = """
+            SELECT year, month, SUM(transaction_value_eur) AS amount
+            FROM vw_transaction_analytics
+            WHERE transaction_type = 'DIVIDEND' AND transaction_date_only >= ?
+            GROUP BY year, month
+            ORDER BY year, month
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, monthlyDividendRowMapper, Date.valueOf(fromDate))
+    }
+
+    /**
+     * Returns the date of the first DIVIDEND transaction or null if none.
+     */
+    fun getFirstDividendDate(): LocalDate? {
+        val sql = "SELECT MIN(transaction_date_only) FROM vw_transaction_analytics WHERE transaction_type = 'DIVIDEND'"
+        val date = jdbcTemplate.queryForObject(sql, Date::class.java)
+        return date?.toLocalDate()
+    }
+
+    /**
+     * Returns monthly dividend rows for the given number of months ending this month.
+     * If months is null, the range starts from the first DIVIDEND transaction date.
+     * This method fills missing months with zero amount.
+     */
+    fun findMonthlyDividends(months: Int?): List<MonthlyDividendRow> {
+        if (months != null && months <= 0) return emptyList()
+
+        val fromDate: LocalDate = if (months == null) {
+            getFirstDividendDate() ?: return emptyList()
+        } else {
+            val startYM = YearMonth.now().minusMonths((months - 1).toLong())
+            startYM.atDay(1)
+        }
+
+        val raw = findMonthlyDividendsFrom(fromDate)
+
+        val startYM = YearMonth.from(fromDate)
+        val actualMonths = if (months == null) {
+            val nowYM = YearMonth.now()
+            ((nowYM.year - startYM.year) * 12) + (nowYM.monthValue - startYM.monthValue) + 1
+        } else months
+
+        val map = raw.associateBy({ YearMonth.of(it.year, it.month) }, { it.amount })
+
+        return (0 until actualMonths).map { offset ->
+            val ym = startYM.plusMonths(offset.toLong())
+            val amount = map[ym] ?: BigDecimal.ZERO
+            MonthlyDividendRow(ym.year, ym.monthValue, amount)
+        }
+    }
+
+    /**
      * Returns latest asset snapshots aggregated per asset and platform (one row per asset+platform for the latest snapshot_date).
      * Aggregates quantity, market_value and cost basis and computes weighted averages for per-share fields.
      */
@@ -385,6 +442,13 @@ class PortfolioRepository(
         )
     }
 
+    private val monthlyDividendRowMapper = RowMapper<MonthlyDividendRow> { rs, _ ->
+        val year = rs.getInt("year")
+        val month = rs.getInt("month")
+        val amount = rs.getBigDecimal("amount") ?: BigDecimal.ZERO
+        MonthlyDividendRow(year, month, amount)
+    }
+
     data class PortfolioSnapshot(
         val snapshotDate: LocalDate,
         val totalValue: BigDecimal,
@@ -449,5 +513,11 @@ class PortfolioRepository(
         val type: String?,
         val percentage: java.math.BigDecimal,
         val currencyCode: String?
+    )
+
+    data class MonthlyDividendRow(
+        val year: Int,
+        val month: Int,
+        val amount: BigDecimal
     )
 }

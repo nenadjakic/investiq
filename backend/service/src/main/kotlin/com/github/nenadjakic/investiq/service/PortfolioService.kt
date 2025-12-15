@@ -7,6 +7,8 @@ import com.github.nenadjakic.investiq.common.dto.PortfolioSummaryResponse
 import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
 import com.github.nenadjakic.investiq.common.dto.MonthlyInvestedEntry
 import com.github.nenadjakic.investiq.common.dto.MonthlyInvestedResponse
+import com.github.nenadjakic.investiq.common.dto.MonthlyDividendEntry
+import com.github.nenadjakic.investiq.common.dto.MonthlyDividendResponse
 import com.github.nenadjakic.investiq.common.dto.CountryValueResponse
 import com.github.nenadjakic.investiq.common.dto.CurrencyValueResponse
 import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
@@ -161,6 +163,16 @@ class PortfolioService(
         }
 
         return MonthlyInvestedResponse(series)
+    }
+
+    fun getMonthlyDividends(months: Int?): MonthlyDividendResponse {
+        val rows = portfolioRepository.findMonthlyDividends(months)
+        val series = rows.map { row ->
+            val yearMonth = YearMonth.of(row.year, row.month)
+            MonthlyDividendEntry(yearMonth.toString(), row.amount)
+        }
+
+        return MonthlyDividendResponse(series)
     }
 
     /**

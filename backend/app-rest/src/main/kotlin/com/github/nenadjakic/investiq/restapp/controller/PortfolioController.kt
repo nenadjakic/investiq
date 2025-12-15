@@ -8,6 +8,7 @@ import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
 import com.github.nenadjakic.investiq.common.dto.MonthlyInvestedResponse
 import com.github.nenadjakic.investiq.common.dto.CountryValueResponse
 import com.github.nenadjakic.investiq.common.dto.CurrencyValueResponse
+import com.github.nenadjakic.investiq.common.dto.MonthlyDividendResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioPerformanceResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioAllocationResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
@@ -118,6 +119,25 @@ class PortfolioController(
     fun getMonthlyInvested(
         @RequestParam(required = false) months: Int?): ResponseEntity<MonthlyInvestedResponse> =
         ResponseEntity.ok(portfolioService.getMonthlyInvested(months))
+
+    @Operation(
+        operationId = "getMonthlyDividends",
+        summary = "Get monthly dividends",
+        description = "Returns dividends per month for the last N months (null = entire history)"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved monthly dividends",
+                content = [Content()]
+            )
+        ]
+    )
+    @GetMapping("/monthly-dividends", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getMonthlyDividends(
+        @RequestParam(required = false) months: Int?): ResponseEntity<MonthlyDividendResponse> =
+        ResponseEntity.ok(portfolioService.getMonthlyDividends(months))
 
     @Operation(
         operationId = "getPortfolioPerformanceData",
