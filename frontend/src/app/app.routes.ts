@@ -1,9 +1,4 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from '../dashboard/dashboard';
-import { AssetPage } from '../assets/assets';
-import { Transactions } from '../transactions/transactions';
-import { ReferenceData } from '../reference-data/reference-data';
-import { StagingTransactions } from '../staging-transactions/staging-transactions';
 
 export const routes: Routes = [
   {
@@ -13,30 +8,30 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: Dashboard,
+    loadComponent: () => import('../dashboard/dashboard').then(m => m.Dashboard),
   },
   {
     path: 'transactions',
-    component: Transactions,
+    loadComponent: () => import('../transactions/transactions').then(m => m.Transactions),
     data: { title: 'Transactions' },
     pathMatch: 'full',
   },
   {
     path: 'staging-transactions',
-    component: StagingTransactions,
+    loadComponent: () => import('../staging-transactions/staging-transactions').then(m => m.StagingTransactions),
     data: { title: 'Staging Transactions' },
     pathMatch: 'full',
   },
 
   {
     path: 'assets',
-    component: AssetPage,
+    loadComponent: () => import('../assets/assets').then(m => m.AssetPage),
     data: { title: 'Assets' },
     pathMatch: 'full',
   },
   {
     path: 'reference-data',
-    component: ReferenceData,
+    loadComponent: () => import('../reference-data/reference-data').then(m => m.ReferenceData),
     data: { title: 'Reference Data' },
     pathMatch: 'full',
   },

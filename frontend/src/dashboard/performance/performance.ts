@@ -21,12 +21,16 @@ export class Performance implements OnInit {
 
   chartData = signal<PortfolioChartResponse | null>(null);
   monthlyInvested = signal<MonthlyInvestedResponse | null>(null);
+  monthlyDividends = signal<any | null>(null);
   chartError = signal(false);
   monthlyError = signal(false);
+  monthlyDividendsError = signal(false);
   chartOption = signal<EChartsCoreOption>({});
   monthlyOption = signal<EChartsCoreOption>({});
+  monthlyDividendsOption = signal<EChartsCoreOption>({});
   selectedPeriod = signal<'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'>('ALL');
   selectedMonths = signal<'6M' | '1Y' | '3Y' | 'ALL'>('6M');
+  selectedDividendsMonths = signal<'6M' | '1Y' | '3Y' | 'ALL'>('6M');
 
   constructor() {
     effect(() => {
@@ -118,6 +122,63 @@ export class Performance implements OnInit {
         });
       }
     });
+
+    effect(() => {
+      const monthlyDivs = this.monthlyDividends();
+      if (!this.monthlyDividendsError() && monthlyDivs) {
+        // Normalize different possible response shapes
+        let rawSeries: any[] | undefined;
+        if (Array.isArray(monthlyDivs)) {
+          rawSeries = monthlyDivs as any[];
+        } else if (Array.isArray(monthlyDivs?.series)) {
+          rawSeries = monthlyDivs.series as any[];
+        } else if (typeof monthlyDivs === 'object') {
+          // Possibly an object map { 'YYYY-MM': amount }
+          rawSeries = Object.entries(monthlyDivs).map(([k, v]) => ({ yearMonth: k, dividends: Number(v) || 0 }));
+        }
+
+        if (rawSeries && rawSeries.length > 0) {
+          const categories = rawSeries.map((item: any) => item.yearMonth ?? item.month ?? item.date ?? '');
+          const values = rawSeries.map((item: any) => {
+            const val = item.dividends ?? item.amount ?? item.value ?? item.invested ?? 0;
+            return Number(val) || 0;
+          });
+
+          this.monthlyDividendsOption.set({
+            xAxis: {
+              type: 'category',
+              data: categories,
+            },
+            yAxis: {
+              type: 'value',
+            },
+            series: [
+              {
+                name: 'Dividends',
+                data: values,
+                type: 'bar',
+                itemStyle: {
+                  color: '#10B981',
+                },
+              },
+            ],
+            tooltip: {
+              trigger: 'axis',
+              formatter: (params: any) => {
+                const item = params[0];
+                const value = `€ ${Number(item.value).toFixed(2)}`;
+                return `${item.axisValue}<br/>${item.marker} ${item.seriesName}: ${value}`;
+              },
+            },
+            grid: {
+              left: '3%',
+              right: '4%',
+              containLabel: true,
+            },
+          });
+        }
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -129,6 +190,7 @@ export class Performance implements OnInit {
     this.chartData.set(null);
     this.loadPerformanceChart(days);
     this.loadMonthlyInvested(this.mapMonthsToNumber(this.selectedMonths()));
+    this.loadMonthlyDividends(this.mapMonthsToNumber(this.selectedDividendsMonths()));
   }
 
   private loadPerformanceChart(days: number | undefined): void {
@@ -156,6 +218,20 @@ export class Performance implements OnInit {
     });
   }
 
+  private loadMonthlyDividends(months: number | undefined): void {
+    this.monthlyDividendsError.set(false);
+    this.monthlyDividends.set(null);
+
+    this.portfolioControllerService.getMonthlyDividends(months).subscribe({
+      next: (data) => this.monthlyDividends.set(data ?? null),
+      error: (err) => {
+        this.monthlyDividendsError.set(true);
+        this.toastService.error('Failed to load monthly dividends', 'Error');
+        console.error('Error loading monthly dividends:', err);
+      },
+    });
+  }
+
   setPeriod(period: 'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y') {
     this.selectedPeriod.set(period);
     const days = this.mapPeriodToDays(period);
@@ -166,6 +242,12 @@ export class Performance implements OnInit {
     this.selectedMonths.set(period);
     const months = this.mapMonthsToNumber(period);
     this.loadMonthlyInvested(months);
+  }
+
+  setDividendsMonthsPeriod(period: '6M' | '1Y' | '3Y' | 'ALL') {
+    this.selectedDividendsMonths.set(period);
+    const months = this.mapMonthsToNumber(period);
+    this.loadMonthlyDividends(months);
   }
 
   private mapPeriodToDays(period: 'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'): number | undefined {

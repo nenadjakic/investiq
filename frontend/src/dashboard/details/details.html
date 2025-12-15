@@ -1,0 +1,210 @@
+  <div class="space-y-8">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div></div>
+    <div class="flex flex-wrap gap-3">
+      <input
+        type="text"
+        placeholder="Search ticker or name..."
+        class="w-48 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        (input)="onSearch($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow">
+    @if (loading()) {
+      <div class="p-6">
+        <p class="text-sm text-gray-600">Loading active positions...</p>
+      </div>
+    }
+
+    @if (!loading() && loadError()) {
+      <div class="p-6">
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-red-600">Failed to load active positions.</p>
+          <button class="px-3 py-1 text-sm bg-gray-100 rounded" (click)="retry()">Retry</button>
+        </div>
+      </div>
+    }
+
+    @if (!loading() && !loadError()) {
+      @if (sortedPositions().length === 0) {
+        <div class="p-6">
+          <p class="text-sm text-gray-500">No active positions to display.</p>
+        </div>
+      }
+
+      @if (sortedPositions().length > 0) {
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button class="flex items-center gap-1" (click)="toggleSort('ticker')">
+                    Ticker
+                    @if (sortState().column === 'ticker') {
+                      <span class="text-[10px] text-gray-500">
+                        {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                      </span>
+                    }
+                  </button>
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('investedEur')">
+                    Invested
+                    @if (sortState().column === 'investedEur') {
+                      <span class="text-[10px] text-gray-500">
+                        {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                      </span>
+                    }
+                  </button>
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('investedPercentage')">
+                    % Invested
+                    @if (sortState().column === 'investedPercentage') {
+                      <span class="text-[10px] text-gray-500">
+                        {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                      </span>
+                    }
+                  </button>
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('profitLossEur')">
+                    P/L EUR
+                    @if (sortState().column === 'profitLossEur') {
+                      <span class="text-[10px] text-gray-500">
+                        {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                      </span>
+                    }
+                  </button>
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('profitLossPercentage')">
+                    P/L %
+                    @if (sortState().column === 'profitLossPercentage') {
+                      <span class="text-[10px] text-gray-500">
+                        {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                      </span>
+                    }
+                  </button>
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('marketValueEur')">
+                    Market Value
+                    @if (sortState().column === 'marketValueEur') {
+                      <span class="text-[10px] text-gray-500">
+                        {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                      </span>
+                    }
+                  </button>
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('marketValuePercentage')">
+                    % Market Value
+                    @if (sortState().column === 'marketValuePercentage') {
+                      <span class="text-[10px] text-gray-500">
+                        {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                      </span>
+                    }
+                  </button>
+                </th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button class="flex items-center gap-1 justify-center w-full" (click)="toggleSort('delta')">
+                    Δ vs Invested
+                    @if (sortState().column === 'delta') {
+                      <span class="text-[10px] text-gray-500">
+                        {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                      </span>
+                    }
+                  </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              @for (position of sortedPositions(); track $index) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-semibold text-gray-900">{{ position.ticker || '-' }}</div>
+                    <div class="text-xs text-gray-500">{{ position.name || '-' }}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">€ {{ (position.investedEur ?? 0) | number:'1.2-2' }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{{ (position.investedPercentage ?? 0) | number:'1.1-2' }}%</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-right" [ngClass]="(position.profitLossEur ?? 0) < 0 ? 'text-red-600' : 'text-green-600'">
+                    € {{ (position.profitLossEur ?? 0) | number:'1.2-2' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-right" [ngClass]="(position.profitLossPercentage ?? 0) < 0 ? 'text-red-600' : 'text-green-600'">
+                    {{ (position.profitLossPercentage ?? 0) | number:'1.1-2' }}%
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">€ {{ (position.marketValueEur ?? 0) | number:'1.2-2' }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{{ (position.marketValuePercentage ?? 0) | number:'1.1-2' }}%</td>
+                  @let delta = getDelta(position);
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                    <div class="flex items-center justify-center gap-2">
+                      <span
+                        class="inline-flex h-6 w-6 items-center justify-center rounded-full"
+                        [ngClass]="delta > 0 ? 'bg-green-50 text-green-600' : delta < 0 ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-500'"
+                      >
+                        @if (delta === 0) {
+                          <span class="text-xs font-semibold">–</span>
+                        }
+                        @if (delta !== 0) {
+                          <svg
+                            class="h-3.5 w-3.5"
+                            [ngClass]="delta < 0 ? 'rotate-180' : ''"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d="M12 5l7 12H5z" />
+                          </svg>
+                        }
+                      </span>                      
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot class="bg-gray-50 font-semibold border-t">
+              <tr>
+                <td class="px-6 py-3 text-sm text-gray-900"></td>
+                <td class="px-6 py-3 text-sm text-gray-900 text-right">€ {{ totals().investedEur | number:'1.2-2' }}</td>
+                <td class="px-6 py-3 text-sm text-gray-400 text-right">—</td>
+                <td class="px-6 py-3 text-sm text-right" [ngClass]="totals().profitLossEur < 0 ? 'text-red-600' : 'text-green-600'">
+                  € {{ totals().profitLossEur | number:'1.2-2' }}
+                </td>
+                <td class="px-6 py-3 text-sm text-right" [ngClass]="totals().profitLossPercentage < 0 ? 'text-red-600' : 'text-green-600'">
+                  {{ totals().profitLossPercentage | number:'1.1-2' }}%
+                </td>
+                <td class="px-6 py-3 text-sm text-gray-900 text-right">€ {{ totals().marketValueEur | number:'1.2-2' }}</td>
+                <td class="px-6 py-3 text-sm text-gray-400 text-right">—</td>
+                <td class="px-6 py-3 text-sm text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <span
+                      class="inline-flex h-6 w-6 items-center justify-center rounded-full"
+                      [ngClass]="totals().delta > 0 ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'"
+                    >
+                      @if (totals().delta > 0) {
+                        <svg
+                          class="h-3.5 w-3.5"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path d="M12 5l7 12H5z" />
+                        </svg>
+                      }
+                      @if (totals().delta <= 0) {
+                        <span class="text-xs font-semibold">–</span>
+                      }
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      }
+    }
+  </div>
+</div>

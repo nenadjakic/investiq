@@ -1,6 +1,6 @@
 <nav class="border-b border-gray-200 mb-6 px-6 lg:px-10 space-y-8">
   <div class="flex space-x-8">
-    <button (click)="activeTab.set('overview')"
+    <button (click)="setActiveTab('overview')"
             class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
             [class.border-blue-500]="activeTab() === 'overview'"
             [class.text-blue-600]="activeTab() === 'overview'"
@@ -8,7 +8,7 @@
             [class.text-gray-500]="activeTab() !== 'overview'">
       Overview
     </button>
-    <button (click)="activeTab.set('performance')"
+    <button (click)="setActiveTab('performance')"
             class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
             [class.border-blue-500]="activeTab() === 'performance'"
             [class.text-blue-600]="activeTab() === 'performance'"
@@ -16,7 +16,7 @@
             [class.text-gray-500]="activeTab() !== 'performance'">
       Performance
     </button>
-    <button (click)="activeTab.set('allocation')"
+    <button (click)="setActiveTab('allocation')"
             class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
             [class.border-blue-500]="activeTab() === 'allocation'"
             [class.text-blue-600]="activeTab() === 'allocation'"
@@ -24,7 +24,7 @@
             [class.text-gray-500]="activeTab() !== 'allocation'">
       Allocation
     </button>
-    <button (click)="activeTab.set('holdings')"
+    <button (click)="setActiveTab('holdings')"
             class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
             [class.border-blue-500]="activeTab() === 'holdings'"
             [class.text-blue-600]="activeTab() === 'holdings'"
@@ -32,7 +32,7 @@
             [class.text-gray-500]="activeTab() !== 'holdings'">
       Holdings
     </button>
-    <button (click)="activeTab.set('insights')"
+    <button (click)="setActiveTab('insights')"
             class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
             [class.border-blue-500]="activeTab() === 'insights'"
             [class.text-blue-600]="activeTab() === 'insights'"
@@ -40,7 +40,7 @@
             [class.text-gray-500]="activeTab() !== 'insights'">
       Insights
     </button>
-    <button (click)="activeTab.set('details')"
+    <button (click)="setActiveTab('details')"
             class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
             [class.border-blue-500]="activeTab() === 'details'"
             [class.text-blue-600]="activeTab() === 'details'"
@@ -51,32 +51,7 @@
   </div>
 </nav>
 <div class="px-6 py-8 lg:px-10 space-y-8">
-@if (activeTab() === 'overview') {
-  <app-overview></app-overview>
-}
-
-<!-- PERFORMANCE TAB -->
-@if (activeTab() === 'performance') {
-  <app-performance></app-performance>
-}
-
-<!-- ALLOCATION TAB -->
-@if (activeTab() === 'allocation') {
-  <app-allocation></app-allocation>
-}
-
-<!-- HOLDINGS TAB -->
-@if (activeTab() === 'holdings') {
-  <app-holdings></app-holdings>
-}
-
-<!-- INSIGHTS TAB -->
-@if (activeTab() === 'insights') {
-  <app-insights></app-insights>
-}
-
-<!-- DETAILS TAB -->
-@if (activeTab() === 'details') {
-  <app-details></app-details>
-}
+  @if (activeComponent()) {
+    <ng-container *ngComponentOutlet="activeComponent()"></ng-container>
+  }
 </div>
