@@ -10,7 +10,17 @@
 
 
 export interface AssetSimpleResponse { 
+    id?: string;
     symbol?: string;
     name?: string;
+    type?: AssetSimpleResponse.TypeEnum;
 }
+export namespace AssetSimpleResponse {
+    export const TypeEnum = {
+        Stock: 'STOCK',
+        Etf: 'ETF'
+    } as const;
+    export type TypeEnum = typeof TypeEnum[keyof typeof TypeEnum];
+}
+
 

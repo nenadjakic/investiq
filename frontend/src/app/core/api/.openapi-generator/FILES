@@ -17,6 +17,7 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/active-position-response.ts
 model/asset-alias-response.ts
 model/asset-holding-response.ts
 model/asset-response.ts

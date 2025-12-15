@@ -618,6 +618,31 @@
         }
       }
     },
+    "/portfolio/holdings/summary": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get active positions summary",
+        "description": "Returns active positions with invested amount, invested %, P/L (EUR and %), market value and market value %",
+        "operationId": "getActivePositions",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved positions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivePositionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/portfolio/chart/performance": {
       "get": {
         "tags": [
@@ -1576,11 +1601,22 @@
       "AssetSimpleResponse": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "symbol": {
             "type": "string"
           },
           "name": {
             "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STOCK",
+              "ETF"
+            ]
           }
         }
       },
@@ -1720,6 +1756,58 @@
             "type": "number"
           },
           "portfolioPercentage": {
+            "type": "number"
+          }
+        }
+      },
+      "ActivePositionResponse": {
+        "type": "object",
+        "description": "Active portfolio position with invested/market values and P/L",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STOCK",
+              "ETF"
+            ]
+          },
+          "ticker": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shares": {
+            "type": "number"
+          },
+          "avgPriceEur": {
+            "type": "number"
+          },
+          "investedEur": {
+            "type": "number"
+          },
+          "investedPercentage": {
+            "type": "number"
+          },
+          "profitLossEur": {
+            "type": "number"
+          },
+          "profitLossPercentage": {
+            "type": "number"
+          },
+          "marketValueEur": {
+            "type": "number"
+          },
+          "marketValuePercentage": {
             "type": "number"
           }
         }
