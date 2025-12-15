@@ -14,7 +14,6 @@ import com.github.nenadjakic.investiq.common.dto.AssetSimpleResponse
 import com.github.nenadjakic.investiq.common.dto.PerformerResponse
 import com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse
 import com.github.nenadjakic.investiq.data.enum.AssetType
-import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -231,6 +230,80 @@ class PortfolioService(
                 type = AssetType.valueOf(snapshot.type!!)
             )
         }.sortedByDescending { it.currentPrice * it.shares }
+    }
+
+    /**
+     * Returns active positions summary with invested amount and market value contributions.
+     */
+    fun getActivePositions(): List<com.github.nenadjakic.investiq.common.dto.ActivePositionResponse> {
+        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
+            ?: return emptyList()
+
+        val assetSnapshots = portfolioRepository.getLatestAssetSnapshots()
+
+        val totalValue = portfolioSnapshot.totalValue
+        val totalInvested = portfolioSnapshot.totalInvested
+
+        if (assetSnapshots.isEmpty()) return emptyList()
+
+        return assetSnapshots.mapNotNull { snapshot ->
+            if (snapshot.quantity <= BigDecimal.ZERO) return@mapNotNull null
+
+            val shares = snapshot.quantity
+            val currentPrice = snapshot.marketPriceEur
+            val marketValue = snapshot.marketValueEur ?: ((currentPrice ?: BigDecimal.ZERO) * shares)
+
+            // Determine average price per share
+            val avgPrice = when {
+                snapshot.avgCostPerShareEur != null && snapshot.avgCostPerShareEur!! > BigDecimal.ZERO -> snapshot.avgCostPerShareEur!!
+                snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO && shares > BigDecimal.ZERO -> snapshot.costBasisEur!!.divide(shares, 8, RoundingMode.HALF_UP)
+                else -> BigDecimal.ZERO
+            }
+
+            val invested = when {
+                snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO -> snapshot.costBasisEur!!.setScale(2, RoundingMode.HALF_UP)
+                else -> (avgPrice * shares).setScale(2, RoundingMode.HALF_UP)
+            }
+
+            // Use multiply-then-divide with explicit scale to preserve fractional percentages
+            val investedPct = if (totalInvested > BigDecimal.ZERO) {
+                invested
+                    .multiply(BigDecimal(100))
+                    .divide(totalInvested, 8, RoundingMode.HALF_UP)
+                    .setScale(2, RoundingMode.HALF_UP)
+            } else BigDecimal.ZERO
+
+            val plEur = (marketValue - invested).setScale(2, RoundingMode.HALF_UP)
+
+            val plPct = if (invested > BigDecimal.ZERO) {
+                plEur
+                    .multiply(BigDecimal(100))
+                    .divide(invested, 8, RoundingMode.HALF_UP)
+                    .setScale(2, RoundingMode.HALF_UP)
+            } else BigDecimal.ZERO
+
+            val marketPct = if (totalValue > BigDecimal.ZERO) {
+                marketValue
+                    .multiply(BigDecimal(100))
+                    .divide(totalValue, 8, RoundingMode.HALF_UP)
+                    .setScale(2, RoundingMode.HALF_UP)
+            } else BigDecimal.ZERO
+
+            com.github.nenadjakic.investiq.common.dto.ActivePositionResponse(
+                platform = null,
+                type = AssetType.valueOf(snapshot.type!!),
+                ticker = snapshot.ticker,
+                name = snapshot.name,
+                shares = shares,
+                avgPriceEur = avgPrice.setScale(2, RoundingMode.HALF_UP),
+                investedEur = invested,
+                investedPercentage = investedPct,
+                profitLossEur = plEur,
+                profitLossPercentage = plPct,
+                marketValueEur = marketValue.setScale(2, RoundingMode.HALF_UP),
+                marketValuePercentage = marketPct
+            )
+        }.sortedByDescending { it.marketValueEur }
     }
 
     private fun calculatePeriodChange(

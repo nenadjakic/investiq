@@ -264,4 +264,19 @@ class PortfolioController(
     ): ResponseEntity<com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse> =
         ResponseEntity.ok(portfolioService.getTopBottomPerformers(limit))
 
-}
+    @Operation(
+        operationId = "getActivePositions",
+        summary = "Get active positions summary",
+        description = "Returns active positions with invested amount, invested %, P/L (EUR and %), market value and market value %"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successfully retrieved positions", content = [Content(mediaType = "application/json", schema = Schema(implementation = com.github.nenadjakic.investiq.common.dto.ActivePositionResponse::class))]),
+            ApiResponse(responseCode = "500", description = "Internal server error", content = [Content()])
+        ]
+    )
+    @GetMapping("/holdings/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getActivePositions(): ResponseEntity<List<com.github.nenadjakic.investiq.common.dto.ActivePositionResponse>> =
+        ResponseEntity.ok(portfolioService.getActivePositions())
+
+ }
