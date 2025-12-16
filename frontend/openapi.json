@@ -599,7 +599,7 @@
           "Portfolio Controller"
         ],
         "summary": "Get monthly dividends",
-        "description": "Returns dividends per month for the last N months (null = entire history)",
+        "description": "Returns dividends per month for the last N months (null \u003d entire history)",
         "operationId": "getMonthlyDividends",
         "parameters": [
           {
@@ -675,7 +675,7 @@
           "Portfolio Controller"
         ],
         "summary": "Get portfolio value time series",
-        "description": "Returns daily market value and invested amount for the specified time period",
+        "description": "Returns daily market value and invested amount for the specified time period, optionally including benchmark indices",
         "operationId": "getPortfolioPerformanceChart",
         "parameters": [
           {
@@ -685,6 +685,17 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "indices",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ],
@@ -1138,7 +1149,8 @@
             "type": "string",
             "enum": [
               "STOCK",
-              "ETF"
+              "ETF",
+              "INDEX"
             ]
           },
           "symbol": {
@@ -1285,21 +1297,21 @@
             "type": "integer",
             "format": "int32"
           },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"
@@ -1313,9 +1325,6 @@
             "type": "integer",
             "format": "int64"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "paged": {
             "type": "boolean"
           },
@@ -1326,6 +1335,9 @@
           "pageSize": {
             "type": "integer",
             "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "unpaged": {
             "type": "boolean"
@@ -1350,10 +1362,10 @@
           "empty": {
             "type": "boolean"
           },
-          "unsorted": {
+          "sorted": {
             "type": "boolean"
           },
-          "sorted": {
+          "unsorted": {
             "type": "boolean"
           }
         }
@@ -1446,21 +1458,21 @@
             "type": "integer",
             "format": "int32"
           },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"
@@ -1641,7 +1653,8 @@
             "type": "string",
             "enum": [
               "STOCK",
-              "ETF"
+              "ETF",
+              "INDEX"
             ]
           }
         }
@@ -1726,6 +1739,16 @@
               "type": "number",
               "format": "double"
             }
+          },
+          "indices": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "double"
+              }
+            }
           }
         }
       },
@@ -1757,7 +1780,8 @@
             "type": "string",
             "enum": [
               "STOCK",
-              "ETF"
+              "ETF",
+              "INDEX"
             ]
           },
           "ticker": {
@@ -1803,7 +1827,8 @@
             "type": "string",
             "enum": [
               "STOCK",
-              "ETF"
+              "ETF",
+              "INDEX"
             ]
           },
           "ticker": {
@@ -1939,21 +1964,21 @@
             "type": "integer",
             "format": "int32"
           },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"

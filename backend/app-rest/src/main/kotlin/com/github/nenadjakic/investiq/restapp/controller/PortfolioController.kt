@@ -63,7 +63,7 @@ class PortfolioController(
     @Operation(
         operationId = "getPortfolioPerformanceChart",
         summary = "Get portfolio value time series",
-        description = "Returns daily market value and invested amount for the specified time period"
+        description = "Returns daily market value and invested amount for the specified time period, optionally including benchmark indices"
     )
     @ApiResponses(
         value = [
@@ -73,9 +73,10 @@ class PortfolioController(
     )
     @GetMapping("/chart/performance", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPortfolioPerformanceChart(
-        @RequestParam(required = false) days: Int?
+        @RequestParam(required = false) days: Int?,
+        @RequestParam(required = false) indices: List<String>?
     ): ResponseEntity<PortfolioChartResponse> =
-        ResponseEntity.ok(portfolioService.getPortfolioValueSeries(days))
+        ResponseEntity.ok(portfolioService.getPortfolioValueSeries(days, indices))
 
     @Operation(
         operationId = "getIndustrySectorAllocation",
@@ -155,7 +156,7 @@ class PortfolioController(
         @RequestParam(required = false) days: Int?,
         @RequestParam(required = false) months: Int?
     ): ResponseEntity<PortfolioPerformanceResponse> {
-        val chart = portfolioService.getPortfolioValueSeries(days)
+        val chart = portfolioService.getPortfolioValueSeries(days, null)
         val monthly = portfolioService.getMonthlyInvested(months)
         return ResponseEntity.ok(PortfolioPerformanceResponse(chart = chart, monthlyInvested = monthly))
     }

@@ -14,5 +14,6 @@ export interface PortfolioChartResponse {
     invested?: Array<number>;
     marketValue?: Array<number>;
     plPercentage?: Array<number>;
+    indices?: { [key: string]: Array<number>; };
 }
 
