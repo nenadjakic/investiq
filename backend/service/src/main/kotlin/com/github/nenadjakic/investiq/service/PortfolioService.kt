@@ -428,13 +428,17 @@ class PortfolioService(
             
             // Get historical prices for the date range
             val priceMap = mutableMapOf<LocalDate, BigDecimal>()
+
+            // Load all history once for this asset, then filter in memory per date
+            val assetHistories = assetHistoryRepository
+                .findAll()
+                .filter { it.asset.id == asset.id }
+
             for (date in dates) {
-                // Find the closest historical price on or before this date
-                val history = assetHistoryRepository
-                    .findAll()
-                    .filter { it.asset.id == asset.id && !it.validDate.isAfter(date) }
+                // Find the closest historical price on or before this date from preloaded history
+                val history = assetHistories
+                    .filter { !it.validDate.isAfter(date) }
                     .maxByOrNull { it.validDate }
-                
                 history?.closePrice?.let { priceMap[date] = it }
             }
             
