@@ -4,7 +4,7 @@ import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
 
 /**
- * Entity representing a stock market Index, which is a specific type of Asset.
+ * Entity representing a stock market index, which is a specific type of Asset.
  * This class uses single-table inheritance strategy with the discriminator value "INDEX".
  * 
  * Indices track the performance of a collection of stocks or other securities, 
