@@ -112,7 +112,8 @@ class PortfolioService(
         }
     }
 
-    fun getPortfolioValueSeries(days: Int?, indices: List<String>? = null): PortfolioChartResponse {
+    fun getPortfolioValueSeries(days: Int?): PortfolioChartResponse {
+        val indices = listOf("^GSPC", "^IXIC", "^STOXX50E", "^STOXX")
         val endDate = LocalDate.now()
         val startDate = if (days == null) null else endDate.minusDays(days.toLong())
 
@@ -153,11 +154,7 @@ class PortfolioService(
         val plPercentage = rawPlPercentage.map { it - firstDayPL }
 
         // Calculate index performance if requested
-        val indicesData = if (!indices.isNullOrEmpty()) {
-            calculateIndicesPerformance(indices, dates)
-        } else {
-            null
-        }
+        val indicesData = calculateIndicesPerformance(indices, dates)
 
         return PortfolioChartResponse(
             dates = dates,
@@ -430,9 +427,7 @@ class PortfolioService(
             val priceMap = mutableMapOf<LocalDate, BigDecimal>()
 
             // Load all history once for this asset, then filter in memory per date
-            val assetHistories = assetHistoryRepository
-                .findAll()
-                .filter { it.asset.id == asset.id }
+            val assetHistories = assetHistoryRepository.findAllByAsset_SymbolOrderByValidDate(symbol)
 
             for (date in dates) {
                 // Find the closest historical price on or before this date from preloaded history
@@ -457,7 +452,7 @@ class PortfolioService(
                                 .setScale(2, RoundingMode.HALF_UP)
                                 .toDouble()
                         } else {
-                            0.0
+                            Double.NaN
                         }
                     }
                     result[symbol] = percentages

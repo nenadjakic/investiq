@@ -159,14 +159,9 @@ export class Overview implements OnInit {
 
   private loadChartData(days: number | undefined): void {
     this.chartError.set(false);
-    const selectedIndices = this.availableIndices()
-      .filter(idx => idx.selected)
-      .map(idx => idx.symbol);
     
     this.portfolioControllerService.getPortfolioPerformanceChart(
-      days,
-      selectedIndices.length > 0 ? selectedIndices : undefined
-    ).subscribe({
+      days).subscribe({
       next: (data) => this.chartData.set(data),
       error: (err) => {
         this.chartError.set(true);
@@ -174,45 +169,5 @@ export class Overview implements OnInit {
         console.error('Error loading chart:', err);
       },
     });
-  }
-
-  toggleIndex(symbol: string): void {
-    const indices = this.availableIndices();
-    const idx = indices.find(i => i.symbol === symbol);
-    if (idx) {
-      idx.selected = !idx.selected;
-      this.availableIndices.set([...indices]);
-      // Reload chart data with updated indices
-      const today = new Date();
-      let days: number | undefined;
-      switch (this.selectedPeriod()) {
-        case 'ALL':
-          days = undefined;
-          break;
-        case 'MTD': {
-          const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-          days = Math.max(1, Math.ceil((today.getTime() - startOfMonth.getTime()) / (1000 * 60 * 60 * 24)));
-          break;
-        }
-        case 'YTD': {
-          const startOfYear = new Date(today.getFullYear(), 0, 1);
-          days = Math.max(1, Math.ceil((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)));
-          break;
-        }
-        case '1M':
-          days = 30;
-          break;
-        case '3M':
-          days = 90;
-          break;
-        case '6M':
-          days = 180;
-          break;
-        case '1Y':
-          days = 365;
-          break;
-      }
-      this.loadChartData(days);
-    }
   }
 }

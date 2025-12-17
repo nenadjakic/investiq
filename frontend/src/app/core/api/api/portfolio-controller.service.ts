@@ -541,24 +541,17 @@ export class PortfolioControllerService extends BaseService {
      * Returns daily market value and invested amount for the specified time period, optionally including benchmark indices
      * @endpoint get /portfolio/chart/performance
      * @param days 
-     * @param indices 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getPortfolioPerformanceChart(days?: number, indices?: Array<string>, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioChartResponse>;
-    public getPortfolioPerformanceChart(days?: number, indices?: Array<string>, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioChartResponse>>;
-    public getPortfolioPerformanceChart(days?: number, indices?: Array<string>, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioChartResponse>>;
-    public getPortfolioPerformanceChart(days?: number, indices?: Array<string>, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getPortfolioPerformanceChart(days?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioChartResponse>;
+    public getPortfolioPerformanceChart(days?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioChartResponse>>;
+    public getPortfolioPerformanceChart(days?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioChartResponse>>;
+    public getPortfolioPerformanceChart(days?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>days, 'days');
-        if (indices) {
-            indices.forEach((element) => {
-                localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
-                  <any>element, 'indices');
-            })
-        }
 
         let localVarHeaders = this.defaultHeaders;
 

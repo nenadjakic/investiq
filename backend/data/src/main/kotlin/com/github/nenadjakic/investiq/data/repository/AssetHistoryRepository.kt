@@ -9,4 +9,8 @@ interface AssetHistoryRepository: JpaRepository<AssetHistory, UUID> {
     fun findTopByAsset_SymbolOrderByValidDateDesc(
         symbol: String,
     ): AssetHistory?
+
+    fun findAllByAsset_SymbolOrderByValidDate(
+        symbol: String,
+    ): List<AssetHistory>
 }

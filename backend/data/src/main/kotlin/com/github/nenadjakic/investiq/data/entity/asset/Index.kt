@@ -12,4 +12,4 @@ import jakarta.persistence.Entity
  */
 @Entity
 @DiscriminatorValue("INDEX")
-class Index : ListedAsset()
+class Index : Asset()
