@@ -17,6 +17,8 @@ import com.github.nenadjakic.investiq.common.dto.PerformerResponse
 import com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse
 import com.github.nenadjakic.investiq.data.enum.AssetType
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
+import com.github.nenadjakic.investiq.data.repository.AssetRepository
+import com.github.nenadjakic.investiq.data.repository.AssetHistoryRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -26,7 +28,9 @@ import java.time.YearMonth
 
 @Service
 class PortfolioService(
-    private val portfolioRepository: PortfolioRepository
+    private val portfolioRepository: PortfolioRepository,
+    private val assetRepository: AssetRepository,
+    private val assetHistoryRepository: AssetHistoryRepository
 )  {
 
     fun getPortfolioSummary(periodDays: Int = 5): PortfolioSummaryResponse {
@@ -109,6 +113,7 @@ class PortfolioService(
     }
 
     fun getPortfolioValueSeries(days: Int?): PortfolioChartResponse {
+        val indices = listOf("^GSPC", "^IXIC", "^STOXX50E", "^STOXX")
         val endDate = LocalDate.now()
         val startDate = if (days == null) null else endDate.minusDays(days.toLong())
 
@@ -119,7 +124,8 @@ class PortfolioService(
                 dates = emptyList(),
                 invested = emptyList(),
                 marketValue = emptyList(),
-                plPercentage = emptyList()
+                plPercentage = emptyList(),
+                indices = emptyMap()
             )
         }
 
@@ -147,11 +153,15 @@ class PortfolioService(
         val firstDayPL = rawPlPercentage.firstOrNull() ?: 0.0
         val plPercentage = rawPlPercentage.map { it - firstDayPL }
 
+        // Calculate index performance if requested
+        val indicesData = calculateIndicesPerformance(indices, dates)
+
         return PortfolioChartResponse(
             dates = dates,
             invested = totalInvested,
             marketValue = totalValue,
-            plPercentage = plPercentage
+            plPercentage = plPercentage,
+            indices = indicesData
         )
     }
 
@@ -398,5 +408,58 @@ class PortfolioService(
         val bottom = performers.sortedBy { it.percentageChange }.take(limit)
 
         return TopBottomPerformersResponse(top = top, bottom = bottom)
+    }
+
+    /**
+     * Calculate normalized performance for requested indices.
+     * Returns a map of index symbol to list of percentage changes, normalized to start at 0%.
+     */
+    private fun calculateIndicesPerformance(
+        indexSymbols: List<String>,
+        dates: List<LocalDate>
+    ): Map<String, List<Double>> {
+        val result = mutableMapOf<String, List<Double>>()
+        
+        for (symbol in indexSymbols) {
+            val asset = assetRepository.findBySymbol(symbol) ?: continue
+            
+            // Get historical prices for the date range
+            val priceMap = mutableMapOf<LocalDate, BigDecimal>()
+
+            // Load all history once for this asset, then filter in memory per date
+            val assetHistories = assetHistoryRepository.findAllByAsset_SymbolOrderByValidDate(symbol)
+
+            for (date in dates) {
+                // Find the closest historical price on or before this date from preloaded history
+                val history = assetHistories
+                    .filter { !it.validDate.isAfter(date) }
+                    .maxByOrNull { it.validDate }
+                history?.closePrice?.let { priceMap[date] = it }
+            }
+            
+            // Calculate percentage changes normalized to start at 0%
+            if (priceMap.isNotEmpty()) {
+                val firstDate = dates.first()
+                val firstPrice = priceMap[firstDate]
+                
+                if (firstPrice != null && firstPrice > BigDecimal.ZERO) {
+                    val percentages = dates.map { date ->
+                        val price = priceMap[date]
+                        if (price != null) {
+                            price.subtract(firstPrice)
+                                .multiply(BigDecimal(100))
+                                .divide(firstPrice, 6, RoundingMode.HALF_UP)
+                                .setScale(2, RoundingMode.HALF_UP)
+                                .toDouble()
+                        } else {
+                            Double.NaN
+                        }
+                    }
+                    result[symbol] = percentages
+                }
+            }
+        }
+        
+        return result
     }
 }

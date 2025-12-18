@@ -538,7 +538,7 @@ export class PortfolioControllerService extends BaseService {
 
     /**
      * Get portfolio value time series
-     * Returns daily market value and invested amount for the specified time period
+     * Returns daily market value and invested amount for the specified time period, optionally including benchmark indices
      * @endpoint get /portfolio/chart/performance
      * @param days 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

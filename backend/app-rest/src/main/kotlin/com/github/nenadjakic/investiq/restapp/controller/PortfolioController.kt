@@ -63,7 +63,7 @@ class PortfolioController(
     @Operation(
         operationId = "getPortfolioPerformanceChart",
         summary = "Get portfolio value time series",
-        description = "Returns daily market value and invested amount for the specified time period"
+        description = "Returns daily market value and invested amount for the specified time period, optionally including benchmark indices"
     )
     @ApiResponses(
         value = [

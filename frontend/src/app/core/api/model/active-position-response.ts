@@ -36,7 +36,8 @@ export namespace ActivePositionResponse {
     export type PlatformEnum = typeof PlatformEnum[keyof typeof PlatformEnum];
     export const TypeEnum = {
         Stock: 'STOCK',
-        Etf: 'ETF'
+        Etf: 'ETF',
+        Index: 'INDEX'
     } as const;
     export type TypeEnum = typeof TypeEnum[keyof typeof TypeEnum];
 }

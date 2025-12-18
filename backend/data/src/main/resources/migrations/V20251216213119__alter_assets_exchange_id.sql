@@ -1,0 +1,1 @@
+ALTER TABLE assets ALTER COLUMN exchange_id DROP NOT NULL;
