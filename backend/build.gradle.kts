@@ -29,4 +29,8 @@ subprojects {
             languageVersion.set(KotlinVersion.KOTLIN_2_2)
         }
     }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
 }
