@@ -1321,11 +1321,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"
@@ -1339,6 +1339,9 @@
             "type": "integer",
             "format": "int64"
           },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
           "paged": {
             "type": "boolean"
           },
@@ -1349,9 +1352,6 @@
           "pageSize": {
             "type": "integer",
             "format": "int32"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
           },
           "unpaged": {
             "type": "boolean"
@@ -1482,11 +1482,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"
@@ -1824,6 +1824,9 @@
           },
           "portfolioPercentage": {
             "type": "number"
+          },
+          "dividendCostYield": {
+            "type": "number"
           }
         }
       },
@@ -2057,11 +2060,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "empty": {
             "type": "boolean"

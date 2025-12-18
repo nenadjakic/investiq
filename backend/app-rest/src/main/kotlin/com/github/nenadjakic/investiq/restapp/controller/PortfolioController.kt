@@ -245,6 +245,7 @@ class PortfolioController(
         ResponseEntity.ok(portfolioService.getAssetTypeAllocation())
 
     @Operation(
+        operationId = "getHoldings",
     summary = "Get current portfolio holdings",
     description = "Returns a list of all current portfolio positions with detailed information."
     )

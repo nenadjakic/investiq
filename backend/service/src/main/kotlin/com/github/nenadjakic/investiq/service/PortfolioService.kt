@@ -206,6 +206,10 @@ class PortfolioService(
             return emptyList()
         }
 
+        // Get dividend cost yield per asset and create a map by assetId
+        val dividendYieldMap = portfolioRepository.getAssetDividendCostYield()
+            .associateBy { it.assetId }
+
         return assetSnapshots.mapNotNull { snapshot ->
             if (snapshot.quantity <= BigDecimal.ZERO) {
                 return@mapNotNull null
@@ -246,6 +250,10 @@ class PortfolioService(
             val portfolioPercentage = (marketValue / totalValue * BigDecimal(100))
                 .setScale(2, RoundingMode.HALF_UP)
 
+            // Get dividend cost yield for this asset
+            val dividendCostYield = dividendYieldMap[snapshot.assetId]?.dividendCostYield
+                ?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
+
             AssetHoldingResponse(
                 ticker = snapshot.ticker,
                 name = snapshot.name,
@@ -256,7 +264,8 @@ class PortfolioService(
                 profitLossPercentage = plPercentage,
                 portfolioPercentage = portfolioPercentage,
                 platform = null,
-                type = AssetType.valueOf(snapshot.type!!)
+                type = AssetType.valueOf(snapshot.type!!),
+                dividendCostYield = dividendCostYield
             )
         }.sortedByDescending { it.currentPrice * it.shares }
     }
