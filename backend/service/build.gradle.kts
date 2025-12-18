@@ -4,8 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.jpa)
 
     alias(libs.plugins.spring.dependency.management)
-
-    jacoco
 }
 
 dependencies {
