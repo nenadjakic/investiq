@@ -359,6 +359,121 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, latestAssetPerformanceMapper)
     }
 
+    /**
+     * Returns dividend cost yield for each asset.
+     * Dividend cost yield is calculated as: (Annualized Dividend / Cost Basis) * 100
+     * Annualized dividend is calculated from all dividends since the first purchase of each asset,
+     * then annualized based on the holding period.
+     */
+    fun getAssetDividendCostYield(): List<AssetDividendCostYield> {
+        val sql = """
+            WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots),
+            first_buy AS (
+                SELECT 
+                    asset_id,
+                    MIN(transaction_date_only) AS first_buy_date
+                FROM vw_transaction_analytics
+                WHERE transaction_type = 'BUY'
+                GROUP BY asset_id
+            ),
+            total_dividends AS (
+                SELECT 
+                    t.asset_id,
+                    SUM(t.transaction_value_eur) AS total_dividend_eur
+                FROM vw_transaction_analytics t
+                JOIN first_buy fb ON t.asset_id = fb.asset_id
+                WHERE t.transaction_type = 'DIVIDEND'
+                  AND t.transaction_date_only >= fb.first_buy_date
+                GROUP BY t.asset_id
+            )
+            SELECT
+              s.asset_id,
+              a.symbol AS ticker,
+              a.name AS name,
+              COALESCE(d.total_dividend_eur, 0)::numeric(36,8) AS total_dividend_eur,
+              SUM(s.cost_basis_eur)::numeric(36,8) AS cost_basis_eur,
+              fb.first_buy_date,
+              -- Calculate days held
+              (CURRENT_DATE - fb.first_buy_date) AS days_held,
+              -- Annualized dividend = total_dividend * 365 / days_held
+              CASE 
+                WHEN (CURRENT_DATE - fb.first_buy_date) > 0 
+                  THEN (COALESCE(d.total_dividend_eur, 0) * 365.0 / (CURRENT_DATE - fb.first_buy_date))
+                ELSE COALESCE(d.total_dividend_eur, 0)
+              END::numeric(36,8) AS annualized_dividend_eur,
+              -- Dividend cost yield = annualized_dividend / cost_basis * 100
+              CASE 
+                WHEN SUM(s.cost_basis_eur) > 0 AND (CURRENT_DATE - fb.first_buy_date) > 0
+                  THEN ((COALESCE(d.total_dividend_eur, 0) * 365.0 / (CURRENT_DATE - fb.first_buy_date)) * 100 / SUM(s.cost_basis_eur))
+                WHEN SUM(s.cost_basis_eur) > 0
+                  THEN (COALESCE(d.total_dividend_eur, 0) * 100 / SUM(s.cost_basis_eur))
+                ELSE 0
+              END::numeric(36,8) AS dividend_cost_yield
+            FROM asset_daily_snapshots s
+            JOIN latest l ON s.snapshot_date = l.d
+            JOIN assets a ON s.asset_id = a.id
+            LEFT JOIN first_buy fb ON s.asset_id = fb.asset_id
+            LEFT JOIN total_dividends d ON s.asset_id = d.asset_id
+            WHERE s.quantity <> 0
+            GROUP BY s.asset_id, a.symbol, a.name, d.total_dividend_eur, fb.first_buy_date
+            ORDER BY dividend_cost_yield DESC
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, assetDividendCostYieldMapper)
+    }
+
+    /**
+     * Returns total dividend cost yield for the entire portfolio.
+     * Dividend cost yield is calculated as: (Annualized Total Dividend / Total Cost Basis) * 100
+     * Annualized dividend is calculated from all dividends since the first investment,
+     * then annualized based on the overall holding period.
+     */
+    fun getTotalDividendCostYield(): TotalDividendCostYield? {
+        val sql = """
+            WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots),
+            first_investment AS (
+                SELECT MIN(transaction_date_only) AS first_date
+                FROM vw_transaction_analytics
+                WHERE transaction_type = 'BUY'
+            ),
+            total_dividends AS (
+                SELECT SUM(transaction_value_eur) AS total_dividend_eur
+                FROM vw_transaction_analytics
+                WHERE transaction_type = 'DIVIDEND'
+            ),
+            portfolio_cost AS (
+                SELECT SUM(s.cost_basis_eur) AS total_cost_basis_eur
+                FROM asset_daily_snapshots s
+                JOIN latest l ON s.snapshot_date = l.d
+                WHERE s.quantity <> 0
+            )
+            SELECT
+              COALESCE(d.total_dividend_eur, 0)::numeric(36,8) AS total_dividend_eur,
+              COALESCE(p.total_cost_basis_eur, 0)::numeric(36,8) AS total_cost_basis_eur,
+              fi.first_date AS first_investment_date,
+              (CURRENT_DATE - fi.first_date) AS days_held,
+              -- Annualized dividend = total_dividend * 365 / days_held
+              CASE 
+                WHEN (CURRENT_DATE - fi.first_date) > 0 
+                  THEN (COALESCE(d.total_dividend_eur, 0) * 365.0 / (CURRENT_DATE - fi.first_date))
+                ELSE COALESCE(d.total_dividend_eur, 0)
+              END::numeric(36,8) AS annualized_dividend_eur,
+              -- Dividend cost yield = annualized_dividend / cost_basis * 100
+              CASE 
+                WHEN COALESCE(p.total_cost_basis_eur, 0) > 0 AND (CURRENT_DATE - fi.first_date) > 0
+                  THEN ((COALESCE(d.total_dividend_eur, 0) * 365.0 / (CURRENT_DATE - fi.first_date)) * 100 / p.total_cost_basis_eur)
+                WHEN COALESCE(p.total_cost_basis_eur, 0) > 0
+                  THEN (COALESCE(d.total_dividend_eur, 0) * 100 / p.total_cost_basis_eur)
+                ELSE 0
+              END::numeric(36,8) AS dividend_cost_yield
+            FROM total_dividends d
+            CROSS JOIN portfolio_cost p
+            CROSS JOIN first_investment fi
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, totalDividendCostYieldMapper).firstOrNull()
+    }
+
     private val portfolioSnapshotMapper = RowMapper<PortfolioSnapshot> { rs, _ ->
         PortfolioSnapshot(
             snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
@@ -442,6 +557,29 @@ class PortfolioRepository(
         )
     }
 
+    private val assetDividendCostYieldMapper = RowMapper<AssetDividendCostYield> { rs, _ ->
+        AssetDividendCostYield(
+            assetId = rs.getObject("asset_id", UUID::class.java),
+            ticker = rs.getString("ticker"),
+            name = rs.getString("name"),
+            totalDividendEur = rs.getBigDecimal("total_dividend_eur") ?: BigDecimal.ZERO,
+            annualizedDividendEur = rs.getBigDecimal("annualized_dividend_eur") ?: BigDecimal.ZERO,
+            costBasisEur = rs.getBigDecimal("cost_basis_eur") ?: BigDecimal.ZERO,
+            daysHeld = rs.getInt("days_held"),
+            dividendCostYield = rs.getBigDecimal("dividend_cost_yield") ?: BigDecimal.ZERO
+        )
+    }
+
+    private val totalDividendCostYieldMapper = RowMapper<TotalDividendCostYield> { rs, _ ->
+        TotalDividendCostYield(
+            totalDividendEur = rs.getBigDecimal("total_dividend_eur") ?: BigDecimal.ZERO,
+            annualizedDividendEur = rs.getBigDecimal("annualized_dividend_eur") ?: BigDecimal.ZERO,
+            totalCostBasisEur = rs.getBigDecimal("total_cost_basis_eur") ?: BigDecimal.ZERO,
+            daysHeld = rs.getInt("days_held"),
+            dividendCostYield = rs.getBigDecimal("dividend_cost_yield") ?: BigDecimal.ZERO
+        )
+    }
+
     private val monthlyDividendRowMapper = RowMapper<MonthlyDividendRow> { rs, _ ->
         val year = rs.getInt("year")
         val month = rs.getInt("month")
@@ -519,5 +657,24 @@ class PortfolioRepository(
         val year: Int,
         val month: Int,
         val amount: BigDecimal
+    )
+
+    data class AssetDividendCostYield(
+        val assetId: UUID,
+        val ticker: String,
+        val name: String,
+        val totalDividendEur: BigDecimal,
+        val annualizedDividendEur: BigDecimal,
+        val costBasisEur: BigDecimal,
+        val daysHeld: Int,
+        val dividendCostYield: BigDecimal
+    )
+
+    data class TotalDividendCostYield(
+        val totalDividendEur: BigDecimal,
+        val annualizedDividendEur: BigDecimal,
+        val totalCostBasisEur: BigDecimal,
+        val daysHeld: Int,
+        val dividendCostYield: BigDecimal
     )
 }

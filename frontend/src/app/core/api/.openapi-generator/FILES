@@ -19,6 +19,7 @@ git_push.sh
 index.ts
 model/active-position-response.ts
 model/asset-alias-response.ts
+model/asset-dividend-cost-yield-response.ts
 model/asset-holding-response.ts
 model/asset-response.ts
 model/asset-simple-response.ts
@@ -29,6 +30,7 @@ model/country-value-response.ts
 model/currency-response.ts
 model/currency-simple-response.ts
 model/currency-value-response.ts
+model/dividend-cost-yield-response.ts
 model/exchange-response.ts
 model/industry-response.ts
 model/industry-sector-value-response.ts
@@ -52,6 +54,7 @@ model/sort-object.ts
 model/staging-transaction-edit-request.ts
 model/staging-transaction-response.ts
 model/top-bottom-performers-response.ts
+model/total-dividend-cost-yield-response.ts
 model/transaction-response.ts
 param.ts
 provide-api.ts

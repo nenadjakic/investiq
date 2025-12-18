@@ -669,6 +669,31 @@
         }
       }
     },
+    "/portfolio/dividend-cost-yield": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get dividend cost yield",
+        "description": "Returns dividend cost yield for each asset and total portfolio. Yield is calculated as (Annualized Dividend / Cost Basis) * 100, annualized from first purchase date.",
+        "operationId": "getDividendCostYield",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved dividend cost yield",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DividendCostYieldResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/portfolio/chart/performance": {
       "get": {
         "tags": [
@@ -1296,11 +1321,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "empty": {
             "type": "boolean"
@@ -1314,12 +1339,6 @@
             "type": "integer",
             "format": "int64"
           },
-          "unpaged": {
-            "type": "boolean"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "paged": {
             "type": "boolean"
           },
@@ -1330,6 +1349,12 @@
           "pageSize": {
             "type": "integer",
             "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "unpaged": {
+            "type": "boolean"
           }
         }
       },
@@ -1457,11 +1482,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "empty": {
             "type": "boolean"
@@ -1618,6 +1643,9 @@
             "format": "int32"
           },
           "totalDividends": {
+            "type": "number"
+          },
+          "dividendCostYield": {
             "type": "number"
           },
           "periodChange": {
@@ -1852,6 +1880,72 @@
           }
         }
       },
+      "AssetDividendCostYieldResponse": {
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ticker": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "totalDividendEur": {
+            "type": "number"
+          },
+          "annualizedDividendEur": {
+            "type": "number"
+          },
+          "costBasisEur": {
+            "type": "number"
+          },
+          "daysHeld": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dividendCostYield": {
+            "type": "number"
+          }
+        }
+      },
+      "DividendCostYieldResponse": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetDividendCostYieldResponse"
+            }
+          },
+          "total": {
+            "$ref": "#/components/schemas/TotalDividendCostYieldResponse"
+          }
+        }
+      },
+      "TotalDividendCostYieldResponse": {
+        "type": "object",
+        "properties": {
+          "totalDividendEur": {
+            "type": "number"
+          },
+          "annualizedDividendEur": {
+            "type": "number"
+          },
+          "totalCostBasisEur": {
+            "type": "number"
+          },
+          "daysHeld": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dividendCostYield": {
+            "type": "number"
+          }
+        }
+      },
       "AssetTypeValueResponse": {
         "type": "object",
         "properties": {
@@ -1963,11 +2057,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
           "empty": {
             "type": "boolean"

@@ -35,6 +35,9 @@ data class PortfolioSummaryResponse(
     @param:Schema(description = "Total dividends", example = "15")
     val totalDividends: BigDecimal,
 
+    @param:Schema(description = "Annualized dividend cost yield percentage", example = "3.25")
+    val dividendCostYield: BigDecimal,
+
     @param:Schema(description = "Period-based change information")
     val periodChange: PeriodChangeResponse
 )

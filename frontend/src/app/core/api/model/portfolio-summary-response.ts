@@ -23,6 +23,7 @@ export interface PortfolioSummaryResponse {
     totalRealizedPL?: number;
     totalHoldings?: number;
     totalDividends?: number;
+    dividendCostYield?: number;
     periodChange?: PeriodChangeResponse;
 }
 

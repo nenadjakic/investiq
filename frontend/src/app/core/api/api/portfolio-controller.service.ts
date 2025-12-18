@@ -27,6 +27,8 @@ import { CountryValueResponse } from '../model/country-value-response';
 // @ts-ignore
 import { CurrencyValueResponse } from '../model/currency-value-response';
 // @ts-ignore
+import { DividendCostYieldResponse } from '../model/dividend-cost-yield-response';
+// @ts-ignore
 import { IndustrySectorValueResponse } from '../model/industry-sector-value-response';
 // @ts-ignore
 import { MonthlyInvestedResponse } from '../model/monthly-invested-response';
@@ -305,6 +307,58 @@ export class PortfolioControllerService extends BaseService {
         let localVarPath = `/portfolio/allocation/currency`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<CurrencyValueResponse>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Get dividend cost yield
+     * Returns dividend cost yield for each asset and total portfolio. Yield is calculated as (Annualized Dividend / Cost Basis) * 100, annualized from first purchase date.
+     * @endpoint get /portfolio/dividend-cost-yield
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getDividendCostYield(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<DividendCostYieldResponse>;
+    public getDividendCostYield(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<DividendCostYieldResponse>>;
+    public getDividendCostYield(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<DividendCostYieldResponse>>;
+    public getDividendCostYield(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/portfolio/dividend-cost-yield`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<DividendCostYieldResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

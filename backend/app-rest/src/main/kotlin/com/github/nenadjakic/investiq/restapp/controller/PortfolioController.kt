@@ -11,6 +11,7 @@ import com.github.nenadjakic.investiq.common.dto.CurrencyValueResponse
 import com.github.nenadjakic.investiq.common.dto.MonthlyDividendResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioPerformanceResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioAllocationResponse
+import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -36,6 +37,7 @@ class PortfolioController(
 ) {
 
     @Operation(
+        operationId = "getPortfolioSummary",
         summary = "Get portfolio summary",
         description = "Returns aggregated portfolio statistics including total value, returns, and changes"
     )
@@ -298,5 +300,31 @@ class PortfolioController(
     @GetMapping("/holdings/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getActivePositions(): ResponseEntity<List<com.github.nenadjakic.investiq.common.dto.ActivePositionResponse>> =
         ResponseEntity.ok(portfolioService.getActivePositions())
+
+    @Operation(
+        operationId = "getDividendCostYield",
+        summary = "Get dividend cost yield",
+        description = "Returns dividend cost yield for each asset and total portfolio. Yield is calculated as (Annualized Dividend / Cost Basis) * 100, annualized from first purchase date."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved dividend cost yield",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = DividendCostYieldResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal server error",
+                content = [Content()]
+            )
+        ]
+    )
+    @GetMapping("/dividend-cost-yield", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getDividendCostYield(): ResponseEntity<DividendCostYieldResponse> =
+        ResponseEntity.ok(portfolioService.getDividendCostYield())
 
  }
