@@ -675,7 +675,7 @@
           "Portfolio Controller"
         ],
         "summary": "Get portfolio value time series",
-        "description": "Returns daily market value and invested amount for the specified time period",
+        "description": "Returns daily market value and invested amount for the specified time period, optionally including benchmark indices",
         "operationId": "getPortfolioPerformanceChart",
         "parameters": [
           {
@@ -1138,7 +1138,8 @@
             "type": "string",
             "enum": [
               "STOCK",
-              "ETF"
+              "ETF",
+              "INDEX"
             ]
           },
           "symbol": {
@@ -1313,6 +1314,9 @@
             "type": "integer",
             "format": "int64"
           },
+          "unpaged": {
+            "type": "boolean"
+          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
           },
@@ -1326,9 +1330,6 @@
           "pageSize": {
             "type": "integer",
             "format": "int32"
-          },
-          "unpaged": {
-            "type": "boolean"
           }
         }
       },
@@ -1350,10 +1351,10 @@
           "empty": {
             "type": "boolean"
           },
-          "unsorted": {
+          "sorted": {
             "type": "boolean"
           },
-          "sorted": {
+          "unsorted": {
             "type": "boolean"
           }
         }
@@ -1641,7 +1642,8 @@
             "type": "string",
             "enum": [
               "STOCK",
-              "ETF"
+              "ETF",
+              "INDEX"
             ]
           }
         }
@@ -1726,6 +1728,16 @@
               "type": "number",
               "format": "double"
             }
+          },
+          "indices": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "double"
+              }
+            }
           }
         }
       },
@@ -1757,7 +1769,8 @@
             "type": "string",
             "enum": [
               "STOCK",
-              "ETF"
+              "ETF",
+              "INDEX"
             ]
           },
           "ticker": {
@@ -1803,7 +1816,8 @@
             "type": "string",
             "enum": [
               "STOCK",
-              "ETF"
+              "ETF",
+              "INDEX"
             ]
           },
           "ticker": {

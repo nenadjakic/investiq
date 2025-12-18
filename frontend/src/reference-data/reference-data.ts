@@ -58,9 +58,9 @@ private toast = inject(ToastService);
 		{ label: 'Countries', value: '0' },
 		{ label: 'Currencies', value: '0' },
 		{ label: 'Exchanges', value: '0' },
-		{ label: 'Companies', value: '1,240' },
-		{ label: 'Sectors', value: '11' },
-		{ label: 'Industries', value: '27' },
+		{ label: 'Companies', value: '0' },
+		{ label: 'Sectors', value: '0' },
+		{ label: 'Industries', value: '0' },
 	]);
 
 

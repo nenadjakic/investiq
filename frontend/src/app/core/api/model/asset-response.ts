@@ -24,7 +24,8 @@ export interface AssetResponse {
 export namespace AssetResponse {
     export const TypeEnum = {
         Stock: 'STOCK',
-        Etf: 'ETF'
+        Etf: 'ETF',
+        Index: 'INDEX'
     } as const;
     export type TypeEnum = typeof TypeEnum[keyof typeof TypeEnum];
 }
