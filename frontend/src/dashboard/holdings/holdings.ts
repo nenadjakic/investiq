@@ -50,6 +50,8 @@ export class Holdings implements OnInit {
           return (this.toNumber(a.currentPrice) - this.toNumber(b.currentPrice)) * dir;
         case 'profitLoss':
           return (this.toNumber(a.profitLoss) - this.toNumber(b.profitLoss)) * dir;
+        case 'dividendCostYield':
+          return (this.toNumber(a.dividendCostYield) - this.toNumber(b.dividendCostYield)) * dir;
         case 'portfolioPercentage':
           return (
             this.toNumber(a.portfolioPercentage) - this.toNumber(b.portfolioPercentage)
@@ -109,6 +111,7 @@ type SortColumn =
   | 'avgPrice'
   | 'currentPrice'
   | 'profitLoss'
+  | 'dividendCostYield'
   | 'portfolioPercentage';
 
 type SortDirection = 'asc' | 'desc';

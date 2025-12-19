@@ -4,8 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.jpa)
 
     alias(libs.plugins.spring.dependency.management)
-
-    jacoco
 }
 
 dependencies {
@@ -25,9 +23,10 @@ dependencies {
     implementation(libs.apache.poi.ooxml)
 
     testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-}
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.junit.jupiter)
 
-tasks.test {
-    useJUnitPlatform()
+    testRuntimeOnly(libs.junit.platformLauncher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintageEngine)
 }

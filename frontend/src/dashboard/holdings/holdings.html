@@ -90,6 +90,16 @@
                   </button>
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button class="flex items-center gap-1" (click)="toggleSort('dividendCostYield')">
+                    Div Yield
+                    @if (sortState().column === 'dividendCostYield') {
+                      <span class="text-[10px] text-gray-500">
+                        {{ sortState().direction === 'asc' ? '^' : 'v' }}
+                      </span>
+                    }
+                  </button>
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   <button class="flex items-center gap-1" (click)="toggleSort('portfolioPercentage')">
                     % Portfolio
                     @if (sortState().column === 'portfolioPercentage') {
@@ -114,6 +124,7 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm" [ngClass]="(holding.profitLoss ?? 0) < 0 ? 'text-red-600' : 'text-green-600'">
                     {{ (holding.profitLoss ?? 0) | number:'1.2-2' }} ({{ (holding.profitLossPercentage ?? 0) | number:'1.1-2' }}%)
                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.dividendCostYield ?? 0) | number:'1.1-2' }}%</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.portfolioPercentage ?? 0) | number:'1.1-2' }}%</td>
                 </tr>
               }

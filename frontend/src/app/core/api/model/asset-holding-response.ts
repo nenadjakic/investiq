@@ -23,6 +23,7 @@ export interface AssetHoldingResponse {
     profitLoss?: number;
     profitLossPercentage?: number;
     portfolioPercentage?: number;
+    dividendCostYield?: number;
 }
 export namespace AssetHoldingResponse {
     export const PlatformEnum = {

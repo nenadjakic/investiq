@@ -15,6 +15,9 @@ import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.AssetSimpleResponse
 import com.github.nenadjakic.investiq.common.dto.PerformerResponse
 import com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse
+import com.github.nenadjakic.investiq.common.dto.AssetDividendCostYieldResponse
+import com.github.nenadjakic.investiq.common.dto.TotalDividendCostYieldResponse
+import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
 import com.github.nenadjakic.investiq.data.enum.AssetType
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
@@ -57,6 +60,9 @@ class PortfolioService(
             periodDays
         )
 
+        val dividendCostYield = portfolioRepository.getTotalDividendCostYield()?.dividendCostYield
+            ?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
+
         return PortfolioSummaryResponse(
             snapshotDate = latestSnapshot.snapshotDate,
             totalValue = totalValue.setScale(2, RoundingMode.HALF_UP),
@@ -67,7 +73,8 @@ class PortfolioService(
             totalRealizedPL = latestSnapshot.totalRealizedPL.setScale(2, RoundingMode.HALF_UP),
             totalHoldings = latestSnapshot.totalHoldings,
             periodChange = periodChange,
-            totalDividends = latestSnapshot.totalDividends
+            totalDividends = latestSnapshot.totalDividends,
+            dividendCostYield = dividendCostYield
         )
     }
 
@@ -199,6 +206,10 @@ class PortfolioService(
             return emptyList()
         }
 
+        // Get dividend cost yield per asset and create a map by assetId
+        val dividendYieldMap = portfolioRepository.getAssetDividendCostYield()
+            .associateBy { it.assetId }
+
         return assetSnapshots.mapNotNull { snapshot ->
             if (snapshot.quantity <= BigDecimal.ZERO) {
                 return@mapNotNull null
@@ -239,6 +250,10 @@ class PortfolioService(
             val portfolioPercentage = (marketValue / totalValue * BigDecimal(100))
                 .setScale(2, RoundingMode.HALF_UP)
 
+            // Get dividend cost yield for this asset
+            val dividendCostYield = dividendYieldMap[snapshot.assetId]?.dividendCostYield
+                ?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
+
             AssetHoldingResponse(
                 ticker = snapshot.ticker,
                 name = snapshot.name,
@@ -249,7 +264,8 @@ class PortfolioService(
                 profitLossPercentage = plPercentage,
                 portfolioPercentage = portfolioPercentage,
                 platform = null,
-                type = AssetType.valueOf(snapshot.type!!)
+                type = AssetType.valueOf(snapshot.type!!),
+                dividendCostYield = dividendCostYield
             )
         }.sortedByDescending { it.currentPrice * it.shares }
     }
@@ -408,6 +424,49 @@ class PortfolioService(
         val bottom = performers.sortedBy { it.percentageChange }.take(limit)
 
         return TopBottomPerformersResponse(top = top, bottom = bottom)
+    }
+
+    /**
+     * Returns dividend cost yield for each asset in the portfolio.
+     * Dividend cost yield = (Annualized Dividend / Cost Basis) * 100
+     */
+    fun getAssetDividendCostYield(): List<AssetDividendCostYieldResponse> {
+        return portfolioRepository.getAssetDividendCostYield().map { row ->
+            AssetDividendCostYieldResponse(
+                assetId = row.assetId,
+                ticker = row.ticker,
+                name = row.name,
+                totalDividendEur = row.totalDividendEur.setScale(2, RoundingMode.HALF_UP),
+                annualizedDividendEur = row.annualizedDividendEur.setScale(2, RoundingMode.HALF_UP),
+                costBasisEur = row.costBasisEur.setScale(2, RoundingMode.HALF_UP),
+                daysHeld = row.daysHeld,
+                dividendCostYield = row.dividendCostYield.setScale(2, RoundingMode.HALF_UP)
+            )
+        }
+    }
+
+    /**
+     * Returns total dividend cost yield for the entire portfolio.
+     * Dividend cost yield = (Annualized Total Dividend / Total Cost Basis) * 100
+     */
+    fun getTotalDividendCostYield(): TotalDividendCostYieldResponse? {
+        val row = portfolioRepository.getTotalDividendCostYield() ?: return null
+        return TotalDividendCostYieldResponse(
+            totalDividendEur = row.totalDividendEur.setScale(2, RoundingMode.HALF_UP),
+            annualizedDividendEur = row.annualizedDividendEur.setScale(2, RoundingMode.HALF_UP),
+            totalCostBasisEur = row.totalCostBasisEur.setScale(2, RoundingMode.HALF_UP),
+            daysHeld = row.daysHeld,
+            dividendCostYield = row.dividendCostYield.setScale(2, RoundingMode.HALF_UP)
+        )
+    }
+
+    /**
+     * Returns combined dividend cost yield response with both per-asset and total portfolio yield.
+     */
+    fun getDividendCostYield(): DividendCostYieldResponse {
+        val assets = getAssetDividendCostYield()
+        val total = getTotalDividendCostYield()
+        return DividendCostYieldResponse(assets = assets, total = total)
     }
 
     /**
