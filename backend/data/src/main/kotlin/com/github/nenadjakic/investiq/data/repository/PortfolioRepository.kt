@@ -437,33 +437,33 @@ class PortfolioRepository(
                 WHERE transaction_type = 'BUY'
             ),
             total_dividends AS (
-                SELECT SUM(transaction_value_eur) AS total_dividend_eur
+                SELECT COALESCE(SUM(transaction_value_eur), 0) AS total_dividend_eur
                 FROM vw_transaction_analytics
                 WHERE transaction_type = 'DIVIDEND'
             ),
             portfolio_cost AS (
-                SELECT SUM(s.cost_basis_eur) AS total_cost_basis_eur
+                SELECT COALESCE(SUM(s.cost_basis_eur), 0) AS total_cost_basis_eur
                 FROM asset_daily_snapshots s
                 JOIN latest l ON s.snapshot_date = l.d
                 WHERE s.quantity <> 0
             )
             SELECT
-              COALESCE(d.total_dividend_eur, 0)::numeric(36,8) AS total_dividend_eur,
-              COALESCE(p.total_cost_basis_eur, 0)::numeric(36,8) AS total_cost_basis_eur,
+              d.total_dividend_eur::numeric(36,8) AS total_dividend_eur,
+              p.total_cost_basis_eur::numeric(36,8) AS total_cost_basis_eur,
               fi.first_date AS first_investment_date,
-              (CURRENT_DATE - fi.first_date) AS days_held,
+              COALESCE(CURRENT_DATE - fi.first_date, 0) AS days_held,
               -- Annualized dividend = total_dividend * 365 / days_held
               CASE 
-                WHEN (CURRENT_DATE - fi.first_date) > 0 
-                  THEN (COALESCE(d.total_dividend_eur, 0) * 365.0 / (CURRENT_DATE - fi.first_date))
-                ELSE COALESCE(d.total_dividend_eur, 0)
+                WHEN fi.first_date IS NOT NULL AND (CURRENT_DATE - fi.first_date) > 0 
+                  THEN (d.total_dividend_eur * 365.0 / (CURRENT_DATE - fi.first_date))
+                ELSE d.total_dividend_eur
               END::numeric(36,8) AS annualized_dividend_eur,
               -- Dividend cost yield = annualized_dividend / cost_basis * 100
               CASE 
-                WHEN COALESCE(p.total_cost_basis_eur, 0) > 0 AND (CURRENT_DATE - fi.first_date) > 0
-                  THEN ((COALESCE(d.total_dividend_eur, 0) * 365.0 / (CURRENT_DATE - fi.first_date)) * 100 / p.total_cost_basis_eur)
-                WHEN COALESCE(p.total_cost_basis_eur, 0) > 0
-                  THEN (COALESCE(d.total_dividend_eur, 0) * 100 / p.total_cost_basis_eur)
+                WHEN p.total_cost_basis_eur > 0 AND fi.first_date IS NOT NULL AND (CURRENT_DATE - fi.first_date) > 0
+                  THEN ((d.total_dividend_eur * 365.0 / (CURRENT_DATE - fi.first_date)) * 100 / p.total_cost_basis_eur)
+                WHEN p.total_cost_basis_eur > 0
+                  THEN (d.total_dividend_eur * 100 / p.total_cost_basis_eur)
                 ELSE 0
               END::numeric(36,8) AS dividend_cost_yield
             FROM total_dividends d

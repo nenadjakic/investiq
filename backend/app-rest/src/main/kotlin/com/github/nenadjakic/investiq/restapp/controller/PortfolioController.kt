@@ -246,8 +246,8 @@ class PortfolioController(
 
     @Operation(
         operationId = "getHoldings",
-    summary = "Get current portfolio holdings",
-    description = "Returns a list of all current portfolio positions with detailed information."
+        summary = "Get current portfolio holdings",
+        description = "Returns a list of all current portfolio positions with detailed information."
     )
     @ApiResponses(
         value = [

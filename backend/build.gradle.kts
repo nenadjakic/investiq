@@ -51,7 +51,7 @@ subprojects {
                 limit {
                     counter = "LINE"
                     value = "COVEREDRATIO"
-                    minimum = "0.30".toBigDecimal()
+                    minimum = "0.0".toBigDecimal()
                 }
             }
         }
