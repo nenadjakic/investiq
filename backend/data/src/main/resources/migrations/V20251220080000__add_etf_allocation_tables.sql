@@ -1,5 +1,13 @@
 -- Add asset_class column to assets table
 ALTER TABLE assets ADD COLUMN asset_class varchar(50) NULL;
+ALTER TABLE assets ADD CONSTRAINT ch_assets_asset_class CHECK (
+    asset_class IS NULL OR asset_class IN (
+        'EQUITY',
+        'BOND',
+        'COMMODITY',
+        'MIXED'
+    )
+);
 
 -- Add tracked_index_id column to assets table (for ETFs that track an index)
 ALTER TABLE assets ADD COLUMN tracked_index_id uuid NULL;
