@@ -10,6 +10,8 @@ dependencies {
 
     implementation(libs.jakarta.persistence.api)
     implementation(libs.spring.data.jpa)
+    implementation(libs.jakarta.validation.api)
+
     runtimeOnly(libs.postgresql)
 }
 

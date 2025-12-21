@@ -84,21 +84,67 @@ class PortfolioRepository(
      */
     fun getValueByIndustrySector(): List<IndustrySectorValue> {
         val sql = """
-            WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
-            SELECT
-              COALESCE(i.name, 'Unclassified') AS industry,
-              COALESCE(sc.name, 'Unclassified') AS sector,
-              SUM(COALESCE(s.market_value_eur, (s.market_price_eur * s.quantity)::numeric(36,8), 0))::numeric(36,8) AS value_eur
-            FROM asset_daily_snapshots s
-            JOIN latest l ON s.snapshot_date = l.d
-            JOIN assets a ON s.asset_id = a.id
-            LEFT JOIN companies c ON a.company_id = c.id
-            LEFT JOIN industries i ON c.industry_id = i.id
-            LEFT JOIN sectors sc ON i.sector_id = sc.id
-            WHERE a.asset_type = 'STOCK'
-              AND s.quantity <> 0
-            GROUP BY COALESCE(i.name, 'Unclassified'), COALESCE(sc.name, 'Unclassified')
-            ORDER BY value_eur DESC
+                        WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots),
+                        stock_values AS (
+                                SELECT
+                                    COALESCE(i.name, 'Unknown') AS industry,
+                                    COALESCE(sc.name, 'Unknown') AS sector,
+                                    SUM(COALESCE(s.market_value_eur, (s.market_price_eur * s.quantity)::numeric(36,8), 0))::numeric(36,8) AS value_eur
+                                FROM asset_daily_snapshots s
+                                JOIN latest l ON s.snapshot_date = l.d
+                                JOIN assets a ON s.asset_id = a.id
+                                LEFT JOIN companies c ON a.company_id = c.id
+                                LEFT JOIN industries i ON c.industry_id = i.id
+                                LEFT JOIN sectors sc ON i.sector_id = sc.id
+                                WHERE a.asset_type = 'STOCK'
+                                    AND s.quantity <> 0
+                                GROUP BY COALESCE(i.name, 'Unknown'), COALESCE(sc.name, 'Unknown')
+                        ),
+                        etf_values AS (
+                                -- ETFs with direct sector allocations
+                                SELECT
+                                    'Unknown' AS industry,
+                                    COALESCE(sc.name, 'Unknown') AS sector,
+                                    SUM(
+                                        COALESCE(s.market_value_eur, (s.market_price_eur * s.quantity)::numeric(36,8), 0)
+                                        * (esa.weight_percentage / 100.0)
+                                    )::numeric(36,8) AS value_eur
+                                FROM asset_daily_snapshots s
+                                JOIN latest l ON s.snapshot_date = l.d
+                                JOIN assets a ON s.asset_id = a.id
+                                JOIN etf_sector_allocations esa ON esa.etf_id = a.id
+                                LEFT JOIN sectors sc ON esa.sector_id = sc.id
+                                WHERE a.asset_type = 'ETF'
+                                    AND a.tracked_index_id IS NULL
+                                    AND s.quantity <> 0
+                                GROUP BY COALESCE(sc.name, 'Unknown')
+                                UNION ALL
+                                -- ETFs that track an index use the index sector allocation
+                                SELECT
+                                    'Unknown' AS industry,
+                                    COALESCE(sc.name, 'Unknown') AS sector,
+                                    SUM(
+                                        COALESCE(s.market_value_eur, (s.market_price_eur * s.quantity)::numeric(36,8), 0)
+                                        * (isa.weight_percentage / 100.0)
+                                    )::numeric(36,8) AS value_eur
+                                FROM asset_daily_snapshots s
+                                JOIN latest l ON s.snapshot_date = l.d
+                                JOIN assets a ON s.asset_id = a.id
+                                JOIN index_sector_allocations isa ON isa.index_id = a.tracked_index_id
+                                LEFT JOIN sectors sc ON isa.sector_id = sc.id
+                                WHERE a.asset_type = 'ETF'
+                                    AND a.tracked_index_id IS NOT NULL
+                                    AND s.quantity <> 0
+                                GROUP BY COALESCE(sc.name, 'Unknown')
+                        )
+                        SELECT industry, sector, SUM(value_eur)::numeric(36,8) AS value_eur
+                        FROM (
+                                SELECT industry, sector, value_eur FROM stock_values
+                                UNION ALL
+                                SELECT industry, sector, value_eur FROM etf_values
+                        ) t
+                        GROUP BY industry, sector
+                        ORDER BY value_eur DESC
         """.trimIndent()
 
         return jdbcTemplate.query(sql, industrySectorValueMapper)
@@ -110,19 +156,63 @@ class PortfolioRepository(
      */
     fun getValueByCountry(): List<CountryValue> {
         val sql = """
-            WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
-            SELECT
-              COALESCE(co.name, 'Unclassified') AS country,
-              SUM(COALESCE(s.market_value_eur, (s.market_price_eur * s.quantity)::numeric(36,8), 0))::numeric(36,8) AS value_eur
-            FROM asset_daily_snapshots s
-            JOIN latest l ON s.snapshot_date = l.d
-            JOIN assets a ON s.asset_id = a.id
-            LEFT JOIN companies c ON a.company_id = c.id
-            LEFT JOIN countries co ON c.country_code = co.iso2_code
-            WHERE a.asset_type = 'STOCK'
-              AND s.quantity <> 0
-            GROUP BY COALESCE(co.name, 'Unclassified')
-            ORDER BY value_eur DESC
+                        WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots),
+                        stock_values AS (
+                                SELECT
+                                    COALESCE(co.name, 'Unknown') AS country,
+                                    SUM(COALESCE(s.market_value_eur, (s.market_price_eur * s.quantity)::numeric(36,8), 0))::numeric(36,8) AS value_eur
+                                FROM asset_daily_snapshots s
+                                JOIN latest l ON s.snapshot_date = l.d
+                                JOIN assets a ON s.asset_id = a.id
+                                LEFT JOIN companies c ON a.company_id = c.id
+                                LEFT JOIN countries co ON c.country_code = co.iso2_code
+                                WHERE a.asset_type = 'STOCK'
+                                    AND s.quantity <> 0
+                                GROUP BY COALESCE(co.name, 'Unknown')
+                        ),
+                        etf_values AS (
+                                -- ETFs with direct country allocations
+                                SELECT
+                                    COALESCE(co.name, 'Unknown') AS country,
+                                    SUM(
+                                        COALESCE(s.market_value_eur, (s.market_price_eur * s.quantity)::numeric(36,8), 0)
+                                        * (eca.weight_percentage / 100.0)
+                                    )::numeric(36,8) AS value_eur
+                                FROM asset_daily_snapshots s
+                                JOIN latest l ON s.snapshot_date = l.d
+                                JOIN assets a ON s.asset_id = a.id
+                                JOIN etf_country_allocations eca ON eca.etf_id = a.id
+                                LEFT JOIN countries co ON eca.country_code = co.iso2_code
+                                WHERE a.asset_type = 'ETF'
+                                    AND a.tracked_index_id IS NULL
+                                    AND s.quantity <> 0
+                                GROUP BY COALESCE(co.name, 'Unknown')
+                                UNION ALL
+                                -- ETFs that track an index use the index country allocation
+                                SELECT
+                                    COALESCE(co.name, 'Unknown') AS country,
+                                    SUM(
+                                        COALESCE(s.market_value_eur, (s.market_price_eur * s.quantity)::numeric(36,8), 0)
+                                        * (ica.weight_percentage / 100.0)
+                                    )::numeric(36,8) AS value_eur
+                                FROM asset_daily_snapshots s
+                                JOIN latest l ON s.snapshot_date = l.d
+                                JOIN assets a ON s.asset_id = a.id
+                                JOIN index_country_allocations ica ON ica.index_id = a.tracked_index_id
+                                LEFT JOIN countries co ON ica.country_code = co.iso2_code
+                                WHERE a.asset_type = 'ETF'
+                                    AND a.tracked_index_id IS NOT NULL
+                                    AND s.quantity <> 0
+                                GROUP BY COALESCE(co.name, 'Unknown')
+                        )
+                        SELECT country, SUM(value_eur)::numeric(36,8) AS value_eur
+                        FROM (
+                                SELECT country, value_eur FROM stock_values
+                                UNION ALL
+                                SELECT country, value_eur FROM etf_values
+                        ) t
+                        GROUP BY country
+                        ORDER BY value_eur DESC
         """.trimIndent()
 
         return jdbcTemplate.query(sql, countryValueMapper)
@@ -552,7 +642,7 @@ class PortfolioRepository(
             ticker = rs.getString("ticker"),
             name = rs.getString("name"),
             type = rs.getString("type"),
-            percentage = rs.getBigDecimal("percentage") ?: java.math.BigDecimal.ZERO,
+            percentage = rs.getBigDecimal("percentage") ?: BigDecimal.ZERO,
             currencyCode = rs.getString("currency_code")
         )
     }
@@ -649,7 +739,7 @@ class PortfolioRepository(
         val ticker: String,
         val name: String,
         val type: String?,
-        val percentage: java.math.BigDecimal,
+        val percentage: BigDecimal,
         val currencyCode: String?
     )
 
