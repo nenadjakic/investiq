@@ -52,14 +52,14 @@ export class Allocation implements OnInit {
 
   private countryNameMap: Record<string, string> = {
     'Korea, Republic of': 'Korea',
-    'Korea, Democratic People\'s Republic of': 'North Korea',
+    "Korea, Democratic People's Republic of": 'North Korea',
     'Iran, Islamic Republic of': 'Iran',
-    'Vietnam': 'Viet Nam',
-    'Syria': 'Syrian Arab Republic',
-    'Tanzania': 'Tanzania, United Republic of',
-    'Venezuela': 'Venezuela, Bolivarian Republic of',
-    'Macedonia': 'Macedonia',
-    'Congo': 'Congo, Republic of the',
+    Vietnam: 'Viet Nam',
+    Syria: 'Syrian Arab Republic',
+    Tanzania: 'Tanzania, United Republic of',
+    Venezuela: 'Venezuela, Bolivarian Republic of',
+    Macedonia: 'Macedonia',
+    Congo: 'Congo, Republic of the',
     'Democratic Republic of the Congo': 'Congo, Democratic Republic of the',
   };
 
@@ -69,51 +69,154 @@ export class Allocation implements OnInit {
 
   private countryToContinentMap: Record<string, string> = {
     // Europe
-    'Austria': 'Europe', 'Belgium': 'Europe', 'Bulgaria': 'Europe', 'Croatia': 'Europe',
-    'Cyprus': 'Europe', 'Czech Republic': 'Europe', 'Denmark': 'Europe', 'Estonia': 'Europe',
-    'Finland': 'Europe', 'France': 'Europe', 'Germany': 'Europe', 'Greece': 'Europe',
-    'Hungary': 'Europe', 'Ireland': 'Europe', 'Italy': 'Europe', 'Latvia': 'Europe',
-    'Lithuania': 'Europe', 'Luxembourg': 'Europe', 'Malta': 'Europe', 'Netherlands': 'Europe',
-    'Poland': 'Europe', 'Portugal': 'Europe', 'Romania': 'Europe', 'Slovakia': 'Europe',
-    'Slovenia': 'Europe', 'Spain': 'Europe', 'Sweden': 'Europe', 'United Kingdom': 'Europe',
-    'Switzerland': 'Europe', 'Norway': 'Europe', 'Iceland': 'Europe', 'Serbia': 'Europe',
-    'Albania': 'Europe', 'Bosnia and Herzegovina': 'Europe', 'Macedonia': 'Europe',
-    'Montenegro': 'Europe', 'Kosovo': 'Europe', 'Ukraine': 'Europe', 'Belarus': 'Europe',
-    'Moldova': 'Europe', 'Russia': 'Europe', 'Jersey': 'Europe',
+    Austria: 'Europe',
+    Belgium: 'Europe',
+    Bulgaria: 'Europe',
+    Croatia: 'Europe',
+    Cyprus: 'Europe',
+    'Czech Republic': 'Europe',
+    Denmark: 'Europe',
+    Estonia: 'Europe',
+    Finland: 'Europe',
+    France: 'Europe',
+    Germany: 'Europe',
+    Greece: 'Europe',
+    Hungary: 'Europe',
+    Ireland: 'Europe',
+    Italy: 'Europe',
+    Latvia: 'Europe',
+    Lithuania: 'Europe',
+    Luxembourg: 'Europe',
+    Malta: 'Europe',
+    Netherlands: 'Europe',
+    Poland: 'Europe',
+    Portugal: 'Europe',
+    Romania: 'Europe',
+    Slovakia: 'Europe',
+    Slovenia: 'Europe',
+    Spain: 'Europe',
+    Sweden: 'Europe',
+    'United Kingdom': 'Europe',
+    Switzerland: 'Europe',
+    Norway: 'Europe',
+    Iceland: 'Europe',
+    Serbia: 'Europe',
+    Albania: 'Europe',
+    'Bosnia and Herzegovina': 'Europe',
+    Macedonia: 'Europe',
+    Montenegro: 'Europe',
+    Kosovo: 'Europe',
+    Ukraine: 'Europe',
+    Belarus: 'Europe',
+    Moldova: 'Europe',
+    Russia: 'Europe',
+    Jersey: 'Europe',
     // Asia
-    'China': 'Asia', 'Japan': 'Asia', 'Korea': 'Asia', 'South Korea': 'Asia', 'North Korea': 'Asia',
-    'India': 'Asia', 'Indonesia': 'Asia', 'Thailand': 'Asia', 'Malaysia': 'Asia',
-    'Singapore': 'Asia', 'Philippines': 'Asia', 'Viet Nam': 'Asia', 'Bangladesh': 'Asia',
-    'Pakistan': 'Asia', 'Taiwan': 'Asia', 'Hong Kong': 'Asia', 'Israel': 'Asia',
-    'Turkey': 'Asia', 'Saudi Arabia': 'Asia', 'United Arab Emirates': 'Asia', 'Iran': 'Asia',
-    'Iraq': 'Asia', 'Qatar': 'Asia', 'Kuwait': 'Asia', 'Lebanon': 'Asia',
-    'Jordan': 'Asia', 'Syria': 'Asia', 'Yemen': 'Asia', 'Oman': 'Asia', 'Bahrain': 'Asia',
-    'Afghanistan': 'Asia', 'Kazakhstan': 'Asia', 'Uzbekistan': 'Asia', 'Myanmar': 'Asia',
-    'Cambodia': 'Asia', 'Laos': 'Asia', 'Mongolia': 'Asia', 'Nepal': 'Asia', 'Sri Lanka': 'Asia',
+    China: 'Asia',
+    Japan: 'Asia',
+    Korea: 'Asia',
+    'South Korea': 'Asia',
+    'North Korea': 'Asia',
+    India: 'Asia',
+    Indonesia: 'Asia',
+    Thailand: 'Asia',
+    Malaysia: 'Asia',
+    Singapore: 'Asia',
+    Philippines: 'Asia',
+    'Viet Nam': 'Asia',
+    Bangladesh: 'Asia',
+    Pakistan: 'Asia',
+    Taiwan: 'Asia',
+    'Hong Kong': 'Asia',
+    Israel: 'Asia',
+    Turkey: 'Asia',
+    'Saudi Arabia': 'Asia',
+    'United Arab Emirates': 'Asia',
+    Iran: 'Asia',
+    Iraq: 'Asia',
+    Qatar: 'Asia',
+    Kuwait: 'Asia',
+    Lebanon: 'Asia',
+    Jordan: 'Asia',
+    Syria: 'Asia',
+    Yemen: 'Asia',
+    Oman: 'Asia',
+    Bahrain: 'Asia',
+    Afghanistan: 'Asia',
+    Kazakhstan: 'Asia',
+    Uzbekistan: 'Asia',
+    Myanmar: 'Asia',
+    Cambodia: 'Asia',
+    Laos: 'Asia',
+    Mongolia: 'Asia',
+    Nepal: 'Asia',
+    'Sri Lanka': 'Asia',
     'Taiwan, Province of China': 'Asia',
     // North America
-    'United States': 'North America', 'Canada': 'North America', 'Mexico': 'North America',
-    'Guatemala': 'North America', 'Honduras': 'North America', 'El Salvador': 'North America',
-    'Nicaragua': 'North America', 'Costa Rica': 'North America', 'Panama': 'North America',
-    'Cuba': 'North America', 'Jamaica': 'North America', 'Haiti': 'North America',
-    'Dominican Republic': 'North America', 'Bahamas': 'North America', 'Trinidad and Tobago': 'North America',
+    'United States': 'North America',
+    Canada: 'North America',
+    Mexico: 'North America',
+    Guatemala: 'North America',
+    Honduras: 'North America',
+    'El Salvador': 'North America',
+    Nicaragua: 'North America',
+    'Costa Rica': 'North America',
+    Panama: 'North America',
+    Cuba: 'North America',
+    Jamaica: 'North America',
+    Haiti: 'North America',
+    'Dominican Republic': 'North America',
+    Bahamas: 'North America',
+    'Trinidad and Tobago': 'North America',
     // South America
-    'Brazil': 'South America', 'Argentina': 'South America', 'Chile': 'South America',
-    'Colombia': 'South America', 'Peru': 'South America', 'Venezuela': 'South America',
-    'Ecuador': 'South America', 'Bolivia': 'South America', 'Paraguay': 'South America',
-    'Uruguay': 'South America', 'Guyana': 'South America', 'Suriname': 'South America',
+    Brazil: 'South America',
+    Argentina: 'South America',
+    Chile: 'South America',
+    Colombia: 'South America',
+    Peru: 'South America',
+    Venezuela: 'South America',
+    Ecuador: 'South America',
+    Bolivia: 'South America',
+    Paraguay: 'South America',
+    Uruguay: 'South America',
+    Guyana: 'South America',
+    Suriname: 'South America',
     // Africa
-    'South Africa': 'Africa', 'Nigeria': 'Africa', 'Egypt': 'Africa', 'Kenya': 'Africa',
-    'Morocco': 'Africa', 'Algeria': 'Africa', 'Tunisia': 'Africa', 'Ghana': 'Africa',
-    'Ethiopia': 'Africa', 'Tanzania': 'Africa', 'Uganda': 'Africa', 'Angola': 'Africa',
-    'Mozambique': 'Africa', 'Zimbabwe': 'Africa', 'Zambia': 'Africa', 'Botswana': 'Africa',
-    'Namibia': 'Africa', 'Libya': 'Africa', 'Sudan': 'Africa', 'Senegal': 'Africa',
-    'Ivory Coast': 'Africa', 'Cameroon': 'Africa', 'Congo': 'Africa',
-    'Congo, Republic of the': 'Africa', 'Congo, Democratic Republic of the': 'Africa',
-    'Democratic Republic of the Congo': 'Africa', 'Rwanda': 'Africa', 'Burundi': 'Africa',
+    'South Africa': 'Africa',
+    Nigeria: 'Africa',
+    Egypt: 'Africa',
+    Kenya: 'Africa',
+    Morocco: 'Africa',
+    Algeria: 'Africa',
+    Tunisia: 'Africa',
+    Ghana: 'Africa',
+    Ethiopia: 'Africa',
+    Tanzania: 'Africa',
+    Uganda: 'Africa',
+    Angola: 'Africa',
+    Mozambique: 'Africa',
+    Zimbabwe: 'Africa',
+    Zambia: 'Africa',
+    Botswana: 'Africa',
+    Namibia: 'Africa',
+    Libya: 'Africa',
+    Sudan: 'Africa',
+    Senegal: 'Africa',
+    'Ivory Coast': 'Africa',
+    Cameroon: 'Africa',
+    Congo: 'Africa',
+    'Congo, Republic of the': 'Africa',
+    'Congo, Democratic Republic of the': 'Africa',
+    'Democratic Republic of the Congo': 'Africa',
+    Rwanda: 'Africa',
+    Burundi: 'Africa',
     // Australia
-    'Australia': 'Australia', 'New Zealand': 'Australia', 'Papua New Guinea': 'Australia',
-    'Fiji': 'Australia', 'Solomon Islands': 'Australia', 'Vanuatu': 'Australia',
+    Australia: 'Australia',
+    'New Zealand': 'Australia',
+    'Papua New Guinea': 'Australia',
+    Fiji: 'Australia',
+    'Solomon Islands': 'Australia',
+    Vanuatu: 'Australia',
   };
 
   private getContinent(country: string): string {
@@ -127,7 +230,9 @@ export class Allocation implements OnInit {
     if (found) {
       return this.countryToContinentMap[found];
     }
-    const cleaned = normalizedCountry.replace(/,? (Republic|Federation|Kingdom|State|States|Islands|and|of|the)$/gi, '').trim();
+    const cleaned = normalizedCountry
+      .replace(/,? (Republic|Federation|Kingdom|State|States|Islands|and|of|the)$/gi, '')
+      .trim();
     if (this.countryToContinentMap[cleaned]) {
       return this.countryToContinentMap[cleaned];
     }
@@ -169,15 +274,6 @@ export class Allocation implements OnInit {
           .sort((a, b) => b.value - a.value);
 
         this.sectorOption.set({
-          toolbox: {
-            show: true,
-            orient: 'horizontal',
-            feature: {
-              saveAsImage: { title: 'Save' },
-              dataView: { readOnly: true, title: 'Data' },
-              restore: { title: 'Reset' },
-            },
-          },
           legend: {
             orient: 'horizontal',
             bottom: 30,
@@ -213,15 +309,6 @@ export class Allocation implements OnInit {
         });
 
         this.sectorIndustryOption.set({
-          toolbox: {
-            show: true,
-            orient: 'horizontal',
-            feature: {
-              saveAsImage: { title: 'Save' },
-              dataView: { readOnly: true, title: 'Data' },
-              restore: { title: 'Reset' },
-            },
-          },
           series: [
             {
               type: 'treemap',
@@ -274,15 +361,6 @@ export class Allocation implements OnInit {
           .sort((a, b) => b.value - a.value);
 
         this.countryOption.set({
-          toolbox: {
-            show: true,
-            orient: 'horizontal',
-            feature: {
-              saveAsImage: { title: 'Save' },
-              dataView: { readOnly: true, title: 'Data' },
-              restore: { title: 'Reset' },
-            },
-          },
           legend: {
             orient: 'horizontal',
             bottom: 30,
@@ -337,15 +415,6 @@ export class Allocation implements OnInit {
           .sort((a, b) => b.value - a.value);
 
         this.currencyOption.set({
-          toolbox: {
-            show: true,
-            orient: 'horizontal',
-            feature: {
-              saveAsImage: { title: 'Save' },
-              dataView: { readOnly: true, title: 'Data' },
-              restore: { title: 'Reset' },
-            },
-          },
           legend: {
             orient: 'horizontal',
             bottom: 30,
@@ -394,15 +463,6 @@ export class Allocation implements OnInit {
           .sort((a, b) => b.value - a.value);
 
         this.assetTypeOption.set({
-          toolbox: {
-            show: true,
-            orient: 'horizontal',
-            feature: {
-              saveAsImage: { title: 'Save' },
-              dataView: { readOnly: true, title: 'Data' },
-              restore: { title: 'Reset' },
-            },
-          },
           legend: {
             orient: 'horizontal',
             bottom: 30,
@@ -526,24 +586,34 @@ export class Allocation implements OnInit {
         formatter: (params: any) => {
           const pct = Number(params.value) || 0;
           const amount = Number(params.data?.amount) || 0;
-          return `${params.name}<br/>${pct.toFixed(2)} %<br/>${this.currencyFormatter.format(amount)}`;
+          return `${params.name}<br/>${pct.toFixed(2)} %<br/>${this.currencyFormatter.format(
+            amount
+          )}`;
         },
       },
-          toolbox: {
-            show: true,
-            orient: 'horizontal',          
-            feature: {
-              saveAsImage: { title: 'Save' },
-              dataView: { readOnly: true, title: 'Data' },
-              restore: { title: 'Reset' },
-            },
-          },
       visualMap: {
         min: 0,
         max: maxVal || 100,
         left: 'left',
         text: ['100%', '0%'],
-        inRange: { color: ['#e0f7ff', '#b0e0f0', '#87ceeb', '#7fffd4', '#90ee90', '#adff2f', '#ffff00', '#ffd700', '#ffb347', '#ffa500', '#ff8c00', '#ff6347', '#ff4500', '#ff0000'] },
+        inRange: {
+          color: [
+            '#e0f7ff',
+            '#b0e0f0',
+            '#87ceeb',
+            '#7fffd4',
+            '#90ee90',
+            '#adff2f',
+            '#ffff00',
+            '#ffd700',
+            '#ffb347',
+            '#ffa500',
+            '#ff8c00',
+            '#ff6347',
+            '#ff4500',
+            '#ff0000',
+          ],
+        },
         outOfRange: { color: '#ffffff' },
         type: 'continuous',
         orient: 'vertical',
@@ -642,13 +712,15 @@ export class Allocation implements OnInit {
 
     const maxVal = 100;
 
-    this.continentMapOption.set({      
+    this.continentMapOption.set({
       tooltip: {
         trigger: 'item',
         formatter: (params: any) => {
           const pct = Number(params.value) || 0;
           const amount = Number(params.data?.amount) || 0;
-          return `${params.name}<br/>${pct.toFixed(2)} %<br/>${this.currencyFormatter.format(amount)}`;
+          return `${params.name}<br/>${pct.toFixed(2)} %<br/>${this.currencyFormatter.format(
+            amount
+          )}`;
         },
       },
       toolbox: {
@@ -665,7 +737,24 @@ export class Allocation implements OnInit {
         max: maxVal || 100,
         left: 'left',
         text: ['100%', '0%'],
-        inRange: { color: ['#e0f7ff', '#b0e0f0', '#87ceeb', '#7fffd4', '#90ee90', '#adff2f', '#ffff00', '#ffd700', '#ffb347', '#ffa500', '#ff8c00', '#ff6347', '#ff4500', '#ff0000'] },
+        inRange: {
+          color: [
+            '#e0f7ff',
+            '#b0e0f0',
+            '#87ceeb',
+            '#7fffd4',
+            '#90ee90',
+            '#adff2f',
+            '#ffff00',
+            '#ffd700',
+            '#ffb347',
+            '#ffa500',
+            '#ff8c00',
+            '#ff6347',
+            '#ff4500',
+            '#ff0000',
+          ],
+        },
         outOfRange: { color: '#ffffff' },
         type: 'continuous',
         orient: 'vertical',
