@@ -1,5 +1,5 @@
 services:
-  investiq-postgres:
+  postgres:
     image: "postgres:18"
     command: -c 'max_connections=${POSTGRES_MAX_CONNECTIONS}'
     container_name: "investiq-postgres"
@@ -13,6 +13,89 @@ services:
     volumes:
       - investiq-pg-data:/var/lib/postgresql/18/docker
       - ./.postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - investiq-network
+
+  app-rest:
+    build:
+      context: ..
+      dockerfile: infrastructure/backend/Dockerfile.app-rest
+    container_name: "investiq-app-rest"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://investiq-postgres:5432/${POSTGRES_DB}"
+      SPRING_DATASOURCE_USERNAME: "${POSTGRES_USER}"
+      SPRING_DATASOURCE_PASSWORD: "${POSTGRES_PASSWORD}"
+      SPRING_FLYWAY_LOCATIONS: "classpath:/migrations"
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: "none"
+    ports:
+      - "${APP_REST_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8080'" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    networks:
+      - investiq-network
+
+  scheduler:
+    build:
+      context: ..
+      dockerfile: infrastructure/backend/Dockerfile.scheduler
+    container_name: "investiq-scheduler"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://investiq-postgres:5432/${POSTGRES_DB}"
+      SPRING_DATASOURCE_USERNAME: "${POSTGRES_USER}"
+      SPRING_DATASOURCE_PASSWORD: "${POSTGRES_PASSWORD}"
+      SPRING_FLYWAY_LOCATIONS: "classpath:/migrations"
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: "none"
+      SERVER_PORT: "${SCHEDULER_PORT:-8081}"
+    ports:
+      - "${SCHEDULER_PORT:-8081}:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8081'" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    networks:
+      - investiq-network
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: infrastructure/frontend/Dockerfile
+    container_name: "investiq-frontend"
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"
+    depends_on:
+      app-rest:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/4200'" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - investiq-network
 
 volumes:
   investiq-pg-data:
+
+networks:
+  investiq-network:

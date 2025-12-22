@@ -11,6 +11,13 @@ plugins {
     jacoco
 }
 
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom(configurations.developmentOnly.get())
+    }
+}
+
 dependencies {
     implementation(project(":data"))
     implementation(project(":common"))
@@ -28,6 +35,8 @@ dependencies {
     implementation(libs.apache.poi)
     implementation(libs.apache.poi.ooxml)
     runtimeOnly(libs.postgresql)
+
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     implementation(libs.spring.boot.flyway)
     implementation(libs.flyway.core)
