@@ -723,15 +723,6 @@ export class Allocation implements OnInit {
           )}`;
         },
       },
-      toolbox: {
-        show: true,
-        orient: 'horizontal',
-        feature: {
-          saveAsImage: { title: 'Save' },
-          dataView: { readOnly: true, title: 'Data' },
-          restore: { title: 'Reset' },
-        },
-      },
       visualMap: {
         min: 0,
         max: maxVal || 100,

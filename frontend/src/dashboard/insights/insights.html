@@ -29,7 +29,7 @@
               <div class="text-right">
                 @if (transaction.transactionType === 'BUY' || transaction.transactionType === 'SELL') {
                   <p class="text-sm font-medium text-gray-900">
-                    {{ (transaction.quantity ?? 0) | number:'1.0-2' }} shares
+                    {{ (transaction.quantity ?? 0) | number:'1.0-8' }} shares
                   </p>
                   <p class="text-xs text-gray-500">
                     @ {{ (transaction.price ?? 0) | number:'1.2-2' }} {{ transaction.currency?.code || '' }}
