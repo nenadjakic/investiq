@@ -51,7 +51,7 @@ export class Allocation implements OnInit {
   private static readonly CONTINENT_GEOJSON_URL = '/maps/continents.json';
 
   private countryNameMap: Record<string, string> = {
-    'Korea, Republic of': 'Korea',
+    'Korea, Republic of': 'South Korea',
     "Korea, Democratic People's Republic of": 'North Korea',
     'Iran, Islamic Republic of': 'Iran',
     Vietnam: 'Viet Nam',
@@ -61,6 +61,7 @@ export class Allocation implements OnInit {
     Macedonia: 'Macedonia',
     Congo: 'Congo, Republic of the',
     'Democratic Republic of the Congo': 'Congo, Democratic Republic of the',
+    'Taiwan, Province of China': 'Taiwan',
   };
 
   private normalizeCountryName(apiName: string): string {
@@ -114,7 +115,6 @@ export class Allocation implements OnInit {
     // Asia
     China: 'Asia',
     Japan: 'Asia',
-    Korea: 'Asia',
     'South Korea': 'Asia',
     'North Korea': 'Asia',
     India: 'Asia',
