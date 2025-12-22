@@ -62,6 +62,7 @@ export class Allocation implements OnInit {
     Congo: 'Congo, Republic of the',
     'Democratic Republic of the Congo': 'Congo, Democratic Republic of the',
     'Taiwan, Province of China': 'Taiwan',
+    'United States': 'United States of America'
   };
 
   private normalizeCountryName(apiName: string): string {
