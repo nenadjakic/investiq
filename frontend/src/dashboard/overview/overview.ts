@@ -71,7 +71,9 @@ export class Overview implements OnInit {
         this.chartOption.set({
           xAxis: {
             type: 'category',
-            data: data.dates,
+            data: data.dates,            
+            axisLine: { show: true, lineStyle: { width: 2, color: '#374151' } },
+            axisTick: { show: true }
           },
           yAxis: {
             type: 'value',

@@ -1,10 +1,16 @@
 package com.github.nenadjakic.investiq.restapp.controller
 
+import com.github.nenadjakic.investiq.common.dto.ImportResult
 import com.github.nenadjakic.investiq.common.dto.StagingTransactionEditRequest
 import com.github.nenadjakic.investiq.common.dto.StagingTransactionResponse
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.service.StagingTransactionService
+import com.github.nenadjakic.investiq.service.importer.ImporterService
+import com.github.nenadjakic.investiq.service.importer.RevolutImporterService
+import com.github.nenadjakic.investiq.service.model.importer.EToroTrade
+import com.github.nenadjakic.investiq.service.model.importer.IBKRTrade
+import com.github.nenadjakic.investiq.service.model.importer.Trading212Trade
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -35,7 +41,11 @@ import java.util.UUID
 @RequestMapping("/staging-transaction")
 @Validated
 class StagingTransactionController(
-    private val stagingTransactionService: StagingTransactionService
+    private val stagingTransactionService: StagingTransactionService,
+    private val tradingImporterService: ImporterService<Trading212Trade>,
+    private val eToroImporterService: ImporterService<EToroTrade>,
+    private val ibkrImportesService: ImporterService<IBKRTrade>,
+    private val revolutImporterService: RevolutImporterService
 ) {
 
     @Operation(
@@ -55,7 +65,16 @@ class StagingTransactionController(
     )
     fun import(
         @RequestParam("platform") platform: Platform,
-        @RequestPart("file") multipartFile: MultipartFile) {
+        @RequestPart("file") multipartFile: MultipartFile
+    ): ResponseEntity<Void> {
+        val inputStream = multipartFile.inputStream
+        val result = when (platform) {
+            Platform.ETORO -> eToroImporterService.import(inputStream)
+            Platform.TRADING212 -> tradingImporterService.import(inputStream)
+            Platform.REVOLUT -> revolutImporterService.import(inputStream)
+            Platform.IBKR -> ibkrImportesService.import(inputStream)
+        }
+        return ResponseEntity.status(201).build()
     }
 
     @Operation(

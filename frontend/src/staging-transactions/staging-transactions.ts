@@ -313,6 +313,14 @@ export class StagingTransactions implements OnInit {
           this.importLoading.set(false);
           this.importPlatform.set('');
           this.importFile.set(null);
+          // Also clear the native file input element so the selected file name disappears
+          try {
+            const fileInputs = document.querySelectorAll<HTMLInputElement>('input[type="file"]');
+            fileInputs.forEach((inp) => { inp.value = ''; });
+          } catch (e) {
+            // ignore - defensive for environments where DOM access might be restricted
+            console.warn('Could not clear native file input', e);
+          }
           this.loadTransactions(0);
         },
         error: (err) => {

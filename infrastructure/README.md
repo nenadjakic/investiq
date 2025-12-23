@@ -1,6 +1,6 @@
 # InvestIQ Docker Compose
 
-Production stack that builds runnable JAR files for app-rest (8080) and scheduler (8081) with nginx-served Angular build (4200). PostgreSQL 18 on port 8432. Jedan compose, jedan .env.
+Production stack that builds runnable JAR files for app-rest (8080) and scheduler (8081) with nginx-served Angular build (4200). PostgreSQL 18 on port 8432.
 
 ## Prerequisites
 - Docker + Docker Compose V2
