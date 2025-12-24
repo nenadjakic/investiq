@@ -36,7 +36,7 @@ export class Insights implements OnInit {
     this.loadPerformers();
   }
 
-  loadRecentTransactions(limit: number = 5): void {
+  loadRecentTransactions(limit: number = 7): void {
     this.txLoading.set(true);
     this.txError.set(null);
     this.transactionControllerService
@@ -58,7 +58,7 @@ export class Insights implements OnInit {
     this.perfLoading.set(true);
     this.perfError.set(null);
     this.portfolioControllerService
-      .getTopBottomPerformers()
+      .getTopBottomPerformers(7)
       .pipe(finalize(() => this.perfLoading.set(false)))
       .subscribe({
         next: (data) => {

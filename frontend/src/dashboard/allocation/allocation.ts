@@ -155,6 +155,7 @@ export class Allocation implements OnInit {
     'Taiwan, Province of China': 'Asia',
     // North America
     'United States': 'North America',
+    'United States of America': 'North America',
     Canada: 'North America',
     Mexico: 'North America',
     Guatemala: 'North America',
@@ -222,21 +223,45 @@ export class Allocation implements OnInit {
 
   private getContinent(country: string): string {
     const normalizedCountry = this.normalizeCountryName(country);
+    // Try direct lookup using normalized name first, then the original API name
     if (this.countryToContinentMap[normalizedCountry]) {
       return this.countryToContinentMap[normalizedCountry];
     }
+    if (this.countryToContinentMap[country]) {
+      return this.countryToContinentMap[country];
+    }
+
+    // Case-insensitive key match against both normalized and original names
     const found = Object.keys(this.countryToContinentMap).find(
-      (key) => key.toLowerCase() === normalizedCountry.toLowerCase()
+      (key) =>
+        key.toLowerCase() === normalizedCountry.toLowerCase() || key.toLowerCase() === country.toLowerCase()
     );
     if (found) {
       return this.countryToContinentMap[found];
     }
-    const cleaned = normalizedCountry
-      .replace(/,? (Republic|Federation|Kingdom|State|States|Islands|and|of|the)$/gi, '')
-      .trim();
-    if (this.countryToContinentMap[cleaned]) {
-      return this.countryToContinentMap[cleaned];
+
+    // Try cleaned variants (remove common suffixes) for both normalized and original
+    const cleanup = (name: string) =>
+      name.replace(/,? (Republic|Federation|Kingdom|State|States|Islands|and|of|the)$/gi, '').trim();
+
+    const cleanedNormalized = cleanup(normalizedCountry);
+    const cleanedOriginal = cleanup(country);
+
+    if (this.countryToContinentMap[cleanedNormalized]) {
+      return this.countryToContinentMap[cleanedNormalized];
     }
+    if (this.countryToContinentMap[cleanedOriginal]) {
+      return this.countryToContinentMap[cleanedOriginal];
+    }
+
+    const foundClean = Object.keys(this.countryToContinentMap).find(
+      (key) =>
+        key.toLowerCase() === cleanedNormalized.toLowerCase() || key.toLowerCase() === cleanedOriginal.toLowerCase()
+    );
+    if (foundClean) {
+      return this.countryToContinentMap[foundClean];
+    }
+
     return 'Other';
   }
 

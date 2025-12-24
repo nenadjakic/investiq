@@ -25,15 +25,15 @@ export class Overview implements OnInit {
   summaryError = signal(false);
   chartData = signal<PortfolioChartResponse | null>(null);
   chartError = signal(false);
-  selectedPeriod = signal<'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'>('1Y');
-  
+  selectedPeriod = signal<'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'>('ALL');
+
   availableIndices = signal<IndexOption[]>([
     { symbol: '^GSPC', label: 'S&P 500', selected: false },
     { symbol: '^IXIC', label: 'NASDAQ', selected: false },
     { symbol: '^STOXX50E', label: 'STOXX 50', selected: false },
     { symbol: '^STOXX', label: 'STOXX 600', selected: false },
   ]);
-  
+
   chartOption = signal<EChartsCoreOption>({});
 
   constructor() {
@@ -71,7 +71,7 @@ export class Overview implements OnInit {
         this.chartOption.set({
           xAxis: {
             type: 'category',
-            data: data.dates,            
+            data: data.dates,
             axisLine: { show: true, lineStyle: { width: 2, color: '#374151' } },
             axisTick: { show: true }
           },
@@ -109,7 +109,7 @@ export class Overview implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setPeriod('1Y');
+    this.setPeriod('ALL');
     this.loadSummary();
   }
 
@@ -161,7 +161,7 @@ export class Overview implements OnInit {
 
   private loadChartData(days: number | undefined): void {
     this.chartError.set(false);
-    
+
     this.portfolioControllerService.getPortfolioPerformanceChart(
       days).subscribe({
       next: (data) => this.chartData.set(data),

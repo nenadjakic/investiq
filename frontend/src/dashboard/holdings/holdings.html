@@ -28,6 +28,24 @@
     }
 
     @if (!loading() && !loadError()) {
+      <!-- New header: group title and visible asset count -->
+      <div class="px-6 py-3 border-b border-gray-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <h3 class="text-lg font-semibold text-gray-900">{{ titleLabel() }}</h3>
+          <span class="text-sm text-gray-500">({{ assetsCount() }} assets)</span>
+        </div>
+        <div>
+          <button class="p-2 rounded text-gray-600 hover:bg-gray-100" (click)="toggleCollapsed()" aria-label="Toggle holdings">
+            <!-- Chevron-only icon: points down when collapsed (expand), up when expanded -->
+            <svg class="w-4 h-4 transform transition-transform" [class.rotate-180]="!collapsed()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      @if (!collapsed()) {
+
       @if (filteredHoldings().length === 0) {
         <div class="p-6">
           <p class="text-sm text-gray-500">No holdings to display.</p>
@@ -118,7 +136,7 @@
                     <div class="text-sm font-semibold text-gray-900">{{ holding.ticker || '-' }}</div>
                     <div class="text-xs text-gray-500">{{ holding.name || '-' }}</div>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.shares ?? 0) | number:'1.0-2' }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.shares ?? 0) | number:'1.8-8' }}</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.avgPrice ?? 0) | number:'1.2-2' }}</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (holding.currentPrice ?? 0) | number:'1.2-2' }}</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm" [ngClass]="(holding.profitLoss ?? 0) < 0 ? 'text-red-600' : 'text-green-600'">
@@ -132,6 +150,104 @@
           </table>
         </div>
       }
+      }
     }
+  </div>
+
+  <!-- New consolidated holdings panel -->
+  <div class="space-y-8 mt-6">
+    <div class="bg-white rounded-lg shadow">
+      <div class="px-6 py-3 border-b border-gray-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <h3 class="text-lg font-semibold text-gray-900">Consolidated holdings — by company/ETF</h3>
+          <span class="text-sm text-gray-500">({{ consolidatedCount() }} items)</span>
+        </div>
+        <div>
+          <button class="p-2 rounded text-gray-600 hover:bg-gray-100" (click)="toggleConsolidatedCollapsed()" aria-label="Toggle consolidated holdings">
+            <svg class="w-4 h-4 transform transition-transform" [class.rotate-180]="!consolidatedCollapsed()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      @if (!consolidatedCollapsed()) {
+        @if (consolidatedLoading()) {
+          <div class="p-6">
+            <p class="text-sm text-gray-600">Loading consolidated holdings...</p>
+          </div>
+        }
+
+        @if (consolidatedLoadError()) {
+          <div class="p-6">
+            <p class="text-sm text-red-600">Failed to load consolidated holdings.</p>
+          </div>
+        }
+
+        @if (!consolidatedLoading() && !consolidatedLoadError()) {
+          @if (consolidatedHoldings().length === 0) {
+            <div class="p-6"><p class="text-sm text-gray-500">No consolidated holdings to display.</p></div>
+          }
+
+          @if (consolidatedHoldings().length > 0) {
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <button class="flex items-center gap-1" (click)="toggleConsolidatedSort('name')">
+                        Name
+                        @if (consolidatedSortState().column === 'name') {
+                          <span class="text-[10px] text-gray-500">{{ consolidatedSortState().direction === 'asc' ? '^' : 'v' }}</span>
+                        }
+                      </button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <button class="flex items-center gap-1" (click)="toggleConsolidatedSort('profitLoss')">
+                        P/L
+                        @if (consolidatedSortState().column === 'profitLoss') {
+                          <span class="text-[10px] text-gray-500">{{ consolidatedSortState().direction === 'asc' ? '^' : 'v' }}</span>
+                        }
+                      </button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <button class="flex items-center gap-1" (click)="toggleConsolidatedSort('dividendCostYield')">
+                        Div Yield
+                        @if (consolidatedSortState().column === 'dividendCostYield') {
+                          <span class="text-[10px] text-gray-500">{{ consolidatedSortState().direction === 'asc' ? '^' : 'v' }}</span>
+                        }
+                      </button>
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <button class="flex items-center gap-1" (click)="toggleConsolidatedSort('portfolioPercentage')">
+                        % Portfolio
+                        @if (consolidatedSortState().column === 'portfolioPercentage') {
+                          <span class="text-[10px] text-gray-500">{{ consolidatedSortState().direction === 'asc' ? '^' : 'v' }}</span>
+                        }
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  @for (item of sortedConsolidatedHoldings(); track $index) {
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-semibold text-gray-900">{{ item.name || '-' }}</div>
+                        <div class="text-xs text-gray-500">{{ (item.tickers || []).join(', ') }}</div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm" [ngClass]="(item.profitLoss ?? 0) < 0 ? 'text-red-600' : 'text-green-600'">
+                        {{ (item.profitLoss ?? 0) | number:'1.2-2' }} ({{ (item.profitLossPercentage ?? 0) | number:'1.2-2' }}%)
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (item.dividendCostYield ?? 0) | number:'1.1-2' }}%</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ (item.portfolioPercentage ?? 0) | number:'1.1-2' }}%</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        }
+      }
+    </div>
   </div>
 </div>

@@ -1,110 +1,214 @@
-  <div class="space-y-6">
-    <!-- Big Performance Chart -->
-    <div class="bg-white rounded-lg shadow p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Portfolio Performance Over Time</h3>
-        <div class="flex gap-2">
-          <button (click)="setPeriod('ALL')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedPeriod() === 'ALL' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">ALL</button>
-          <button (click)="setPeriod('MTD')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedPeriod() === 'MTD' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">MTD</button>
-          <button (click)="setPeriod('YTD')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedPeriod() === 'YTD' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">YTD</button>
-          <button (click)="setPeriod('1M')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedPeriod() === '1M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">1M</button>
-          <button (click)="setPeriod('3M')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedPeriod() === '3M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">3M</button>
-          <button (click)="setPeriod('6M')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedPeriod() === '6M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">6M</button>
-          <button (click)="setPeriod('1Y')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedPeriod() === '1Y' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">1Y</button>
-        </div>
-      </div>
-      <div class="h-96">
-        @if (chartError()) {
-          <div class="w-full h-full flex items-center justify-center bg-red-50 text-red-600 rounded">
-            Performance data not available.
-          </div>
-        } @else if (!chartData()) {
-          <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-500 rounded">
-            No data available for performance.
-          </div>
-        } @else {
-          <div echarts [options]="chartOption()" class="w-full h-full"></div>
-        }
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Monthly Investments (€)</h3>
-        <div class="flex gap-2">
-          <button (click)="setMonthsPeriod('6M')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedMonths() === '6M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">6M</button>
-          <button (click)="setMonthsPeriod('1Y')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedMonths() === '1Y' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">1Y</button>
-          <button (click)="setMonthsPeriod('3Y')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedMonths() === '3Y' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">3Y</button>
-          <button (click)="setMonthsPeriod('ALL')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedMonths() === 'ALL' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'">ALL</button>
-        </div>
-      </div>
-      <div class="h-96">
-        @if (monthlyError()) {
-          <div class="w-full h-full flex items-center justify-center bg-red-50 text-red-600 rounded">
-            Investment data not available.
-          </div>
-        } @else if (!monthlyInvested()?.series?.length) {
-          <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-500 rounded">
-            No data available for monthly investments.
-          </div>
-        } @else {
-          <div echarts [options]="monthlyOption()" class="w-full h-full"></div>
-        }
+<div class="space-y-6">
+  <!-- Big Performance Chart -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Portfolio Performance Over Time</h3>
+      <div class="flex gap-2">
+        <button
+          (click)="setPeriod('ALL')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedPeriod() === 'ALL' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          ALL
+        </button>
+        <button
+          (click)="setPeriod('MTD')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedPeriod() === 'MTD' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          MTD
+        </button>
+        <button
+          (click)="setPeriod('YTD')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedPeriod() === 'YTD' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          YTD
+        </button>
+        <button
+          (click)="setPeriod('1M')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedPeriod() === '1M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          1M
+        </button>
+        <button
+          (click)="setPeriod('3M')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedPeriod() === '3M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          3M
+        </button>
+        <button
+          (click)="setPeriod('6M')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedPeriod() === '6M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          6M
+        </button>
+        <button
+          (click)="setPeriod('1Y')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedPeriod() === '1Y' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          1Y
+        </button>
       </div>
     </div>
-
-    <div class="bg-white rounded-lg shadow p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Monthly Dividends (€)</h3>
-        <div class="flex gap-2">
-          <button (click)="setDividendsMonthsPeriod('6M')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedDividendsMonths() === '6M' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'">6M</button>
-          <button (click)="setDividendsMonthsPeriod('1Y')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedDividendsMonths() === '1Y' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'">1Y</button>
-          <button (click)="setDividendsMonthsPeriod('3Y')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedDividendsMonths() === '3Y' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'">3Y</button>
-          <button (click)="setDividendsMonthsPeriod('ALL')"
-            class="px-2 py-1 text-sm rounded"
-            [ngClass]="selectedDividendsMonths() === 'ALL' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'">ALL</button>
+    <div class="h-96">
+      @if (chartError()) {
+        <div class="w-full h-full flex items-center justify-center bg-red-50 text-red-600 rounded">
+          Performance data not available.
         </div>
-      </div>
-      <div class="h-96">
-        @if (monthlyDividendsError()) {
-          <div class="w-full h-full flex items-center justify-center bg-red-50 text-red-600 rounded">
-            Dividend data not available.
-          </div>
-        } @else if (!monthlyDividends()) {
-          <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-500 rounded">
-            No data available for monthly dividends.
-          </div>
-        } @else {
-          <div echarts [options]="monthlyDividendsOption()" class="w-full h-full"></div>
-        }
-      </div>
+      } @else if (!chartData()) {
+        <div
+          class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-500 rounded"
+        >
+          No data available for performance.
+        </div>
+      } @else {
+        <div echarts [options]="chartOption()" class="w-full h-full"></div>
+      }
     </div>
   </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Monthly Investments (€)</h3>
+      <div class="flex gap-2">
+        <button
+          (click)="setMonthsPeriod('ALL')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedMonths() === 'ALL' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          ALL
+        </button>
+        <button
+          (click)="setMonthsPeriod('6M')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedMonths() === '6M' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          6M
+        </button>
+        <button
+          (click)="setMonthsPeriod('1Y')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedMonths() === '1Y' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          1Y
+        </button>
+        <button
+          (click)="setMonthsPeriod('3Y')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedMonths() === '3Y' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+          "
+        >
+          3Y
+        </button>
+      </div>
+    </div>
+    <div class="h-96">
+      @if (monthlyError()) {
+        <div class="w-full h-full flex items-center justify-center bg-red-50 text-red-600 rounded">
+          Investment data not available.
+        </div>
+      } @else if (!monthlyInvested()?.series?.length) {
+        <div
+          class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-500 rounded"
+        >
+          No data available for monthly investments.
+        </div>
+      } @else {
+        <div echarts [options]="monthlyOption()" class="w-full h-full"></div>
+      }
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Monthly Dividends (€)</h3>
+      <div class="flex gap-2">
+        <button
+          (click)="setDividendsMonthsPeriod('ALL')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedDividendsMonths() === 'ALL'
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-gray-100 text-gray-700'
+          "
+        >
+          ALL
+        </button>
+        <button
+          (click)="setDividendsMonthsPeriod('6M')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedDividendsMonths() === '6M'
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-gray-100 text-gray-700'
+          "
+        >
+          6M
+        </button>
+        <button
+          (click)="setDividendsMonthsPeriod('1Y')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedDividendsMonths() === '1Y'
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-gray-100 text-gray-700'
+          "
+        >
+          1Y
+        </button>
+        <button
+          (click)="setDividendsMonthsPeriod('3Y')"
+          class="px-2 py-1 text-sm rounded"
+          [ngClass]="
+            selectedDividendsMonths() === '3Y'
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-gray-100 text-gray-700'
+          "
+        >
+          3Y
+        </button>
+      </div>
+    </div>
+    <div class="h-96">
+      @if (monthlyDividendsError()) {
+        <div class="w-full h-full flex items-center justify-center bg-red-50 text-red-600 rounded">
+          Dividend data not available.
+        </div>
+      } @else if (!monthlyDividends()) {
+        <div
+          class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-500 rounded"
+        >
+          No data available for monthly dividends.
+        </div>
+      } @else {
+        <div echarts [options]="monthlyDividendsOption()" class="w-full h-full"></div>
+      }
+    </div>
+  </div>
+</div>

@@ -272,6 +272,21 @@
         }
       }
     },
+    "/transaction/copy": {
+      "post": {
+        "tags": [
+          "Transaction Controller"
+        ],
+        "summary": "Copy validated staging transactions to transactions table",
+        "description": "Copies all validated staging transactions into the main transactions table. Returns 204 No Content on success.",
+        "operationId": "copyValidatedTransactions",
+        "responses": {
+          "204": {
+            "description": "Copy successful"
+          }
+        }
+      }
+    },
     "/transaction": {
       "get": {
         "tags": [
@@ -684,6 +699,31 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DividendCostYieldResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/portfolio/consolidated-holdings": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get consolidated portfolio holdings by company or ETF",
+        "description": "Returns a list of all current portfolio positions grouped by company or ETF with profit/loss and dividend yield.",
+        "operationId": "getConsolidatedHoldings",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved consolidated holdings list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyAssetHoldingResponse"
                 }
               }
             }
@@ -1311,21 +1351,21 @@
             "type": "integer",
             "format": "int32"
           },
-          "first": {
-            "type": "boolean"
-          },
-          "last": {
-            "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
           },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
           },
           "empty": {
             "type": "boolean"
@@ -1472,21 +1512,21 @@
             "type": "integer",
             "format": "int32"
           },
-          "first": {
-            "type": "boolean"
-          },
-          "last": {
-            "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
           },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
           },
           "empty": {
             "type": "boolean"
@@ -1949,6 +1989,42 @@
           }
         }
       },
+      "CompanyAssetHoldingResponse": {
+        "type": "object",
+        "description": "Individual company/etf holding details",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
+          },
+          "tickers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "profitLoss": {
+            "type": "number"
+          },
+          "profitLossPercentage": {
+            "type": "number"
+          },
+          "portfolioPercentage": {
+            "type": "number"
+          },
+          "dividendCostYield": {
+            "type": "number"
+          }
+        }
+      },
       "AssetTypeValueResponse": {
         "type": "object",
         "properties": {
@@ -2050,21 +2126,21 @@
             "type": "integer",
             "format": "int32"
           },
-          "first": {
-            "type": "boolean"
-          },
-          "last": {
-            "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
           },
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
           },
           "empty": {
             "type": "boolean"
