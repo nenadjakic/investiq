@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 
 @RestController
 @RequestMapping("/api/scheduler")
@@ -66,5 +68,20 @@ class SchedulerController(
             }
         }
         return ResponseEntity.accepted().body("All schedulers triggered")
+    }
+
+    @PostMapping("/snapshot/range")
+    fun triggerSnapshotRange(
+        @RequestParam from: LocalDate,
+        @RequestParam to: LocalDate
+    ): ResponseEntity<String> {
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                snapshotScheduler.generateSnapshots(from, to)
+            } catch (ex: Exception) {
+                log.error("Error while running snapshot scheduler for range", ex)
+            }
+        }
+        return ResponseEntity.accepted().body("Snapshot scheduler triggered for range $from to $to")
     }
 }

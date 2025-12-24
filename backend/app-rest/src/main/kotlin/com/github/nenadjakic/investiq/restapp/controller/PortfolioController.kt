@@ -2,6 +2,7 @@ package com.github.nenadjakic.investiq.restapp.controller
 
 import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.AssetTypeValueResponse
+import com.github.nenadjakic.investiq.common.dto.CompanyAssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioChartResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioSummaryResponse
 import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
@@ -269,6 +270,32 @@ class PortfolioController(
     @GetMapping("/holdings", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getHoldings(): ResponseEntity<List<AssetHoldingResponse>> =
          ResponseEntity.ok(portfolioService.getPortfolioHoldings())
+
+    @Operation(
+        operationId = "getConsolidatedHoldings",
+        summary = "Get consolidated portfolio holdings by company or ETF",
+        description = "Returns a list of all current portfolio positions grouped by company or ETF with profit/loss and dividend yield."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved consolidated holdings list",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = CompanyAssetHoldingResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal server error",
+                content = [Content()]
+            )
+        ]
+    )
+    @GetMapping("/consolidated-holdings", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getConsolidatedHoldings(): ResponseEntity<List<CompanyAssetHoldingResponse>> =
+        ResponseEntity.ok(portfolioService.getConsolidatedPortfolioHoldings())
 
     @Operation(
         operationId = "getTopBottomPerformers",

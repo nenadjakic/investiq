@@ -100,3 +100,28 @@ data class AssetHoldingResponse(
     @param:Schema(description = "Annualized dividend cost yield percentage", example = "2.50")
     val dividendCostYield: BigDecimal
 )
+
+@Schema(description = "Individual company/etf holding details")
+data class CompanyAssetHoldingResponse(
+
+    @param:Schema(description = "Trading platform", example = "IBKR", allowableValues = ["TRADING212", "IBKR", "REVOLUT", "ETORO"])
+    val platform: Platform?,
+
+    @param:Schema(description = "Stock ticker symbols", example = "MSFT, MSF")
+    val tickers: List<String>,
+
+    @param:Schema(description = "Company name or ETF name", example = "Apple Inc.")
+    val name: String,
+
+    @param:Schema(description = "Profit/Loss amount", example = "1275.00")
+    val profitLoss: BigDecimal,
+
+    @param:Schema(description = "Profit/Loss percentage", example = "17.0")
+    val profitLossPercentage: BigDecimal,
+
+    @param:Schema(description = "Percentage of total portfolio", example = "35.0")
+    val portfolioPercentage: BigDecimal,
+
+    @param:Schema(description = "Annualized dividend cost yield percentage", example = "2.50")
+    val dividendCostYield: BigDecimal
+)

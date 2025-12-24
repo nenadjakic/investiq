@@ -418,6 +418,36 @@ class PortfolioRepository(
     }
 
     /**
+     * Returns latest asset snapshots grouped by company (one row per company/ETF for the latest snapshot_date).
+     * For ETFs, groups by ETF id and name; for stocks, groups by company id and name.
+     * Aggregates cost basis, market value and unrealized P/L.
+     * Also aggregates tickers associated with each holding.
+     */
+    fun getLatestAssetSnapshotsGroupedByCompany(): List<AssetSnapshotGroupedByCompany> {
+        val sql = """
+            WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots)
+            SELECT
+              l.d AS snapshot_date,
+             CASE WHEN a.asset_type = 'ETF' THEN a.id ELSE a.company_id END AS holding_id,
+    		 CASE WHEN a.asset_type = 'ETF' THEN a.name ELSE c.name END AS holding_name,
+
+              SUM(s.cost_basis_eur) AS cost_basis_eur,
+              SUM(s.market_value_eur) AS market_value_eur,
+              SUM(s.unrealized_pl_eur) AS unrealized_pl_eur,
+              ARRAY_AGG(DISTINCT a.symbol ORDER BY a.symbol) AS tickers
+            FROM asset_daily_snapshots s
+            JOIN latest l ON s.snapshot_date = l.d
+            JOIN assets a ON s.asset_id = a.id
+            LEFT JOIN companies c ON a.company_id = c.id
+            WHERE s.quantity <> 0
+            GROUP BY l.d,  holding_id, holding_name
+            ORDER BY SUM(COALESCE(s.market_value_eur,0)) desc
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, assetSnapshotGroupedByCompanyMapper)
+    }
+
+    /**
      * Returns latest asset performances (percentage change) computed from the latest snapshot rows.
      * Percentage is computed as:
      *  - if avg_cost_per_share_eur available and > 0 and market_price_eur available: (market_price - avg_cost)/avg_cost*100
@@ -459,7 +489,7 @@ class PortfolioRepository(
         val sql = """
             WITH latest AS (SELECT MAX(snapshot_date) AS d FROM asset_daily_snapshots),
             first_buy AS (
-                SELECT 
+                SELECT
                     asset_id,
                     MIN(transaction_date_only) AS first_buy_date
                 FROM vw_transaction_analytics
@@ -467,7 +497,7 @@ class PortfolioRepository(
                 GROUP BY asset_id
             ),
             total_dividends AS (
-                SELECT 
+                SELECT
                     t.asset_id,
                     SUM(t.transaction_value_eur) AS total_dividend_eur
                 FROM vw_transaction_analytics t
@@ -486,13 +516,13 @@ class PortfolioRepository(
               -- Calculate days held
               (CURRENT_DATE - fb.first_buy_date) AS days_held,
               -- Annualized dividend = total_dividend * 365 / days_held
-              CASE 
-                WHEN (CURRENT_DATE - fb.first_buy_date) > 0 
+              CASE
+                WHEN (CURRENT_DATE - fb.first_buy_date) > 0
                   THEN (COALESCE(d.total_dividend_eur, 0) * 365.0 / (CURRENT_DATE - fb.first_buy_date))
                 ELSE COALESCE(d.total_dividend_eur, 0)
               END::numeric(36,8) AS annualized_dividend_eur,
               -- Dividend cost yield = annualized_dividend / cost_basis * 100
-              CASE 
+              CASE
                 WHEN SUM(s.cost_basis_eur) > 0 AND (CURRENT_DATE - fb.first_buy_date) > 0
                   THEN ((COALESCE(d.total_dividend_eur, 0) * 365.0 / (CURRENT_DATE - fb.first_buy_date)) * 100 / SUM(s.cost_basis_eur))
                 WHEN SUM(s.cost_basis_eur) > 0
@@ -510,6 +540,68 @@ class PortfolioRepository(
         """.trimIndent()
 
         return jdbcTemplate.query(sql, assetDividendCostYieldMapper)
+    }
+
+    fun getAssetDividendCostYieldGroupedByCompany(): List<CompanyEtfDividendCostYield> {
+        val sql = """
+            WITH latest AS (
+                SELECT MAX(snapshot_date) AS d
+                FROM asset_daily_snapshots
+            ),
+            first_buy AS (
+                SELECT
+                    asset_id,
+                    MIN(transaction_date_only) AS first_buy_date
+                FROM vw_transaction_analytics
+                WHERE transaction_type = 'BUY'
+                GROUP BY asset_id
+            ),
+            total_dividends AS (
+                SELECT
+                    t.asset_id,
+                    SUM(t.transaction_value_eur) AS total_dividend_eur
+                FROM vw_transaction_analytics t
+                JOIN first_buy fb ON t.asset_id = fb.asset_id
+                WHERE t.transaction_type = 'DIVIDEND'
+                  AND t.transaction_date_only >= fb.first_buy_date
+                GROUP BY t.asset_id
+            ),
+            annualized_dividend_per_asset AS (
+                SELECT
+                    s.asset_id,
+                    CASE WHEN a.asset_type = 'ETF' THEN a.id ELSE a.company_id END AS holding_id,
+                    s.cost_basis_eur,
+                    COALESCE(d.total_dividend_eur,0) AS total_dividend_eur,
+                    fb.first_buy_date,
+                    CASE
+                        WHEN (CURRENT_DATE - fb.first_buy_date) > 0
+                        THEN COALESCE(d.total_dividend_eur,0) * 365.0 / (CURRENT_DATE - fb.first_buy_date)
+                        ELSE COALESCE(d.total_dividend_eur,0)
+                    END AS annualized_dividend_eur,
+                    (CURRENT_DATE - fb.first_buy_date) AS days_held
+                FROM asset_daily_snapshots s
+                JOIN latest l ON s.snapshot_date = l.d
+                JOIN assets a ON s.asset_id = a.id
+                LEFT JOIN first_buy fb ON s.asset_id = fb.asset_id
+                LEFT JOIN total_dividends d ON s.asset_id = d.asset_id
+                WHERE s.quantity <> 0
+            )
+            SELECT
+                holding_id,
+                MAX(CASE WHEN a.asset_type = 'ETF' THEN a.name ELSE c.name END) AS holding_name,
+                SUM(COALESCE(ad.total_dividend_eur, 0)::numeric(36,8)) AS total_dividend_eur,
+                SUM(cost_basis_eur) AS total_cost_basis_eur,
+                SUM(annualized_dividend_eur) AS total_annualized_dividend,
+                (SUM(annualized_dividend_eur) / NULLIF(SUM(cost_basis_eur),0)) * 100 AS dividend_cost_yield,
+                MAX(days_held) AS days_held
+            FROM annualized_dividend_per_asset ad
+            JOIN assets a ON ad.asset_id = a.id
+            LEFT JOIN companies c ON a.company_id = c.id
+            GROUP BY holding_id
+            ORDER BY dividend_cost_yield DESC;
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, assetDividendCostYieldGroupedByCompanyMapper)
     }
 
     /**
@@ -543,13 +635,13 @@ class PortfolioRepository(
               fi.first_date AS first_investment_date,
               COALESCE(CURRENT_DATE - fi.first_date, 0) AS days_held,
               -- Annualized dividend = total_dividend * 365 / days_held
-              CASE 
-                WHEN fi.first_date IS NOT NULL AND (CURRENT_DATE - fi.first_date) > 0 
+              CASE
+                WHEN fi.first_date IS NOT NULL AND (CURRENT_DATE - fi.first_date) > 0
                   THEN (d.total_dividend_eur * 365.0 / (CURRENT_DATE - fi.first_date))
                 ELSE d.total_dividend_eur
               END::numeric(36,8) AS annualized_dividend_eur,
               -- Dividend cost yield = annualized_dividend / cost_basis * 100
-              CASE 
+              CASE
                 WHEN p.total_cost_basis_eur > 0 AND fi.first_date IS NOT NULL AND (CURRENT_DATE - fi.first_date) > 0
                   THEN ((d.total_dividend_eur * 365.0 / (CURRENT_DATE - fi.first_date)) * 100 / p.total_cost_basis_eur)
                 WHEN p.total_cost_basis_eur > 0
@@ -636,6 +728,19 @@ class PortfolioRepository(
         )
     }
 
+    private val assetSnapshotGroupedByCompanyMapper = RowMapper<AssetSnapshotGroupedByCompany> { rs, _ ->
+        AssetSnapshotGroupedByCompany(
+            snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
+            holdingName = rs.getString("holding_name"),
+            costBasisEur = rs.getBigDecimal("cost_basis_eur"),
+            marketValueEur = rs.getBigDecimal("market_value_eur"),
+            unrealizedPlEur = rs.getBigDecimal("unrealized_pl_eur"),
+            tickers = rs.getArray("tickers").array.let { sqlArray ->
+                (sqlArray as? Array<*>)?.map { it.toString() } ?: emptyList()
+            }
+        )
+    }
+
     private val latestAssetPerformanceMapper = RowMapper<LatestAssetPerformance> { rs, _ ->
         LatestAssetPerformance(
             assetId = rs.getObject("asset_id", UUID::class.java),
@@ -655,6 +760,18 @@ class PortfolioRepository(
             totalDividendEur = rs.getBigDecimal("total_dividend_eur") ?: BigDecimal.ZERO,
             annualizedDividendEur = rs.getBigDecimal("annualized_dividend_eur") ?: BigDecimal.ZERO,
             costBasisEur = rs.getBigDecimal("cost_basis_eur") ?: BigDecimal.ZERO,
+            daysHeld = rs.getInt("days_held"),
+            dividendCostYield = rs.getBigDecimal("dividend_cost_yield") ?: BigDecimal.ZERO
+        )
+    }
+
+    private val assetDividendCostYieldGroupedByCompanyMapper = RowMapper<CompanyEtfDividendCostYield> { rs, _ ->
+        CompanyEtfDividendCostYield(
+            id = rs.getObject("holding_id", UUID::class.java),
+            name = rs.getString("holding_name"),
+            totalDividendEur = rs.getBigDecimal("total_dividend_eur") ?: BigDecimal.ZERO,
+            annualizedDividendEur = rs.getBigDecimal("total_annualized_dividend") ?: BigDecimal.ZERO,
+            costBasisEur = rs.getBigDecimal("total_cost_basis_eur") ?: BigDecimal.ZERO,
             daysHeld = rs.getInt("days_held"),
             dividendCostYield = rs.getBigDecimal("dividend_cost_yield") ?: BigDecimal.ZERO
         )
@@ -713,6 +830,15 @@ class PortfolioRepository(
         val type: String? = null
     )
 
+    data class AssetSnapshotGroupedByCompany(
+        val snapshotDate: LocalDate,
+        val holdingName: String,
+        val costBasisEur: BigDecimal?,
+        val marketValueEur: BigDecimal?,
+        val unrealizedPlEur: BigDecimal?,
+        val tickers: List<String>
+    )
+
     data class MonthlyInvestedRow(
         val year: Int,
         val month: Int,
@@ -752,6 +878,16 @@ class PortfolioRepository(
     data class AssetDividendCostYield(
         val assetId: UUID,
         val ticker: String,
+        val name: String,
+        val totalDividendEur: BigDecimal,
+        val annualizedDividendEur: BigDecimal,
+        val costBasisEur: BigDecimal,
+        val daysHeld: Int,
+        val dividendCostYield: BigDecimal
+    )
+
+    data class CompanyEtfDividendCostYield(
+        val id: UUID,
         val name: String,
         val totalDividendEur: BigDecimal,
         val annualizedDividendEur: BigDecimal,
