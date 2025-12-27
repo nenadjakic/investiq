@@ -93,17 +93,24 @@ export class Overview implements OnInit {
               return tooltip;
             }
           },
-          legend: {
-            data: series.map(s => s.name),
-            top: 10,
-          },
-          grid: {
-            left: '3%',
-            right: '4%',
-            top: '50px',
-            containLabel: true,
-          },
-        });
+          // Legend: show series names but by default only enable the main P/L series
+          legend: (() => {
+            const names = series.map(s => s.name);
+            const main = series[0]?.name ?? 'P/L %';
+            const selected: { [key: string]: boolean } = {};
+            names.forEach((n) => {
+              // Enable only the first series by default (assumed main P/L series)
+              selected[n] = n === main;
+            });
+            return { data: names, top: 10, selected };
+          })(),
+           grid: {
+             left: '3%',
+             right: '4%',
+             top: '50px',
+             containLabel: true,
+           },
+         });
       }
     });
   }
