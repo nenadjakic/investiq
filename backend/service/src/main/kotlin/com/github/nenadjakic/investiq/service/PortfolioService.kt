@@ -41,11 +41,24 @@ class PortfolioService(
         val latestSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
             ?: throw NoSuchElementException("No portfolio data available")
 
-        val totalValue = latestSnapshot.totalValue
-        val totalInvested = latestSnapshot.totalInvested
-        val totalReturn = totalValue - totalInvested
-        val totalReturnPercentage = if (totalInvested > BigDecimal.ZERO) {
-            (totalReturn / totalInvested * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
+        // Use rounded values for presentation and for percentage calculations to make results deterministic
+        val totalValueRaw = latestSnapshot.totalValue
+        val totalInvestedRaw = latestSnapshot.totalInvested
+
+        val totalValueRounded = totalValueRaw.setScale(2, RoundingMode.HALF_UP)
+        val totalInvestedRounded = totalInvestedRaw.setScale(2, RoundingMode.HALF_UP)
+
+        // Compute unrealized and realized P/L and use their sum as the portfolio's total P/L
+        val unrealizedRounded = latestSnapshot.totalUnrealizedPL.setScale(2, RoundingMode.HALF_UP)
+        val realizedRounded = latestSnapshot.totalRealizedPL.setScale(2, RoundingMode.HALF_UP)
+
+        val totalPl = (unrealizedRounded + realizedRounded).setScale(2, RoundingMode.HALF_UP)
+
+        val totalReturnPercentage = if (totalInvestedRounded > BigDecimal.ZERO) {
+            totalPl
+                .multiply(BigDecimal(100))
+                .divide(totalInvestedRounded, 6, RoundingMode.HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP)
         } else {
             BigDecimal.ZERO
         }
@@ -56,7 +69,7 @@ class PortfolioService(
         val periodChange = calculatePeriodChange(
             latestSnapshot.snapshotDate,
             periodSnapshot?.snapshotDate ?: periodStartDate,
-            totalValue,
+            totalValueRaw,
             periodSnapshot?.totalValue ?: BigDecimal.ZERO,
             periodDays
         )
@@ -66,12 +79,12 @@ class PortfolioService(
 
         return PortfolioSummaryResponse(
             snapshotDate = latestSnapshot.snapshotDate,
-            totalValue = totalValue.setScale(2, RoundingMode.HALF_UP),
-            totalInvested = totalInvested.setScale(2, RoundingMode.HALF_UP),
-            totalReturn = totalReturn.setScale(2, RoundingMode.HALF_UP),
+            totalValue = totalValueRounded,
+            totalInvested = totalInvestedRounded,
+            totalReturn = totalPl,
             totalReturnPercentage = totalReturnPercentage,
-            totalUnrealizedPL = latestSnapshot.totalUnrealizedPL.setScale(2, RoundingMode.HALF_UP),
-            totalRealizedPL = latestSnapshot.totalRealizedPL.setScale(2, RoundingMode.HALF_UP),
+            totalUnrealizedPL = unrealizedRounded,
+            totalRealizedPL = realizedRounded,
             totalHoldings = latestSnapshot.totalHoldings,
             periodChange = periodChange,
             totalDividends = latestSnapshot.totalDividends,
