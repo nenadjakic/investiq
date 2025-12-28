@@ -24,6 +24,7 @@ dependencies {
 
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.junit.jupiter)
 
     testRuntimeOnly(libs.junit.platformLauncher)

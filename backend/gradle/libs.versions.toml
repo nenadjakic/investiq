@@ -13,6 +13,7 @@ apache-commons-csv = "1.14.1"
 apache-poi = "5.5.0"
 junit = "6.0.1"
 mockito = "5.6.0"
+mockito-kotlin = "6.1.0"
 jakarta-persistence = "3.2.0"
 jakarta-transaction = "2.0.1"
 jakarta-validation = "4.0.0-M1"
@@ -56,6 +57,7 @@ junit-platformLauncher = { module = "org.junit.platform:junit-platform-launcher"
 junit-vintageEngine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
