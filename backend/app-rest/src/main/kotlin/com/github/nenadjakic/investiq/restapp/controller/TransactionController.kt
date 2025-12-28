@@ -12,10 +12,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Transaction Controller", description = "Endpoints for managing transactions")
 @RestController
@@ -50,5 +47,19 @@ class TransactionController(
     @GetMapping(path = ["/last"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findLast(@RequestParam(required = false, defaultValue = "10") n: Int): ResponseEntity<List<TransactionResponse>> {
         return ResponseEntity.ok(transactionService.findLast(n))
+    }
+
+    @Operation(
+        summary = "Copy validated staging transactions to transactions table",
+        description = "Copies all validated staging transactions into the main transactions table. Returns 204 No Content on success.",
+        operationId = "copyValidatedTransactions",
+        responses = [
+            ApiResponse(responseCode = "204", description = "Copy successful")
+        ]
+    )
+    @PostMapping("/copy")
+    fun copyValidatedTransactions(): ResponseEntity<Void> {
+        transactionService.copy()
+        return ResponseEntity.noContent().build()
     }
 }

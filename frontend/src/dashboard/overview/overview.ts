@@ -25,15 +25,15 @@ export class Overview implements OnInit {
   summaryError = signal(false);
   chartData = signal<PortfolioChartResponse | null>(null);
   chartError = signal(false);
-  selectedPeriod = signal<'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'>('1Y');
-  
+  selectedPeriod = signal<'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'>('ALL');
+
   availableIndices = signal<IndexOption[]>([
     { symbol: '^GSPC', label: 'S&P 500', selected: false },
     { symbol: '^IXIC', label: 'NASDAQ', selected: false },
     { symbol: '^STOXX50E', label: 'STOXX 50', selected: false },
     { symbol: '^STOXX', label: 'STOXX 600', selected: false },
   ]);
-  
+
   chartOption = signal<EChartsCoreOption>({});
 
   constructor() {
@@ -71,7 +71,7 @@ export class Overview implements OnInit {
         this.chartOption.set({
           xAxis: {
             type: 'category',
-            data: data.dates,            
+            data: data.dates,
             axisLine: { show: true, lineStyle: { width: 2, color: '#374151' } },
             axisTick: { show: true }
           },
@@ -93,23 +93,30 @@ export class Overview implements OnInit {
               return tooltip;
             }
           },
-          legend: {
-            data: series.map(s => s.name),
-            top: 10,
-          },
-          grid: {
-            left: '3%',
-            right: '4%',
-            top: '50px',
-            containLabel: true,
-          },
-        });
+          // Legend: show series names but by default only enable the main P/L series
+          legend: (() => {
+            const names = series.map(s => s.name);
+            const main = series[0]?.name ?? 'P/L %';
+            const selected: { [key: string]: boolean } = {};
+            names.forEach((n) => {
+              // Enable only the first series by default (assumed main P/L series)
+              selected[n] = n === main;
+            });
+            return { data: names, top: 10, selected };
+          })(),
+           grid: {
+             left: '3%',
+             right: '4%',
+             top: '50px',
+             containLabel: true,
+           },
+         });
       }
     });
   }
 
   ngOnInit(): void {
-    this.setPeriod('1Y');
+    this.setPeriod('ALL');
     this.loadSummary();
   }
 
@@ -161,7 +168,7 @@ export class Overview implements OnInit {
 
   private loadChartData(days: number | undefined): void {
     this.chartError.set(false);
-    
+
     this.portfolioControllerService.getPortfolioPerformanceChart(
       days).subscribe({
       next: (data) => this.chartData.set(data),

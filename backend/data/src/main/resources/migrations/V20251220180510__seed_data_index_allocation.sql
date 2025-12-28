@@ -12,12 +12,12 @@ VALUES
     ('c5d5e5a3-ec64-41ca-9d99-1a8a2a65a266', 'cf4a597d-bc40-4440-9a54-e719956d1e05', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 10.45),     --'Communication Services'   -- 50
     ('2c617574-dbf9-499d-9ee4-df52e409784f', 'cf4a597d-bc40-4440-9a54-e719956d1e05', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 2.24),     --'Utilities'                 -- 55
     ('d045dea0-50de-4f55-9016-e7c67bfbd276', 'cf4a597d-bc40-4440-9a54-e719956d1e05', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 1.83)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.index_country_allocations (id, index_id, country_code, weight_percentage)
 VALUES
     ('6f708123-4567-89ab-cdef-0123456789ab', 'cf4a597d-bc40-4440-9a54-e719956d1e05', 'US', 100)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- NASDAQ Composite Index Allocations
 INSERT INTO public.index_sector_allocations (id, index_id, sector_id, weight_percentage)
@@ -33,7 +33,7 @@ VALUES
     ('e3d6cf1f-3e4a-4338-aa8e-e142aef6e86a', '99696a98-2667-48e1-9a38-851cfb8ffb45', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 15.33),     --'Communication Services'   -- 50
     ('16b23fa6-9b03-41be-8f9c-182dbc935d26', '99696a98-2667-48e1-9a38-851cfb8ffb45', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 1.36),     --'Utilities'                 -- 55
     ('c1c2fce1-ca85-4285-a488-2344e86a2d9b', '99696a98-2667-48e1-9a38-851cfb8ffb45', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 0.00)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.index_country_allocations (id, index_id, country_code, weight_percentage)
 VALUES
@@ -42,7 +42,7 @@ VALUES
     ('fef9d6f0-ab8b-4aa2-9588-a7f9640fc665', '99696a98-2667-48e1-9a38-851cfb8ffb45', 'NL', 0.70),
     ('8a80cf01-3c61-4ab0-b65c-40e6ee65548d', '99696a98-2667-48e1-9a38-851cfb8ffb45', 'CN', 0.39),
     ('dbb3e996-5ca7-466e-b74f-ba532d4f0817', '99696a98-2667-48e1-9a38-851cfb8ffb45', 'GB', 0.37)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- EURO STOXX 50 Index Allocations
 INSERT INTO public.index_sector_allocations (id, index_id, sector_id, weight_percentage)
@@ -58,7 +58,7 @@ VALUES
     ('b22cfa0e-dc5c-4593-9bd7-bdd6d42aa5f3', 'b779ffcb-1fa1-49c5-825c-6ff0bb259d1c', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 2.26),     --'Communication Services'   -- 50
     ('d4ade7d6-9f11-4932-8cc4-41bf11a17fa7', 'b779ffcb-1fa1-49c5-825c-6ff0bb259d1c', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 4.24),     --'Utilities'                 -- 55
     ('18e6952e-f654-4ccb-bb91-e85ddc2a8c26', 'b779ffcb-1fa1-49c5-825c-6ff0bb259d1c', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 0.00)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.index_country_allocations (id, index_id, country_code, weight_percentage)
 VALUES
@@ -69,7 +69,7 @@ VALUES
     ('7cbbd3b5-53bb-46a6-a7f2-76ea30ee0a9c', 'b779ffcb-1fa1-49c5-825c-6ff0bb259d1c', 'IT', 7.85),
     ('db086895-82d9-4010-9dc3-ab1f87779276', 'b779ffcb-1fa1-49c5-825c-6ff0bb259d1c', 'BE', 2.43),
     ('bc469de1-81a5-454b-8521-382b255f43eb', 'b779ffcb-1fa1-49c5-825c-6ff0bb259d1c', 'FI', 1.21)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- STOXX Europe 600 Index Allocations
 INSERT INTO public.index_sector_allocations (id, index_id, sector_id, weight_percentage)
@@ -85,7 +85,7 @@ VALUES
     ('95632e79-c446-4cda-91b6-63a11ba2d5de', 'b98c0954-19bf-4968-9e5e-08ecd358cd44', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 2.97),     --'Communication Services'   -- 50
     ('057880e2-c6b6-42a5-8c2e-80de813ff57c', 'b98c0954-19bf-4968-9e5e-08ecd358cd44', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 4.43),     --'Utilities'                 -- 55
     ('61bbfc7b-a932-4c75-9274-8e5473df7493', 'b98c0954-19bf-4968-9e5e-08ecd358cd44', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 1.15)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.index_country_allocations (id, index_id, country_code, weight_percentage)
 VALUES
@@ -99,4 +99,4 @@ VALUES
     ('fbdd4448-7d83-49e6-86ad-b4d880a26d61', 'b98c0954-19bf-4968-9e5e-08ecd358cd44', 'SE', 4.90),
     ('f7230538-e967-40d8-9b54-0104a5f0f446', 'b98c0954-19bf-4968-9e5e-08ecd358cd44', 'DK', 3.05),
     ('9bf2a773-5ed6-452b-b137-9ab2a013fe1d', 'b98c0954-19bf-4968-9e5e-08ecd358cd44', 'FI', 1.84)
-;
+ON CONFLICT (id) DO NOTHING;

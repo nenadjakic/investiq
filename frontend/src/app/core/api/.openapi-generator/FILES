@@ -24,6 +24,7 @@ model/asset-holding-response.ts
 model/asset-response.ts
 model/asset-simple-response.ts
 model/asset-type-value-response.ts
+model/company-asset-holding-response.ts
 model/company-response.ts
 model/country-response.ts
 model/country-value-response.ts

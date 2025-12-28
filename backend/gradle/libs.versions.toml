@@ -1,8 +1,8 @@
 [versions]
-kotlin = "2.2.21"
-spring-framework = "7.0.1"
-spring-boot = "4.0.0-RC2"
-spring-boot-starter-test = "4.0.0-RC2"
+kotlin = "2.3.0"
+spring-framework = "7.0.2"
+spring-boot = "4.0.1"
+spring-boot-starter-test = "4.0.1"
 spring-dependency-management = "1.1.7"
 spring-shell-starter = "4.0.0-M1"
 openapi-gradle = "1.9.0"

@@ -29,8 +29,8 @@ export class Performance implements OnInit {
   monthlyOption = signal<EChartsCoreOption>({});
   monthlyDividendsOption = signal<EChartsCoreOption>({});
   selectedPeriod = signal<'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'>('ALL');
-  selectedMonths = signal<'6M' | '1Y' | '3Y' | 'ALL'>('6M');
-  selectedDividendsMonths = signal<'6M' | '1Y' | '3Y' | 'ALL'>('6M');
+  selectedMonths = signal<'6M' | '1Y' | '3Y' | 'ALL'>('ALL');
+  selectedDividendsMonths = signal<'6M' | '1Y' | '3Y' | 'ALL'>('ALL');
 
   constructor() {
     effect(() => {

@@ -23,7 +23,26 @@
       </div>
 
       <div class="bg-white rounded-lg shadow p-6">
-        <p class="text-sm text-gray-500 mb-2">Total Invested</p>
+        <div class="flex justify-between items-start mb-2">
+          <p class="text-sm text-gray-500 mb-0">Total Invested</p>
+          <span class="relative inline-block group">
+            <button
+              type="button"
+              aria-label="Total invested info"
+              title="Fees included"
+              aria-describedby="total-invested-tooltip"
+              class="w-6 h-6 flex items-center justify-center text-gray-600 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded"
+            >
+               <!-- Info SVG (visible darker icon) -->
+               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                 <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-11a1 1 0 110-2 1 1 0 010 2zm1 9h-2v-6h2v6z" />
+               </svg>
+             </button>
+            <span id="total-invested-tooltip" role="tooltip" class="absolute left-1/2 -translate-x-1/2 mt-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 group-focus:opacity-100 pointer-events-none whitespace-nowrap">
+              Fees included
+            </span>
+          </span>
+        </div>
         <h3 class="text-3xl font-bold text-gray-800 mb-1">
           {{ summary()?.totalInvested | currency : 'EUR' }}
         </h3>

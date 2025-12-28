@@ -5,6 +5,7 @@ export * from './asset-holding-response';
 export * from './asset-response';
 export * from './asset-simple-response';
 export * from './asset-type-value-response';
+export * from './company-asset-holding-response';
 export * from './company-response';
 export * from './country-response';
 export * from './country-value-response';

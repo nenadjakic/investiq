@@ -16,6 +16,7 @@ import com.github.nenadjakic.investiq.common.dto.AssetSimpleResponse
 import com.github.nenadjakic.investiq.common.dto.PerformerResponse
 import com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse
 import com.github.nenadjakic.investiq.common.dto.AssetDividendCostYieldResponse
+import com.github.nenadjakic.investiq.common.dto.CompanyAssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.TotalDividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
 import com.github.nenadjakic.investiq.data.enum.AssetType
@@ -40,11 +41,24 @@ class PortfolioService(
         val latestSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
             ?: throw NoSuchElementException("No portfolio data available")
 
-        val totalValue = latestSnapshot.totalValue
-        val totalInvested = latestSnapshot.totalInvested
-        val totalReturn = totalValue - totalInvested
-        val totalReturnPercentage = if (totalInvested > BigDecimal.ZERO) {
-            (totalReturn / totalInvested * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
+        // Use rounded values for presentation and for percentage calculations to make results deterministic
+        val totalValueRaw = latestSnapshot.totalValue
+        val totalInvestedRaw = latestSnapshot.totalInvested
+
+        val totalValueRounded = totalValueRaw.setScale(2, RoundingMode.HALF_UP)
+        val totalInvestedRounded = totalInvestedRaw.setScale(2, RoundingMode.HALF_UP)
+
+        // Compute unrealized and realized P/L and use their sum as the portfolio's total P/L
+        val unrealizedRounded = latestSnapshot.totalUnrealizedPL.setScale(2, RoundingMode.HALF_UP)
+        val realizedRounded = latestSnapshot.totalRealizedPL.setScale(2, RoundingMode.HALF_UP)
+
+        val totalPl = (unrealizedRounded + realizedRounded).setScale(2, RoundingMode.HALF_UP)
+
+        val totalReturnPercentage = if (totalInvestedRounded > BigDecimal.ZERO) {
+            totalPl
+                .multiply(BigDecimal(100))
+                .divide(totalInvestedRounded, 6, RoundingMode.HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP)
         } else {
             BigDecimal.ZERO
         }
@@ -55,7 +69,7 @@ class PortfolioService(
         val periodChange = calculatePeriodChange(
             latestSnapshot.snapshotDate,
             periodSnapshot?.snapshotDate ?: periodStartDate,
-            totalValue,
+            totalValueRaw,
             periodSnapshot?.totalValue ?: BigDecimal.ZERO,
             periodDays
         )
@@ -65,12 +79,12 @@ class PortfolioService(
 
         return PortfolioSummaryResponse(
             snapshotDate = latestSnapshot.snapshotDate,
-            totalValue = totalValue.setScale(2, RoundingMode.HALF_UP),
-            totalInvested = totalInvested.setScale(2, RoundingMode.HALF_UP),
-            totalReturn = totalReturn.setScale(2, RoundingMode.HALF_UP),
+            totalValue = totalValueRounded,
+            totalInvested = totalInvestedRounded,
+            totalReturn = totalPl,
             totalReturnPercentage = totalReturnPercentage,
-            totalUnrealizedPL = latestSnapshot.totalUnrealizedPL.setScale(2, RoundingMode.HALF_UP),
-            totalRealizedPL = latestSnapshot.totalRealizedPL.setScale(2, RoundingMode.HALF_UP),
+            totalUnrealizedPL = unrealizedRounded,
+            totalRealizedPL = realizedRounded,
             totalHoldings = latestSnapshot.totalHoldings,
             periodChange = periodChange,
             totalDividends = latestSnapshot.totalDividends,
@@ -220,31 +234,24 @@ class PortfolioService(
             val marketValue = snapshot.marketValueEur ?: BigDecimal.ZERO
 
             // Calculate average price with fallback
-            val avgPrice = when {
-                snapshot.avgCostPerShareEur != null && snapshot.avgCostPerShareEur!! > BigDecimal.ZERO ->
-                    snapshot.avgCostPerShareEur
-                snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO && shares > BigDecimal.ZERO ->
-                    snapshot.costBasisEur!!.divide(shares, 8, RoundingMode.HALF_UP)
-                else -> null
-            }
+            val avgPrice =
+                snapshot.avgCostPerShareEur
+                    ?.setScale(2, RoundingMode.HALF_UP)
+                    ?: BigDecimal.ZERO
+
 
             // Calculate P/L absolute and percentage
-            val (plAbsolute, plPercentage) = if (currentPrice != null && avgPrice != null && avgPrice > BigDecimal.ZERO) {
-                val plAbs = (currentPrice - avgPrice) * shares
-                val plPct = ((currentPrice - avgPrice) / avgPrice * BigDecimal(100))
-                    .setScale(2, RoundingMode.HALF_UP)
-                plAbs.setScale(2, RoundingMode.HALF_UP) to plPct
-            } else {
-                // Fallback to unrealized P/L from snapshot if available
-                val plAbs = snapshot.unrealizedPlEur?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
-                val plPct = if (avgPrice != null && avgPrice > BigDecimal.ZERO && currentPrice != null) {
-                    ((currentPrice - avgPrice) / avgPrice * BigDecimal(100))
+            val plAbsolute = snapshot.unrealizedPlEur
+                ?.setScale(2, RoundingMode.HALF_UP)
+                ?: BigDecimal.ZERO
+
+            val plPercentage =
+                if (snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO) {
+                    (plAbsolute / snapshot.costBasisEur!! * BigDecimal(100))
                         .setScale(2, RoundingMode.HALF_UP)
                 } else {
                     BigDecimal.ZERO
                 }
-                plAbs to plPct
-            }
 
             // Calculate portfolio percentage
             val portfolioPercentage = (marketValue / totalValue * BigDecimal(100))
@@ -269,6 +276,47 @@ class PortfolioService(
             )
         }.sortedByDescending { it.currentPrice * it.shares }
     }
+
+    fun getConsolidatedPortfolioHoldings(): List<CompanyAssetHoldingResponse> {
+        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
+            ?: return emptyList()
+
+        val assetSnapshots = portfolioRepository.getLatestAssetSnapshotsGroupedByCompany()
+
+        val totalValue = portfolioSnapshot.totalValue
+        if (totalValue <= BigDecimal.ZERO) {
+            return emptyList()
+        }
+
+        val dividendYieldMap = portfolioRepository.getAssetDividendCostYieldGroupedByCompany()
+            .associateBy { it.name }
+
+        return assetSnapshots.map { snapshot ->
+            val marketValue = snapshot.marketValueEur ?: BigDecimal.ZERO
+            val profitLoss = snapshot.unrealizedPlEur?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
+            val profitLossPercentage = if (marketValue > BigDecimal.ZERO) {
+                (profitLoss / marketValue * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
+            } else BigDecimal.ZERO
+
+            val portfolioPercentage = if (totalValue > BigDecimal.ZERO) {
+                (marketValue / totalValue * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
+            } else BigDecimal.ZERO
+
+            val dividendCostYield = dividendYieldMap[snapshot.holdingName]?.dividendCostYield
+                ?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
+
+            CompanyAssetHoldingResponse(
+                platform = null,
+                tickers = snapshot.tickers.sorted(),
+                name = snapshot.holdingName,
+                profitLoss = profitLoss,
+                profitLossPercentage = profitLossPercentage,
+                portfolioPercentage = portfolioPercentage,
+                dividendCostYield = dividendCostYield
+            )
+        }.sortedByDescending { it.profitLoss }
+    }
+
 
     /**
      * Returns active positions summary with invested amount and market value contributions.

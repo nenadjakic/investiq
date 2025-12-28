@@ -22,12 +22,12 @@ VALUES
     ('df8bf91b-a76c-4f91-9f52-a6d5a079383a', 'aa491ae0-a832-41f2-9354-6d158c23e399', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 7.10),     --'Communication Services'   -- 50
     ('3abf37c3-bc48-426e-b7f5-eb42375d41d9', 'aa491ae0-a832-41f2-9354-6d158c23e399', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 0.00),     --'Utilities'                 -- 55
     ('4720c75f-3c8e-42d5-baa9-39b86e74aca8', 'aa491ae0-a832-41f2-9354-6d158c23e399', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 6.01)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
     ('4f74ddf2-244b-4a27-a7dd-e56eee86a9c1', 'aa491ae0-a832-41f2-9354-6d158c23e399', 'JP', 99.38)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- iShares S&P 500 Information Technology Sector UCITS ETF USD (Acc)
 UPDATE assets
@@ -37,12 +37,12 @@ WHERE id = '8571c932-dd11-4d38-9545-41fa6c0ee2ab';
 INSERT INTO etf_sector_allocations (id, etf_id, sector_id, weight_percentage)
 VALUES
     ('761005f2-6001-41e7-a7e5-2301207b57bb', '8571c932-dd11-4d38-9545-41fa6c0ee2ab', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e', 99.88)     --'Information Technology'   -- 45
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
     ('8be00496-0d37-4f67-ad79-11e9e8faccc9', '8571c932-dd11-4d38-9545-41fa6c0ee2ab', 'US', 99.88)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- iShares MSCI Europe ex-UK GBP Hedged UCITS ETF (Dist)
 UPDATE assets
@@ -62,7 +62,7 @@ VALUES
     ('01acd039-0cbf-4ce4-ba68-e715bcf90bb4', 'b10c4bfa-81e1-428f-bc7f-ab9613a5bb9e', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 4.01),     --'Communication Services'   -- 50
     ('5604af17-71ca-401f-bf46-1b8cbdcdca3d', 'b10c4bfa-81e1-428f-bc7f-ab9613a5bb9e', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 4.48),     --'Utilities'                 -- 55
     ('e703f9b3-8c34-43cf-b7c9-de9f5ec327c5', 'b10c4bfa-81e1-428f-bc7f-ab9613a5bb9e', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 0.74)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -76,7 +76,7 @@ VALUES
     ('aef99811-5b47-427c-95fa-e688927633f8', 'b10c4bfa-81e1-428f-bc7f-ab9613a5bb9e', 'DK', 3.74),
     ('3051fdf5-0aeb-42f6-901f-bfe92115490f', 'b10c4bfa-81e1-428f-bc7f-ab9613a5bb9e', 'FI', 2.21),
     ('fd9d962d-1b87-4dce-abab-a3a912712872', 'b10c4bfa-81e1-428f-bc7f-ab9613a5bb9e', 'BE', 2.17)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- iShares Core S&P 500 UCITS ETF USD (Acc)
 UPDATE assets
@@ -114,7 +114,7 @@ VALUES
     ('f20280af-8bb3-4d45-8320-ff92969eba28', '4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 9.1),     --'Communication Services'   -- 50
     ('b70826ae-c046-4edd-8526-d9702332b24b', '4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 2.4),     --'Utilities'                 -- 55
     ('872e463f-4c00-4586-aecb-689a041a07e2', '4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 1.9)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -138,7 +138,7 @@ VALUES
     ('a7796248-54c9-4be4-93e2-c99882212e80', '4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', 'SG', 0.4),
     ('f3313079-7114-4e5e-848f-4357b9a3f5d5', '4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', 'BR', 0.3),
     ('a3fcc98f-0e85-4b7b-a26b-7ee02ab1be8b', '4936d8ac-27e8-46b1-b42d-b610c7fd1ea9', 'SA', 0.3)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- iShares Core MSCI Europe UCITS ETF EUR (Acc)
 UPDATE assets
@@ -158,7 +158,7 @@ VALUES
     ('74ac36ed-0b58-4651-947d-eea2b5547916', '8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 3.57),     --'Communication Services'   -- 50
     ('5a0b9643-3bf5-4069-9607-ba05c2129118', '8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 4.52),     --'Utilities'                 -- 55
     ('f7886de1-2963-4590-aab1-365788644692', '8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 0.70)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -172,7 +172,7 @@ VALUES
     ('e69451e0-6983-4553-a829-f891ad26fa93', '8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', 'IT', 4.87),
     ('af8e0bcb-641f-4d77-ae44-59d65fa0f239', '8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', 'DK', 2.92),
     ('0e38e5ed-825a-4db6-b387-69a195969191', '8fc5029f-8fa1-4874-adc8-07efbc6c9d5e', 'FI', 1.72)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- iShares MSCI Japan GBP Hedged UCITS ETF (Acc)
 UPDATE assets
@@ -192,12 +192,12 @@ VALUES
     ('bf14e311-0e16-44eb-b33f-0b50d08176af', '42e35a5d-9958-47dc-8951-be1c98f0c81f', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 7.54),     --'Communication Services'   -- 50
     ('deb27060-1e50-4fb5-9e08-6817007ec8c6', '42e35a5d-9958-47dc-8951-be1c98f0c81f', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 1.06),     --'Utilities'                 -- 55
     ('9b83b043-743c-4f6e-8cd6-a0c9bd865248', '42e35a5d-9958-47dc-8951-be1c98f0c81f', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 2.30)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
     ('df5157f3-c657-4906-a9de-a2b26d9bbda5', '42e35a5d-9958-47dc-8951-be1c98f0c81f', 'JP', 96.70)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- HAN-GINS Tech Megatrend Equal Weight UCITS ETF (Acc)
 UPDATE assets
@@ -213,7 +213,7 @@ VALUES
     ('57f2088c-0675-447b-8f42-860348da7e78', '9e3576fe-1e9e-41c3-8089-fefec9f420d0', 'a45f3a5a-0319-4dcb-86e1-9478b16adfa4', 4.5),     --'Financials'               -- 40
     ('7454dee6-9974-4f24-9ef2-ade277ed9645', '9e3576fe-1e9e-41c3-8089-fefec9f420d0', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e', 46),     --'Information Technology'   -- 45
     ('301f7978-72b3-4bda-a2d0-4f92014fe0c5', '9e3576fe-1e9e-41c3-8089-fefec9f420d0', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 17)     --'Communication Services'   -- 50
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -223,7 +223,7 @@ VALUES
     ('ec233e11-ca2d-43a8-ac0f-9c32697eff35', '9e3576fe-1e9e-41c3-8089-fefec9f420d0', 'IL', 3.61),
     ('14263a8f-d0b2-4f53-8a24-b4d0bac2737b', '9e3576fe-1e9e-41c3-8089-fefec9f420d0', 'DE', 2.78),
     ('881ad575-ffab-48db-b949-a7f746359491', '9e3576fe-1e9e-41c3-8089-fefec9f420d0', 'CA', 2.48)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- iShares NASDAQ 100 UCITS ETF USD (Acc)
 UPDATE assets
@@ -241,7 +241,7 @@ VALUES
     ('03a5a9c3-70c0-4902-9bd2-4f481a400915', '24070ba3-6675-46e7-a2a4-47737dfa2152', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f', 45.2),    --'Industrials'                -- 20
     ('2f011b0d-3022-4df0-b42e-0746e808ef00', '24070ba3-6675-46e7-a2a4-47737dfa2152', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e', 14.9),     --'Information Technology'   -- 45
     ('fe944b10-c04c-4a81-9d8c-ab0686b9b13e', '24070ba3-6675-46e7-a2a4-47737dfa2152', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 39.8)     --'Communication Services'   -- 50
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -254,7 +254,7 @@ VALUES
     ('c4613c4f-0a3b-4d07-a3fb-e602c052ca48', '24070ba3-6675-46e7-a2a4-47737dfa2152', 'TW', 3.41),
     ('4eb5b4a5-2bbc-4a54-a128-0ce1fa396e11', '24070ba3-6675-46e7-a2a4-47737dfa2152', 'IT', 3.01),
     ('3006b775-bd43-4f48-a745-88dca61193c7', '24070ba3-6675-46e7-a2a4-47737dfa2152', 'IL', 1.96)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- Global X Uranium UCITS ETF USD (Acc)
 UPDATE assets
@@ -268,7 +268,7 @@ VALUES
     ('2b69fb94-2dc6-4243-a6f8-e37bd1417ad0', 'bb3ca0dd-824b-412d-bc19-a2302c93229d', '0b743204-587a-4ba5-baea-8a9e36805063', 3.94),    --'Materials'                  -- 15
     ('5ce0b684-7f89-409a-81ca-8fdc845ad124', 'bb3ca0dd-824b-412d-bc19-a2302c93229d', 'f1c2d3e4-5b6a-7c8d-9e0f-1a2b3c4d5e6f', 20.32),    --'Industrials'                -- 20
     ('5ed8c594-0e6a-4518-ab06-4711db831b46', 'bb3ca0dd-824b-412d-bc19-a2302c93229d', 'e0dd8ea8-25ea-46b1-b280-fadf7e0e4d2e', 1.39)     --'Information Technology'   -- 45
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -281,7 +281,7 @@ VALUES
     ('16f65ed2-3faa-49c7-9188-c61267aa1235', 'bb3ca0dd-824b-412d-bc19-a2302c93229d', 'JE', 1.85),
     ('c4733751-7c79-436c-9f58-5f1bfc48d486', 'bb3ca0dd-824b-412d-bc19-a2302c93229d', 'ZA', 1.72),
     ('0e9c4ab7-e627-4eac-a5d0-cc2e6b7793e8', 'bb3ca0dd-824b-412d-bc19-a2302c93229d', 'HK', 1.47)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- WisdomTree Silver
 UPDATE assets
@@ -296,7 +296,7 @@ WHERE id = 'a82f3551-f7df-42b5-a934-fddf43d02175';
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
     ('59d8c319-fc79-4325-b803-b9a62f4ded8f', 'a82f3551-f7df-42b5-a934-fddf43d02175', 'US', 38.58)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- iShares Silver Trust
 UPDATE assets
@@ -321,7 +321,7 @@ VALUES
     ('af99bb6b-a947-4efe-abc7-028d4c0ce1c4', '40b35093-06c8-40e6-8ab9-05a6dbe30d68', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 3.85),     --'Communication Services'   -- 50
     ('7484a7c8-71d5-43ae-9722-3e055eabe3aa', '40b35093-06c8-40e6-8ab9-05a6dbe30d68', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 6.22),     --'Utilities'                 -- 55
     ('4811c449-3669-46bb-84f3-7dc34d0c5cfc', '40b35093-06c8-40e6-8ab9-05a6dbe30d68', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 0.78)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -335,7 +335,7 @@ VALUES
     ('8dfdadce-7822-4d3a-ab5d-8fe0f55d99f6', '40b35093-06c8-40e6-8ab9-05a6dbe30d68', 'IE', 1.33),
     ('92adc998-77f8-47b2-96c3-747e96569dcd', '40b35093-06c8-40e6-8ab9-05a6dbe30d68', 'AT', 0.74),
     ('0c26f1d3-b520-4abd-b7c1-805422614a27', '40b35093-06c8-40e6-8ab9-05a6dbe30d68', 'PT', 0.54)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- SPDR S&P 500 UCITS ETF
 UPDATE assets
@@ -401,7 +401,7 @@ VALUES
     ('3e3b307b-ef1a-4681-bd7c-6f230b2e55a9', '3cd133b1-1207-40fe-b91b-ab3e62afbfa6', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 3.33),     --'Communication Services'   -- 50
     ('5643bf3f-a7cb-4a1d-a898-33f17d5a5796', '3cd133b1-1207-40fe-b91b-ab3e62afbfa6', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 4.91),     --'Utilities'                 -- 55
     ('55a492b0-bf91-4923-9c93-4b20f4842670', '3cd133b1-1207-40fe-b91b-ab3e62afbfa6', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 2.21)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -415,7 +415,7 @@ VALUES
     ('8c6c3cb5-2c3f-4041-ab37-2887f98ff49b', '3cd133b1-1207-40fe-b91b-ab3e62afbfa6', 'SE', 4.75),
     ('eac09f17-49ff-4a79-b934-940940804681', '3cd133b1-1207-40fe-b91b-ab3e62afbfa6', 'DK', 2.66),
     ('3f44dc57-9cb9-4d18-b723-9d35df66552a', '3cd133b1-1207-40fe-b91b-ab3e62afbfa6', 'BE', 1.90)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- HSBC MSCI World UCITS ETF (Dist)
 UPDATE assets
@@ -435,7 +435,7 @@ VALUES
     ('5ff4e718-9cf8-4475-b8a2-db2da425d356', '5c526cd2-44f6-4de7-b5ea-fd83e081bf35', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 8.57),     --'Communication Services'   -- 50
     ('fa6e276d-f3f1-4a0b-bb20-c0a3f34f0998', '5c526cd2-44f6-4de7-b5ea-fd83e081bf35', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 2.58),     --'Utilities'                 -- 55
     ('11e40c34-d047-4829-bc01-b5b5d45ea05d', '5c526cd2-44f6-4de7-b5ea-fd83e081bf35', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 1.78)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -449,7 +449,7 @@ VALUES
     ('abed767a-215e-4eb7-bdce-58db1bc1a35c', '5c526cd2-44f6-4de7-b5ea-fd83e081bf35', 'AU', 1.55),
     ('cc669ef8-68a6-4a3d-813a-751b5961f1fc', '5c526cd2-44f6-4de7-b5ea-fd83e081bf35', 'NL', 1.49),
     ('07159aa3-71dd-4572-831f-e6c4743a7b4f', '5c526cd2-44f6-4de7-b5ea-fd83e081bf35', 'IR', 1.29)
-;
+ON CONFLICT (id) DO NOTHING;
 
 -- iShares VII PLC - iShares NASDAQ 100 UCITS ETF (Acc)
 UPDATE assets
@@ -481,7 +481,7 @@ VALUES
     ('fa6b2e03-7c4b-4a03-ab29-ffbdfaf8abda', '9947b11a-69cb-4a8a-a4d0-dd822ac24491', 'ee4c5e5c-def2-4965-8779-00b32b1edf70', 2.81),     --'Communication Services'   -- 50
     ('b7287ed8-a922-41a6-b677-38b35c83f3b1', '9947b11a-69cb-4a8a-a4d0-dd822ac24491', '1a09f1f7-628b-4f9a-a05c-0368cbc3a225', 2.80),     --'Utilities'                 -- 55
     ('c7d013c9-26ce-4595-81d7-10b00f1c6ce2', '9947b11a-69cb-4a8a-a4d0-dd822ac24491', 'cf1d4f4e-3b6a-4c2e-9f7a-8e9d6c5b4a3f', 1.93)        --'Real Estate'             -- 60
-;
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO etf_country_allocations (id, etf_id, country_code, weight_percentage)
 VALUES
@@ -495,4 +495,4 @@ VALUES
     ('10502802-d997-4e4e-9f0a-5e3b7877fd8c', '9947b11a-69cb-4a8a-a4d0-dd822ac24491', 'DE', 2.01),
     ('0ff439c1-0312-4374-9e6a-b2b0c53f22da', '9947b11a-69cb-4a8a-a4d0-dd822ac24491', 'CH', 1.97),
     ('cf209cfe-785a-4ebf-afba-88f7482b1c70', '9947b11a-69cb-4a8a-a4d0-dd822ac24491', 'IN', 1.94)
-;
+ON CONFLICT (id) DO NOTHING;

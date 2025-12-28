@@ -45,6 +45,27 @@ class SnapshotScheduler(
                 }.awaitAll()
             }
     }
+
+    /**
+     * Triggers snapshot generation for a custom date range [from, to).
+     * @param from start date (inclusive)
+     * @param to end date (exclusive)
+     */
+    fun scheduleSnapshotGeneration(from: LocalDate, to: LocalDate) {
+        runBlocking {
+            generateSnapshots(from, to)
+        }
+    }
+
+    suspend fun generateSnapshots(from: LocalDate, to: LocalDate) = coroutineScope {
+        generateSequence(from) { it.plusDays(1) }
+            .takeWhile { it < to }
+            .chunked(parallelism).forEach { chunk ->
+                chunk.map { date ->
+                    async { snapshotWorker.populateForDate(date) }
+                }.awaitAll()
+            }
+    }
 }
 
 @Service
