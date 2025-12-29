@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "generate:api": "del-cli --force ./src/core/api/ src/core/api/model && openapi-generator-cli generate -i ./openapi.json -g typescript-angular -o ./src/app/core/api --additional-properties fileNaming=kebab-case,ngVersion=20.0.0 --generate-alias-as-model"
+    "generate:core-api": "del-cli --force ./src/core/api/ src/core/api/model && openapi-generator-cli generate -i ./openapi.core.json -g typescript-angular -o ./src/app/core/api --additional-properties fileNaming=kebab-case,ngVersion=20.0.0 --generate-alias-as-model",
+    "generate:ai-api": "del-cli --force ./src/ai/api/ src/ai/api/model && openapi-generator-cli generate -i ./openapi.ai.json -g typescript-angular -o ./src/app/ai/api --additional-properties fileNaming=kebab-case,ngVersion=20.0.0 --generate-alias-as-model"
   },
   "prettier": {
     "printWidth": 100,
