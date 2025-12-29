@@ -11,8 +11,8 @@ import { FormsModule } from '@angular/forms';
 export class Chat implements AfterViewInit, OnChanges {
   @Input() messages: { role: 'user' | 'assistant'; text: string }[] = [];
   @Input() placeholder: string = 'Type your message...';
-  @Input() disabled: boolean = false; // when true, chat is in 'run' mode
-  @Input() loading: boolean = false; // show spinner when processing
+  @Input() disabled: boolean = false;
+  @Input() loading: boolean = false;
   @Input() loadingLabel: string = 'Processing…';
   @Input() runLabel: string = 'Run';
   @Input() cancelLabel: string = 'Cancel';
@@ -30,14 +30,12 @@ export class Chat implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['messages']) {
-      // Wait for DOM update
       setTimeout(() => this.scrollToBottom(), 0);
     }
   }
 
   onSend(): void {
     if (this.disabled) {
-      // In disabled mode, the send button acts as Run
       this.run.emit();
       return;
     }
@@ -58,7 +56,7 @@ export class Chat implements AfterViewInit, OnChanges {
   }
 
   onKeydown(event: KeyboardEvent): void {
-    if (this.disabled) return; // don't send via Enter when disabled
+    if (this.disabled) return;
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       this.onSend();
@@ -72,7 +70,6 @@ export class Chat implements AfterViewInit, OnChanges {
         el.scrollTop = el.scrollHeight;
       }
     } catch (e) {
-      // ignore
     }
   }
 }

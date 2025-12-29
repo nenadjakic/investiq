@@ -2,7 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { AnalysisService, AnalysisResponse, FollowUpResponse } from '../../app/core/services/analysis.service';
+// Removed AnalysisService usage; use ChatControllerService directly
+import { ChatControllerService } from '../../app/ai/api/api/chat-controller.service';
+import { ChatStartResponse } from '../../app/ai/api/model/chat-start-response';
+import { ChatMessageRequest } from '../../app/ai/api/model/chat-message-request';
+import { ChatMessageResponse } from '../../app/ai/api/model/chat-message-response';
 import { Chat } from '../../shared/chat/chat';
 
 const STORAGE_KEY = 'chat:analysis:v1';
@@ -14,7 +18,8 @@ const STORAGE_KEY = 'chat:analysis:v1';
   templateUrl: './analysis.html',
 })
 export class Analysis implements OnInit {
-  private analysisService = inject(AnalysisService);
+  // use ChatControllerService directly
+  private chatService = inject(ChatControllerService);
 
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
@@ -72,16 +77,16 @@ export class Analysis implements OnInit {
     this.messages.set([]);
     this.saveMessages();
 
-    this.analysisService.startAnalysis({ includeHoldings: true }).subscribe({
-      next: (res: AnalysisResponse) => {
-        this.sessionId.set(res.sessionId);
-        this.summary.set(res.summary);
-        this.details.set(res.details ?? []);
-        // Do NOT auto-insert summary into chat here; allow specific flows to decide
+    this.chatService.startConversation().subscribe({
+      next: (res: ChatStartResponse) => {
+        const id = res.conversationId ?? `chat-${Date.now()}`;
+        this.sessionId.set(id);
+        this.summary.set(res.message ?? null);
+        this.details.set([]);
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Analysis failed', err);
+        console.error('Analysis (chat start) failed', err);
         this.error.set('Failed to run analysis');
         this.loading.set(false);
       }
@@ -115,13 +120,14 @@ export class Analysis implements OnInit {
       }
     }, 15000);
 
-    this.analysisSub = this.analysisService.startAnalysis({ includeHoldings: true }).subscribe({
-      next: (res: AnalysisResponse) => {
-        this.sessionId.set(res.sessionId);
-        this.summary.set(res.summary);
-        this.details.set(res.details ?? []);
+    this.analysisSub = this.chatService.startConversation().subscribe({
+      next: (res: ChatStartResponse) => {
+        const id = res.conversationId ?? `chat-${Date.now()}`;
+        this.sessionId.set(id);
+        this.summary.set(res.message ?? null);
+        this.details.set([]);
         // Insert summary into chat and enable chat interaction
-        this.messages.set([{ role: 'assistant', text: res.summary }]);
+        this.messages.set([{ role: 'assistant', text: res.message ?? '' }]);
         this.chatDisabled.set(false);
         this.loading.set(false);
         if (this.analysisTimeoutHandle) {
@@ -132,7 +138,7 @@ export class Analysis implements OnInit {
         this.saveMessages();
       },
       error: (err) => {
-        console.error('Analysis failed', err);
+        console.error('Analysis (chat start) failed', err);
         this.error.set('Failed to run analysis');
         // Allow the user to try again — don't keep the chat permanently disabled
         this.chatDisabled.set(false);
@@ -195,9 +201,10 @@ export class Analysis implements OnInit {
     this.messages.set([...this.messages(), { role: 'user', text }]);
     this.saveMessages();
 
-    this.analysisService.askFollowUp(this.sessionId()!, { question: text }).subscribe({
-      next: (res: FollowUpResponse) => {
-        this.messages.set([...this.messages(), { role: 'assistant', text: res.answer }]);
+    const payload: ChatMessageRequest = { text };
+    this.chatService.sendMessage(this.sessionId()!, payload).subscribe({
+      next: (res: ChatMessageResponse) => {
+        this.messages.set([...this.messages(), { role: 'assistant', text: res.message ?? '' }]);
         this.saveMessages();
       },
       error: (err) => {

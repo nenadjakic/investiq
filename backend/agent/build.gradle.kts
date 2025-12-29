@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.boot.starter.security)
 
     implementation(libs.spring.ai.starter.model.openai)
     implementation(libs.spring.ai.starter.memory.repository.jdbc)
