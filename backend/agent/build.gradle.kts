@@ -5,10 +5,10 @@ plugins {
 
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
-}
 
-group = "com.github.nenadjakic.investiq"
-version = "1.0-SNAPSHOT"
+    application
+    jacoco
+}
 
 repositories {
     mavenCentral()
@@ -35,6 +35,8 @@ dependencies {
 
     implementation(libs.spring.ai.starter.model.openai)
     implementation(libs.spring.ai.starter.memory.repository.jdbc)
+
+    implementation(libs.springdoc.openapi.starter.webmvc.ui)
 
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.mockito.core)

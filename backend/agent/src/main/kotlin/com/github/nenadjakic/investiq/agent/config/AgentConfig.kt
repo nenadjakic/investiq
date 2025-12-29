@@ -54,7 +54,7 @@ class AgentConfig(
     ): ChatMemory =
         MessageWindowChatMemory.builder()
             .chatMemoryRepository(repository)
-            .maxMessages(10)
+            .maxMessages(50)
             .build()
 
     @Bean
@@ -64,6 +64,7 @@ class AgentConfig(
         return ChatClient.builder(openAiChatModel)
             .defaultSystem(SYSTEM_PROMPT)
             .defaultTools(agentTool)
+            .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
             .build()
     }
 

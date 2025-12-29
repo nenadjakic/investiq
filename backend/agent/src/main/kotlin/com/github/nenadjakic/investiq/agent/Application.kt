@@ -16,22 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableJpaRepositories(basePackages = ["com.github.nenadjakic.investiq.data.repository"])
 @EntityScan(basePackages = ["com.github.nenadjakic.investiq.data.entity"])
 @ComponentScan(basePackages = ["com.github.nenadjakic.investiq", "com.github.nenadjakic.toon"])
-class Application {
-
-    @Bean
-    fun runAtStartup(portfolioChatService: PortfolioChatService, agentTool: AgentTool) = CommandLineRunner {
-        // Try AI-backed analysis; if ChatClient isn't configured or fails, fall back to the local analysis
-        val analysis = try {
-            var toon = agentTool.getPortfolioHoldings()
-            portfolioChatService.analyzeWithAi()
-        } catch (ex: Exception) {
-
-        }
-
-        println(analysis)
-    }
-
-}
+class Application
 
 fun main(args: Array<String>) {
     runApplication<Application>(*args)
