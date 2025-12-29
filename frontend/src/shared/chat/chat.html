@@ -1,0 +1,49 @@
+<div class="flex flex-col h-full">
+  <div #messagesContainer class="space-y-4 overflow-auto max-h-80 p-4">
+    @for (m of messages; track $index) {
+      <div class="flex items-start" [class.justify-end]="m.role === 'user'">
+        @if (m.role === 'assistant') {
+          <div class="mr-3 flex-shrink-0">
+            <div class="w-8 h-8 rounded-full bg-sky-600 text-white flex items-center justify-center font-semibold">AI</div>
+          </div>
+        }
+        <div class="max-w-[80%]">
+          <div class="rounded-lg px-4 py-2 text-sm"
+               [class.bg-slate-50]="m.role === 'assistant'"
+               [class.bg-sky-500]="m.role === 'user'"
+               [class.text-white]="m.role === 'user'">
+            {{ m.text }}
+          </div>
+        </div>
+        @if (m.role === 'user') {
+          <div class="ml-3 flex-shrink-0">
+            <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-700 flex items-center justify-center font-semibold">U</div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="mt-3">
+    <div class="relative">
+      <textarea
+        class="w-full border border-gray-200 rounded-md p-3 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-sky-300"
+        rows="2"
+        [(ngModel)]="input"
+        (keydown)="onKeydown($event)"
+        [placeholder]="placeholder"
+        [disabled]="disabled"
+        [readonly]="disabled"
+        [attr.aria-disabled]="disabled"
+        [class.opacity-50]="disabled"
+        aria-label="Chat input"
+      ></textarea>
+    </div>
+
+    <div class="flex justify-end mt-2">
+      <button class="group inline-flex items-center gap-2 bg-sky-600 text-white px-4 py-2 rounded-md cursor-pointer" (click)="onSend()" aria-label="Send message">
+        <span class="text-sm font-medium">@if (disabled) { {{ runLabel }} } @else { Send }</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -23,7 +23,7 @@ export class Dashboard {
 
   private async loadComponent(tab: string): Promise<void> {
     let component: Type<any> | null = null;
-    
+
     switch (tab) {
       case 'overview':
         component = (await import('./overview/overview')).Overview;
@@ -39,6 +39,9 @@ export class Dashboard {
         break;
       case 'insights':
         component = (await import('./insights/insights')).Insights;
+        break;
+      case 'analysis':
+        component = (await import('./analysis/analysis')).Analysis;
         break;
       case 'details':
         component = (await import('./details/details')).Details;
