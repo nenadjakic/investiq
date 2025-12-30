@@ -15,9 +15,17 @@ class ChatService(
 
     companion object {
         val INITIAL_USER_MESSAGE = """
-            Perform an initial analysis of my portfolio using the full snapshot of holdings from the available tool.
-            Focus on diversification, concentration, and risk, providing structured, professional insights. 
-            Do not just display the data—interpret it.
+            Perform an initial analysis of my investment portfolio using the complete portfolio snapshot from the available tools.
+
+            Focus specifically on:
+            - Diversification across sectors, geographies, and holdings
+            - Concentration risks
+            - Overall portfolio risk characteristics
+            
+            Interpret the data rather than listing it.
+            Present the analysis in a clear, structured, and professional format.
+            
+            Use short sections with bullet points and include a brief summary at the end.
         """.trimIndent()
     }
 
