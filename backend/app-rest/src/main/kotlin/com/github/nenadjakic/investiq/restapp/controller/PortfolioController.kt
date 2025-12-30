@@ -13,6 +13,7 @@ import com.github.nenadjakic.investiq.common.dto.MonthlyDividendResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioPerformanceResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioAllocationResponse
 import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
+import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -296,6 +297,28 @@ class PortfolioController(
     @GetMapping("/consolidated-holdings", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getConsolidatedHoldings(): ResponseEntity<List<CompanyAssetHoldingResponse>> =
         ResponseEntity.ok(portfolioService.getConsolidatedPortfolioHoldings())
+
+    @Operation(
+        operationId = "getPortfolioConcentration",
+        summary = "Get portfolio concentration and HHI",
+        description = "Returns top1/top3/top5/top10 concentration percentages and Herfindahl–Hirschman Index (HHI)"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved concentration metrics",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = PortfolioConcentrationResponse::class)
+                )]
+            ),
+            ApiResponse(responseCode = "500", description = "Internal server error", content = [Content()])
+        ]
+    )
+    @GetMapping("/concentration", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getPortfolioConcentration(): ResponseEntity<PortfolioConcentrationResponse> =
+        ResponseEntity.ok(portfolioService.getPortfolioConcentration())
 
     @Operation(
         operationId = "getTopBottomPerformers",

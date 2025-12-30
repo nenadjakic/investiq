@@ -19,6 +19,7 @@ import com.github.nenadjakic.investiq.common.dto.AssetDividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.CompanyAssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.TotalDividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
+import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
 import com.github.nenadjakic.investiq.data.enum.AssetType
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
@@ -568,5 +569,72 @@ class PortfolioService(
         }
         
         return result
+    }
+
+    /**
+     * Returns top concentration metrics (top1/top3/top5/top10) and HHI index for the portfolio.
+     * Groups holdings by company/ETF using the repository grouped snapshot.
+     * HHI is calculated using portfolio percentages expressed as percentage points and summing their squares
+     * (so range is 0..10000). Returned value is scaled to 2 decimals.
+     */
+    fun getPortfolioConcentration(): PortfolioConcentrationResponse {
+        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
+            ?: return PortfolioConcentrationResponse(
+                top1 = BigDecimal.ZERO,
+                top3 = BigDecimal.ZERO,
+                top5 = BigDecimal.ZERO,
+                top10 = BigDecimal.ZERO,
+                hhi = BigDecimal.ZERO
+            )
+
+        val totalValue = portfolioSnapshot.totalValue
+        if (totalValue <= BigDecimal.ZERO) {
+            return PortfolioConcentrationResponse(
+                top1 = BigDecimal.ZERO,
+                top3 = BigDecimal.ZERO,
+                top5 = BigDecimal.ZERO,
+                top10 = BigDecimal.ZERO,
+                hhi = BigDecimal.ZERO
+            )
+        }
+
+        val grouped = portfolioRepository.getLatestAssetSnapshotsGroupedByCompany()
+
+        // Build list of pairs (name, marketValue)
+        val values = grouped.map { g ->
+            val mv = g.marketValueEur ?: BigDecimal.ZERO
+            Pair(g.holdingName, mv)
+        }.sortedByDescending { it.second }
+
+        // Convert to portfolio percentage (0..100) per holding
+        val percentages = values.map { (_, mv) ->
+            mv.multiply(BigDecimal(100))
+                .divide(totalValue, 8, RoundingMode.HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP)
+        }
+
+        fun sumTop(n: Int): BigDecimal {
+            return percentages.take(n).fold(BigDecimal.ZERO) { acc, v -> acc + v }
+        }
+
+        val top1 = sumTop(1)
+        val top3 = sumTop(3)
+        val top5 = sumTop(5)
+        val top10 = sumTop(10)
+
+        // HHI: sum of squares of portfolio percentage shares (percentage points), e.g. 50% -> 50^2 = 2500
+        val hhiRaw = percentages.fold(BigDecimal.ZERO) { acc, p ->
+            acc + p.multiply(p)
+        }
+
+        val hhi = hhiRaw.setScale(2, RoundingMode.HALF_UP)
+
+        return PortfolioConcentrationResponse(
+            top1 = top1.setScale(2, RoundingMode.HALF_UP),
+            top3 = top3.setScale(2, RoundingMode.HALF_UP),
+            top5 = top5.setScale(2, RoundingMode.HALF_UP),
+            top10 = top10.setScale(2, RoundingMode.HALF_UP),
+            hhi = hhi
+        )
     }
 }
