@@ -1,4 +1,3 @@
-# Production image for scheduler: builds bootJar with Gradle, then runs on JRE
 FROM gradle:9.2.1-jdk25-ubi10 AS builder
 
 WORKDIR /workspace

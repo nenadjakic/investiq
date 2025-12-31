@@ -13,21 +13,22 @@ docker compose --env-file .env up --build
 ```
 
 ## Services
-- **PostgreSQL**: `localhost:8432` (db: `investiq_db`, user: `postgres`, password: `postgres`) — configured via `.env`
-- **app-rest**: `http://localhost:8080` — REST API with Swagger UI at `/swagger-ui.html`
-- **scheduler**: `http://localhost:8081` — Background job scheduler
-- **frontend**: `http://localhost:4200` — Angular SPA served by nginx (production build)
+- **PostgreSQL**: `localhost:8432` (db: `investiq_db`, user: `postgres`, password: `postgres`) - configured via `.env`
+- **app-rest**: `http://localhost:8080` - REST API with Swagger UI at `/swagger-ui.html`
+- **scheduler**: `http://localhost:8081` - Background job scheduler
+- **agent**: `http://localhost:8082` - Lightweight AI agent (optional)
+- **frontend**: `http://localhost:4200` - Angular SPA served by nginx (production build)
 
 ## Dockerfiles
-- `infrastructure/backend/Dockerfile.app-rest` — Gradle build (gradle:9.2.1-jdk25-ubi10) → Eclipse Temurin 25 JRE
-- `infrastructure/backend/Dockerfile.scheduler` — Gradle build (gradle:9.2.1-jdk25-ubi10) → Eclipse Temurin 25 JRE
-- `infrastructure/frontend/Dockerfile` — Node.js 22 build → nginx:1.27-alpine (SPA routing, asset caching)
+- `infrastructure/backend/Dockerfile.app-rest` - Gradle build (gradle:9.2.1-jdk25-ubi10) → Eclipse Temurin 25 JRE
+- `infrastructure/backend/Dockerfile.scheduler` - Gradle build (gradle:9.2.1-jdk25-ubi10) → Eclipse Temurin 25 JRE
+- `infrastructure/frontend/Dockerfile` - Node.js 22 build → nginx:1.27-alpine (SPA routing, asset caching)
 
 ## Build Context
 All builds use repo root (`..`) as build context. Dockerfiles copy `backend/` and `frontend/` directories into the build image.
 
 ## Volumes
-- `investiq-pg-data` — PostgreSQL data persistence
+- `investiq-pg-data` - PostgreSQL data persistence
 
 ## Common commands
 ```bash

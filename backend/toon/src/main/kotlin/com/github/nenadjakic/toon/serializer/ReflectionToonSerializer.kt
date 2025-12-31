@@ -23,6 +23,47 @@ class ReflectionToonSerializer(private val defaultDelimiter: String = ",") {
         val sb = StringBuilder()
         val space = " ".repeat(indent)
 
+        if (obj is List<*>) {
+            if (obj.isEmpty()) {
+                sb.appendLine("${space}[0]:")
+                return sb.toString()
+            }
+
+            val first = obj.firstOrNull()
+            when (first) {
+                null -> {
+                    val listValues = obj.joinToString(defaultDelimiter) { it.toString() }
+                    sb.appendLine("${space}[${obj.size}]: $listValues")
+                }
+                is String, is Number, is Boolean -> {
+                    val listValues = obj.joinToString(defaultDelimiter) { it.toString() }
+                    sb.appendLine("${space}[${obj.size}]: $listValues")
+                }
+                else -> {
+                    val elemClass = first::class
+                    val elemProps = elemClass.declaredMemberProperties
+                        .filterNot { it.findAnnotation<ToonIgnore>() != null }
+
+                    val orderedElemProps = orderProps(elemProps)
+                    val headerNames = orderedElemProps.joinToString(defaultDelimiter) {
+                        it.findAnnotation<ToonProperty>()?.name ?: it.name
+                    }
+
+                    sb.appendLine("${space}[${obj.size}]{$headerNames}:")
+                    val elemIndent = " ".repeat(indent + 2)
+
+                    for (elem in obj) {
+                        val row = orderedElemProps.joinToString(defaultDelimiter) { p ->
+                            val v = if (elem == null) null else p.call(elem)
+                            v?.toString() ?: ""
+                        }
+                        sb.appendLine("$elemIndent$row")
+                    }
+                }
+            }
+            return sb.toString()
+        }
+
         val kClass = obj::class
         // Collect constructor parameters annotated with ToonIgnore (common when annotating data-class params)
         val ctorIgnored = kClass.primaryConstructor?.parameters

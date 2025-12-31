@@ -5,6 +5,7 @@ spring-boot = "4.0.1"
 spring-boot-starter-test = "4.0.1"
 spring-dependency-management = "1.1.7"
 spring-shell-starter = "4.0.0-M1"
+spring-ai-starter="2.0.0-M1"
 openapi-gradle = "1.9.0"
 flyway = "11.17.0"
 postgres = "42.7.8"
@@ -35,6 +36,9 @@ spring-data-jpa = { module = "org.springframework.data:spring-data-jpa", version
 spring-shell-starter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "spring-shell-starter" }
 spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref="spring-boot" }
 spring-boot-flyway = { module = "org.springframework.boot:spring-boot-starter-flyway", version.ref="spring-boot" }
+spring-ai-starter-model-openai = { module = "org.springframework.ai:spring-ai-starter-model-openai", version.ref="spring-ai-starter" }
+spring-ai-openai = { module = "org.springframework.ai:spring-ai-openai", version.ref="spring-ai-starter" }
+spring-ai-starter-memory-repository-jdbc = { module = "org.springframework.ai:spring-ai-starter-model-chat-memory-repository-jdbc", version.ref="spring-ai-starter" }
 spring-framework-context = { module = "org.springframework:spring-context", version.ref = "spring-framework"}
 spring-framework-web = { module = "org.springframework:spring-web", version.ref = "spring-framework"}
 springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }

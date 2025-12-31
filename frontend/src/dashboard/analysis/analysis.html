@@ -1,0 +1,39 @@
+<div class="max-w-7xl mx-auto px-4">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-semibold">Portfolio Analysis</h2>
+    <div class="flex items-center gap-2">
+      <button
+        class="group inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-2 py-1 rounded cursor-pointer transition"
+        (click)="resetConversation()"
+        aria-label="Reset conversation"
+      >
+        <span>Reset conversation</span>
+      </button>
+    </div>
+  </div>
+
+  <section class="mt-6">
+    <h3 class="font-medium mb-2"></h3>
+    <div class="relative bg-white rounded-lg shadow-sm p-6 space-y-4">
+      <app-chat
+        [messages]="messages()"
+        [disabled]="chatDisabled()"
+        [runLabel]="'Run Analysis'"
+        [loadingLabel]="'Running analysis...'"
+        (send)="onChatSend($event)"
+        (run)="startAnalysisFromChat()"
+        placeholder="Type your question...">
+      </app-chat>
+
+      @if (loading()) {
+        <div class="absolute inset-0 z-20 flex items-center justify-center bg-white/60">
+          <div class="flex items-center gap-3 text-sm text-gray-700">
+            <svg class="animate-spin h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+            Running analysis...
+            <button class="ml-4 text-sm text-red-600 hover:underline" (click)="cancelAnalysis()">Stop</button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

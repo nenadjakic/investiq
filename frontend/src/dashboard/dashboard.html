@@ -48,6 +48,14 @@
             [class.text-gray-500]="activeTab() !== 'details'">
       Details
     </button>
+    <button (click)="setActiveTab('analysis')"
+            class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
+            [class.border-blue-500]="activeTab() === 'analysis'"
+            [class.text-blue-600]="activeTab() === 'analysis'"
+            [class.border-transparent]="activeTab() !== 'analysis'"
+            [class.text-gray-500]="activeTab() !== 'analysis'">
+      Analysis
+    </button>
   </div>
 </nav>
 <div class="px-6 py-8 lg:px-10 space-y-8">
