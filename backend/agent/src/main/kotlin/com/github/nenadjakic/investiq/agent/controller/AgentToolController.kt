@@ -38,7 +38,7 @@ class AgentToolController(
     }
 
     @GetMapping(value= ["country-allocation"], produces = ["application/toon"])
-    fun getCountryAllocation(): ResponseEntity<List<AgentTool.CountryAllocationResponse>?>? {
+    fun getCountryAllocation(): ResponseEntity<List<AgentTool.CountryAllocationResponse>> {
         return ResponseEntity.ok(agentTool.getCountryAllocationRaw())
     }
 
