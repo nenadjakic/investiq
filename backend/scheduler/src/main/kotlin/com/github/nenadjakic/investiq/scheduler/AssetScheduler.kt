@@ -6,6 +6,7 @@ import com.github.nenadjakic.investiq.data.repository.AssetRepository
 import com.github.nenadjakic.investiq.integration.dto.AssetHistoryList
 import com.github.nenadjakic.investiq.integration.service.YahooFinanceAssetService
 import com.github.nenadjakic.investiq.service.AssetHistoryService
+import jakarta.transaction.Transactional
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -16,7 +17,7 @@ import java.time.LocalDate
 @Service
 class AssetScheduler(
     private val assetRepository: AssetRepository,
-    private val assetHistoryRepository: AssetHistoryRepository,
+    private val assetHistoryWorker: AssetHistoryWorker,
     private val yahooFinanceAssetService: YahooFinanceAssetService,
     private val assetHistoryService: AssetHistoryService
 ) {
@@ -42,33 +43,47 @@ class AssetScheduler(
                     }
 
                     val response = yahooFinanceAssetService.fetchHistory(symbol, fromDate, toDate)
+                    assetHistoryWorker.saveAssetHistories(response)
 
-                    assetHistories.addAll(initAssetHistories(response))
                     Thread.sleep(fetchDelayMs!!)
                 } catch (ex: Exception) {
                     log.error("Error fetching data for $symbol: ${ex.message}", ex)
                 }
             }
-        if(assetHistories.isNotEmpty()) {
-            assetHistoryRepository.saveAll(assetHistories)
-        }
     }
+}
+
+@Service
+class AssetHistoryWorker(
+    private val assetRepository: AssetRepository,
+    private val assetHistoryRepository: AssetHistoryRepository
+) {
 
     private fun initAssetHistories(yahooResponse: AssetHistoryList): List<AssetHistory> {
         val asset = assetRepository.findBySymbol(yahooResponse.symbol)!!
         val result = mutableListOf<AssetHistory>()
         yahooResponse.prices.forEach { (date, volume, open, highPrice, lowPrice, closePrice, adjustedClose) ->
-            result.add(AssetHistory(
-                asset = asset,
-                validDate = date,
-                volume = volume,
-                openPrice = open,
-                highPrice = highPrice,
-                lowPrice = lowPrice,
-                closePrice = closePrice!!,
-                adjustedClose = adjustedClose
-            ))
+            result.add(
+                AssetHistory(
+                    asset = asset,
+                    validDate = date,
+                    volume = volume,
+                    openPrice = open,
+                    highPrice = highPrice,
+                    lowPrice = lowPrice,
+                    closePrice = closePrice!!,
+                    adjustedClose = adjustedClose
+                )
+            )
         }
         return result
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    fun saveAssetHistories(response: AssetHistoryList) {
+        val assetHistories = initAssetHistories(response)
+        if (assetHistories.isNotEmpty()) {
+            assetHistoryRepository.saveAll(assetHistories)
+        }
     }
 }
