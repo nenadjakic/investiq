@@ -22,7 +22,7 @@ class SnapshotScheduler(
 
     private val parallelism = 2
 
-    @Scheduled(cron = "0 0 0 ? * MON")
+    @Scheduled(cron = "0 0 5 ? * SUN")
     fun scheduleSnapshotGeneration() {
         runBlocking {
             generateSnapshots()

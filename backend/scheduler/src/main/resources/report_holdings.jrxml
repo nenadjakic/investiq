@@ -1,0 +1,256 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="report_holdings" language="java" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0a120bc4-6cbe-4e2c-aef3-833b6f7dbe84">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="IndicatorStyle" pattern="">
+		<conditionalStyle forecolor="#00AA00">
+			<conditionExpression><![CDATA[$V{TOTAL_VALUE_CHANGE}.compareTo(new java.math.BigDecimal("0")) > 0]]></conditionExpression>
+		</conditionalStyle>
+		<conditionalStyle forecolor="#FF0000">
+			<conditionExpression><![CDATA[$V{TOTAL_VALUE_CHANGE}.compareTo(new java.math.BigDecimal("0")) < 0
+]]></conditionExpression>
+		</conditionalStyle>
+	</style>
+	<parameter name="REPORT_DATE" class="java.sql.Date"/>
+	<parameter name="PERIOD_TYPE" class="java.lang.String"/>
+	<query language="sql"><![CDATA[select * from public.get_portfolio_holdings_with_previous($P{REPORT_DATE}, $P{PERIOD_TYPE} )]]></query>
+	<field name="snapshot_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="snapshot_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="snapshot_date"/>
+	</field>
+	<field name="prev_snapshot_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="prev_snapshot_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_snapshot_date"/>
+	</field>
+	<field name="holding_id" class="java.util.UUID">
+		<property name="com.jaspersoft.studio.field.name" value="holding_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="holding_id"/>
+	</field>
+	<field name="holding_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="holding_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="holding_name"/>
+	</field>
+	<field name="tickers" class="java.sql.Array">
+		<property name="com.jaspersoft.studio.field.name" value="tickers"/>
+		<property name="com.jaspersoft.studio.field.label" value="tickers"/>
+	</field>
+	<field name="cost_basis_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cost_basis_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="cost_basis_eur"/>
+	</field>
+	<field name="market_value_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="market_value_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="market_value_eur"/>
+	</field>
+	<field name="unrealized_pl_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="unrealized_pl_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="unrealized_pl_eur"/>
+	</field>
+	<field name="realized_pl_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="realized_pl_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="realized_pl_eur"/>
+	</field>
+	<field name="dividends_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="dividends_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="dividends_eur"/>
+	</field>
+	<field name="fees_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="fees_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="fees_eur"/>
+	</field>
+	<field name="weight_pct" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="weight_pct"/>
+		<property name="com.jaspersoft.studio.field.label" value="weight_pct"/>
+	</field>
+	<field name="prev_weight_pct" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_weight_pct"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_weight_pct"/>
+	</field>
+	<field name="prev_cost_basis_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_cost_basis_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_cost_basis_eur"/>
+	</field>
+	<field name="prev_market_value_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_market_value_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_market_value_eur"/>
+	</field>
+	<field name="prev_unrealized_pl_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_unrealized_pl_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_unrealized_pl_eur"/>
+	</field>
+	<field name="prev_realized_pl_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_realized_pl_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_realized_pl_eur"/>
+	</field>
+	<field name="prev_dividends_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_dividends_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_dividends_eur"/>
+	</field>
+	<field name="prev_fees_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_fees_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_fees_eur"/>
+	</field>
+	<sortField name="weight_pct" order="Descending"/>
+	<variable name="TOTAL_VALUE_CHANGE" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{market_value_eur}.subtract($F{prev_market_value_eur})]]></expression>
+	</variable>
+	<variable name="TOTAL_VALUE_CHANGE_PERCENT" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{prev_market_value_eur} != null
+&& $F{prev_market_value_eur}.compareTo(java.math.BigDecimal.ZERO) != 0
+    ? $F{market_value_eur}
+        .subtract($F{prev_market_value_eur})
+        .multiply(new java.math.BigDecimal("100"))
+        .divide($F{prev_market_value_eur}, 2, java.math.RoundingMode.HALF_UP)
+    : new java.math.BigDecimal("0.00")
+]]></expression>
+	</variable>
+	<variable name="TOTAL_VALUE_INDICATOR" class="java.lang.String">
+		<expression><![CDATA[$V{TOTAL_VALUE_CHANGE}.compareTo(java.math.BigDecimal.ZERO) > 0
+    ? "▲ +" + new java.text.DecimalFormat("#,##0.00").format($V{TOTAL_VALUE_CHANGE}) +
+      " (" + new java.text.DecimalFormat("0.00").format($V{TOTAL_VALUE_CHANGE_PERCENT}) + "%)"
+    : ($V{TOTAL_VALUE_CHANGE}.compareTo(java.math.BigDecimal.ZERO) < 0
+        ? "▼ " + new java.text.DecimalFormat("#,##0.00").format($V{TOTAL_VALUE_CHANGE}) +
+          " (" + new java.text.DecimalFormat("0.00").format($V{TOTAL_VALUE_CHANGE_PERCENT}) + "%)"
+        : "-")
+]]></expression>
+	</variable>
+	<variable name="TOTAL_VALUE_INDICATOR_ONLY" class="java.lang.String">
+		<expression><![CDATA[$V{TOTAL_VALUE_CHANGE}.compareTo(java.math.BigDecimal.ZERO) > 0
+    ? "▲ "
+    : ($V{TOTAL_VALUE_CHANGE}.compareTo(java.math.BigDecimal.ZERO) < 0
+        ? "▼ "
+        : "-")
+]]></expression>
+	</variable>
+	<background splitType="Stretch"/>
+	<pageHeader height="34" splitType="Stretch">
+		<element kind="staticText" uuid="5c663436-8442-4262-b230-997e78639160" x="0" y="0" width="260" height="30" fontName="DejaVu Serif" fontSize="16.0" bold="true" vTextAlign="Top">
+			<text><![CDATA[Holdings]]></text>
+		</element>
+	</pageHeader>
+	<columnHeader height="23" splitType="Stretch">
+		<element kind="staticText" uuid="3548b01e-dea3-4c3d-8f25-634feec68756" mode="Opaque" x="0" y="0" width="200" height="20" backcolor="#E1E1E1" fontName="DejaVu Serif" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Name / tickers]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="265c355f-bf3d-42b4-803b-deac032e5900"/>
+			<box>
+				<pen lineWidth="0.75"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="38ac0cab-1e3c-465b-930b-c3c3c5d39414" mode="Opaque" x="200" y="0" width="70" height="20" backcolor="#E1E1E1" fontName="DejaVu Serif" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Cost basis]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9907a0c8-de3c-4a9e-885f-323ec09317a4"/>
+			<box>
+				<pen lineWidth="0.75"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="9b66652c-b56b-42c7-870a-8d2e20d5d56a" mode="Opaque" x="270" y="0" width="60" height="20" backcolor="#E1E1E1" fontName="DejaVu Serif" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Value]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="93b8e084-b245-4031-a153-0d594c8b8608"/>
+			<box>
+				<pen lineWidth="0.75"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="d7f714e1-ab8b-485c-a9c8-fa9c4beaddd6" mode="Opaque" x="500" y="0" width="55" height="20" backcolor="#E1E1E1" fontName="DejaVu Serif" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[% of total]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bc0c44ff-3dab-47c1-a728-ae3a69c8899b"/>
+			<box>
+				<pen lineWidth="0.75"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="dbe43d04-9ac8-4bec-b6a9-f3cd72ce0d1a" mode="Opaque" x="330" y="0" width="60" height="20" backcolor="#E1E1E1" fontName="DejaVu Serif" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Prev Value (€)]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fa27ec2-8da1-490e-9608-8bf0ff011c21"/>
+			<box>
+				<pen lineWidth="0.75"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="7428d84e-8f5f-4bda-b03d-74b3deec06fd" mode="Opaque" x="390" y="0" width="50" height="20" backcolor="#E1E1E1" fontName="DejaVu Serif" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Change]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bc0c44ff-3dab-47c1-a728-ae3a69c8899b"/>
+			<box>
+				<pen lineWidth="0.75"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="1cde58d5-16a0-4a11-bcb5-8e0808551e9e" mode="Opaque" x="440" y="0" width="60" height="20" backcolor="#E1E1E1" fontName="DejaVu Serif" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Dividends]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fa27ec2-8da1-490e-9608-8bf0ff011c21"/>
+			<box>
+				<pen lineWidth="0.75"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<element kind="textField" uuid="088d91f6-3b14-48b3-bfe0-f7867565b9b7" x="0" y="0" width="200" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true">
+				<expression><![CDATA[$F{holding_name}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="265c355f-bf3d-42b4-803b-deac032e5900"/>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="textField" uuid="cf5d321d-869c-4cdb-b6bc-d062c63ed803" x="0" y="16" width="555" height="13" fontName="DejaVu Serif">
+				<expression><![CDATA[$F{tickers}.toString().replace("{", "(") .replace("}", ")")]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7385057d-1bfa-45ce-b354-88787ecc30ba"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="5d370c65-cb5f-4869-8c2e-b639ff8d5555" x="200" y="0" width="70" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" hTextAlign="Right">
+				<expression><![CDATA[$F{cost_basis_eur}]]></expression>
+				<patternExpression><![CDATA["#,##0.0000"]]></patternExpression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9907a0c8-de3c-4a9e-885f-323ec09317a4"/>
+			</element>
+			<element kind="textField" uuid="c49e3874-f022-4bab-a67a-78ff1bbd5854" x="270" y="0" width="60" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" hTextAlign="Right">
+				<expression><![CDATA[$F{market_value_eur}]]></expression>
+				<patternExpression><![CDATA["#,##0.0000 €"]]></patternExpression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="93b8e084-b245-4031-a153-0d594c8b8608"/>
+			</element>
+			<element kind="textField" uuid="2e6f49c6-82de-4f1f-a68b-ef255cd87838" x="500" y="0" width="55" height="16" fontName="DejaVu Serif" fontSize="12.0" bold="true" hTextAlign="Right">
+				<expression><![CDATA[$F{weight_pct}]]></expression>
+				<patternExpression><![CDATA["##0.00 '%'"]]></patternExpression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bc0c44ff-3dab-47c1-a728-ae3a69c8899b"/>
+			</element>
+			<element kind="textField" uuid="45e2b58b-93ed-4ab5-a9da-5ed617009aeb" x="330" y="0" width="60" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" hTextAlign="Right">
+				<expression><![CDATA[$F{prev_market_value_eur}]]></expression>
+				<patternExpression><![CDATA["#,##0.0000"]]></patternExpression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fa27ec2-8da1-490e-9608-8bf0ff011c21"/>
+			</element>
+			<element kind="textField" uuid="ed38c517-a402-4452-96d1-d29bf267ca87" x="390" y="0" width="50" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" hTextAlign="Center" style="IndicatorStyle">
+				<expression><![CDATA[$V{TOTAL_VALUE_INDICATOR_ONLY}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fa27ec2-8da1-490e-9608-8bf0ff011c21"/>
+			</element>
+			<element kind="textField" uuid="4c8cfd4d-b80c-447b-aaae-0f1b6d08ac25" x="440" y="0" width="60" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" hTextAlign="Right">
+				<expression><![CDATA[$F{dividends_eur}.subtract($F{prev_dividends_eur})]]></expression>
+				<patternExpression><![CDATA["#,##0.0000"]]></patternExpression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3fa27ec2-8da1-490e-9608-8bf0ff011c21"/>
+			</element>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</detail>
+</jasperReport>

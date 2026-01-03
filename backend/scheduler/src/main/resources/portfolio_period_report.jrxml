@@ -1,0 +1,73 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="portfolio_period_report" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="13ea9980-f514-4e09-baed-dcae3dfaca6c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+	<parameter name="REPORT_DATE" class="java.sql.Date"/>
+	<parameter name="PERIOD_TYPE" class="java.lang.String">
+		<description><![CDATA["W/M/Y"]]></description>
+	</parameter>
+	<query language="SQL"><![CDATA[select 1 as dummy]]></query>
+	<variable name="START_DATE" class="java.time.LocalDate">
+		<expression><![CDATA[$P{PERIOD_TYPE}.equals("W") ? $P{REPORT_DATE}.toLocalDate().minusDays(6) : $P{REPORT_DATE}.toLocalDate().withDayOfMonth(1)]]></expression>
+	</variable>
+	<variable name="END_DATE" class="java.time.LocalDate">
+		<expression><![CDATA[$P{REPORT_DATE}.toLocalDate()]]></expression>
+	</variable>
+	<variable name="REPORT_TITLE" class="java.lang.String">
+		<expression><![CDATA[$P{PERIOD_TYPE}.equals("W") ? "Weekly Portfolio Report" : "Monthly Portfolio Report"]]></expression>
+	</variable>
+	<background splitType="Stretch"/>
+	<title height="77" splitType="Stretch">
+		<element kind="textField" uuid="1bc98948-d330-415d-8f60-3130c9102743" x="0" y="0" width="555" height="30" fontName="DejaVu Serif" fontSize="22.0" evaluationTime="Report" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$V{REPORT_TITLE}]]></expression>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+		</element>
+		<element kind="textField" uuid="6b069ddc-5e83-4e30-b04b-629c812be282" x="0" y="30" width="555" height="20" fontName="DejaVu Serif" evaluationTime="Report" bold="true" vTextAlign="Middle">
+			<expression><![CDATA["Period: " + $V{START_DATE} + " – " + $V{END_DATE}
+]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="c7166749-6d11-43b6-9f73-59960a096d46" x="0" y="50" width="555" height="20" fontName="DejaVu Serif" evaluationTime="Report" bold="false" vTextAlign="Middle">
+			<expression><![CDATA["Generated on: " + java.time.LocalDateTime.now()]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
+	</title>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<element kind="subreport" uuid="dba19c5d-eb21-4801-8ebb-cf13a7284195" x="0" y="0" width="555" height="24" usingCache="false">
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<expression><![CDATA["report_holdings.jasper"]]></expression>
+				<parameter name="REPORT_DATE">
+					<expression><![CDATA[$P{REPORT_DATE}]]></expression>
+				</parameter>
+				<parameter name="PERIOD_TYPE">
+					<expression><![CDATA[$P{PERIOD_TYPE}]]></expression>
+				</parameter>
+			</element>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</detail>
+	<pageFooter height="16">
+		<element kind="textField" uuid="f3e8d742-a430-4252-aec1-141dee07b411" x="220" y="0" width="80" height="16" fontName="DejaVu Serif" hTextAlign="Right">
+			<expression><![CDATA["Page " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+		<element kind="textField" uuid="c79a60d5-fc4e-4ae6-b8fb-c24e12195f6b" x="300" y="0" width="64" height="16" fontName="DejaVu Serif" evaluationTime="Report" hTextAlign="Left">
+			<expression><![CDATA[" of " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="107">
+		<element kind="subreport" uuid="cc3f90d9-ddf8-4579-be2b-f184ff534448" x="0" y="0" width="555" height="105">
+			<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+			<expression><![CDATA["portfolio_summary.jasper"]]></expression>
+			<parameter name="REPORT_DATE">
+				<expression><![CDATA[$P{REPORT_DATE}]]></expression>
+			</parameter>
+			<parameter name="PERIOD_TYPE">
+				<expression><![CDATA[$P{PERIOD_TYPE}]]></expression>
+			</parameter>
+		</element>
+	</summary>
+</jasperReport>

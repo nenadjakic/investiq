@@ -20,6 +20,7 @@ jakarta-transaction = "2.0.1"
 jakarta-validation = "4.0.0-M1"
 kotlinx-coroutines = "1.10.2"
 hibernate = "7.1.11.Final"
+jasperreports = "7.0.3"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -32,6 +33,8 @@ spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
 spring-boot-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
+spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref="spring-boot" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref="spring-boot" }
 spring-data-jpa = { module = "org.springframework.data:spring-data-jpa", version.ref = "spring-boot" }
 spring-shell-starter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "spring-shell-starter" }
 spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref="spring-boot" }
@@ -54,6 +57,9 @@ jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-ap
 jakarta-validation-api  = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 hibernate-core = { module = "org.hibernate:hibernate-core", version.ref = "hibernate" }
+jasperreports = { module = "net.sf.jasperreports:jasperreports", version.ref = "jasperreports" }
+jasperreports-pdf = { module = "net.sf.jasperreports:jasperreports-pdf", version.ref = "jasperreports" }
+jasperreports-fonts = { module = "net.sf.jasperreports:jasperreports-fonts", version.ref = "jasperreports" }
 
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }

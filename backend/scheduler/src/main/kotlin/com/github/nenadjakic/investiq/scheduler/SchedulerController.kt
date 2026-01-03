@@ -4,7 +4,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -16,7 +18,8 @@ import java.time.LocalDate
 class SchedulerController(
     private val assetScheduler: AssetScheduler,
     private val currencyScheduler: CurrencyScheduler,
-    private val snapshotScheduler: SnapshotScheduler
+    private val snapshotScheduler: SnapshotScheduler,
+    private val reportScheduler: ReportScheduler
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -83,5 +86,40 @@ class SchedulerController(
             }
         }
         return ResponseEntity.accepted().body("Snapshot scheduler triggered for range $from to $to")
+    }
+
+    @PostMapping("/report")
+    fun generateReport(
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) date: LocalDate?,
+        @RequestParam(defaultValue = "W") type: String
+    ): ResponseEntity<Map<String, String>> {
+
+        val reportDate = date ?: LocalDate.now().minusDays(1)
+        val periodType = type.uppercase()
+
+        if (periodType !in listOf("W", "M", "Y")) {
+            return ResponseEntity.badRequest()
+                .body(mapOf("error" to "Invalid period type. Must be W, M, or Y"))
+        }
+
+        return try {
+            reportScheduler.generateReportManually(reportDate, periodType)
+            ResponseEntity.ok(
+                mapOf(
+                    "status" to "success",
+                    "message" to "Report generated and sent successfully",
+                    "date" to reportDate.toString(),
+                    "type" to periodType
+                )
+            )
+        } catch (e: Exception) {
+            ResponseEntity.internalServerError()
+                .body(
+                    mapOf(
+                        "status" to "error",
+                        "message" to "Failed to generate report: ${e.message}"
+                    )
+                )
+        }
     }
 }

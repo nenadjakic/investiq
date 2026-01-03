@@ -1,0 +1,294 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="portfolio_summary" language="java" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="9f76b81a-d137-4e71-8ad8-d8ee5a22cf79">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="IndicatorStyle" pattern="">
+		<conditionalStyle forecolor="#00AA00">
+			<conditionExpression><![CDATA[$V{TOTAL_VALUE_CHANGE}.compareTo(new java.math.BigDecimal("0")) > 0]]></conditionExpression>
+		</conditionalStyle>
+		<conditionalStyle forecolor="#FF0000">
+			<conditionExpression><![CDATA[$V{TOTAL_VALUE_CHANGE}.compareTo(new java.math.BigDecimal("0")) < 0
+]]></conditionExpression>
+		</conditionalStyle>
+	</style>
+	<parameter name="REPORT_DATE" class="java.sql.Date"/>
+	<parameter name="PERIOD_TYPE" class="java.lang.String">
+		<description><![CDATA["W/M/Y"]]></description>
+	</parameter>
+	<query language="sql"><![CDATA[select * from public.get_portfolio_snapshot_with_previous($P{REPORT_DATE}, $P{PERIOD_TYPE})]]></query>
+	<field name="snapshot_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="snapshot_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="snapshot_date"/>
+	</field>
+	<field name="prev_snapshot_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="prev_snapshot_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_snapshot_date"/>
+	</field>
+	<field name="total_cost_basis_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_cost_basis_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_cost_basis_eur"/>
+	</field>
+	<field name="total_market_value_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_market_value_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_market_value_eur"/>
+	</field>
+	<field name="total_unrealized_pl_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_unrealized_pl_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_unrealized_pl_eur"/>
+	</field>
+	<field name="total_realized_pl_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_realized_pl_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_realized_pl_eur"/>
+	</field>
+	<field name="total_dividends_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_dividends_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_dividends_eur"/>
+	</field>
+	<field name="total_fees_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_fees_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_fees_eur"/>
+	</field>
+	<field name="total_holdings" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="total_holdings"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_holdings"/>
+	</field>
+	<field name="total_buy_amount_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_buy_amount_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_buy_amount_eur"/>
+	</field>
+	<field name="prev_total_cost_basis_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_total_cost_basis_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_total_cost_basis_eur"/>
+	</field>
+	<field name="prev_total_market_value_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_total_market_value_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_total_market_value_eur"/>
+	</field>
+	<field name="prev_total_unrealized_pl_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_total_unrealized_pl_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_total_unrealized_pl_eur"/>
+	</field>
+	<field name="prev_total_realized_pl_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_total_realized_pl_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_total_realized_pl_eur"/>
+	</field>
+	<field name="prev_total_dividends_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_total_dividends_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_total_dividends_eur"/>
+	</field>
+	<field name="prev_total_fees_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_total_fees_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_total_fees_eur"/>
+	</field>
+	<field name="prev_total_holdings" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="prev_total_holdings"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_total_holdings"/>
+	</field>
+	<field name="prev_total_buy_amount_eur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prev_total_buy_amount_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="prev_total_buy_amount_eur"/>
+	</field>
+	<variable name="TOTAL_VALUE_CHANGE" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{total_market_value_eur}.subtract($F{prev_total_market_value_eur})]]></expression>
+	</variable>
+	<variable name="TOTAL_VALUE_CHANGE_PERCENT" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{prev_total_market_value_eur} != null
+&& $F{prev_total_market_value_eur}.compareTo(java.math.BigDecimal.ZERO) != 0
+    ? $F{total_market_value_eur}
+        .subtract($F{prev_total_market_value_eur})
+        .multiply(new java.math.BigDecimal("100"))
+        .divide($F{prev_total_market_value_eur}, 2, java.math.RoundingMode.HALF_UP)
+    : new java.math.BigDecimal("0.00")
+]]></expression>
+	</variable>
+	<variable name="TOTAL_VALUE_INDICATOR" class="java.lang.String">
+		<expression><![CDATA[$V{TOTAL_VALUE_CHANGE}.compareTo(java.math.BigDecimal.ZERO) > 0
+    ? "▲ +" + new java.text.DecimalFormat(" € #,##0.00").format($V{TOTAL_VALUE_CHANGE}) +
+      " (" + new java.text.DecimalFormat("0.00").format($V{TOTAL_VALUE_CHANGE_PERCENT}) + "%)"
+    : ($V{TOTAL_VALUE_CHANGE}.compareTo(java.math.BigDecimal.ZERO) < 0
+        ? "▼ " + new java.text.DecimalFormat(" € #,##0.00").format($V{TOTAL_VALUE_CHANGE}) +
+          " (" + new java.text.DecimalFormat("0.00").format($V{TOTAL_VALUE_CHANGE_PERCENT}) + "%)"
+        : "-")
+]]></expression>
+	</variable>
+	<variable name="TOTAL_VALUE_INDICATOR_ONLY" class="java.lang.String">
+		<expression><![CDATA[$V{TOTAL_VALUE_CHANGE}.compareTo(java.math.BigDecimal.ZERO) > 0
+    ? "▲ "
+    : ($V{TOTAL_VALUE_CHANGE}.compareTo(java.math.BigDecimal.ZERO) < 0
+        ? "▼ "
+        : "-")
+]]></expression>
+	</variable>
+	<variable name="TOTAL_DIVIDENDS" class="java.math.BigDecimal">
+		<expression><![CDATA[($F{total_dividends_eur} != null ? $F{total_dividends_eur} : BigDecimal.ZERO)
+.subtract(
+    $F{prev_total_dividends_eur} != null ? $F{prev_total_dividends_eur} : BigDecimal.ZERO
+)
+]]></expression>
+	</variable>
+	<variable name="TOTAL_INVESTED" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{total_buy_amount_eur}.subtract($F{prev_total_buy_amount_eur})]]></expression>
+	</variable>
+	<variable name="TOTAL_PL" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{total_unrealized_pl_eur}.add($F{total_realized_pl_eur})]]></expression>
+	</variable>
+	<detail>
+		<band height="227" splitType="Stretch">
+			<element kind="frame" uuid="753f4603-fa48-4603-bb39-fa95a478337f" x="10" y="160" width="140" height="55">
+				<element kind="staticText" uuid="c4770391-131f-4a0e-bec7-d60670e72bd1" x="0" y="0" width="140" height="25" fontName="DejaVu Serif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Value:]]></text>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</element>
+				<element kind="textField" uuid="1090e116-517f-4227-8f0c-bf257dc65d7d" x="0" y="25" width="140" height="30" fontName="DejaVu Serif" fontSize="18.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$F{total_market_value_eur}]]></expression>
+					<patternExpression><![CDATA["€ #,##0.00"]]></patternExpression>
+					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+				</element>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="frame" uuid="3e3a3510-78af-4507-87bc-3c2f553a46b9" x="410" y="160" width="139" height="56">
+				<element kind="staticText" uuid="ed0745a7-784a-4515-953c-ac06849ea37a" x="0" y="0" width="139" height="25" fontName="DejaVu Serif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Dividens:]]></text>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</element>
+				<element kind="textField" uuid="48706b65-022d-4bee-aabf-765d456141d6" x="0" y="26" width="139" height="30" fontName="DejaVu Serif" fontSize="18.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$F{total_dividends_eur}]]></expression>
+					<patternExpression><![CDATA["€ #,##0.00"]]></patternExpression>
+					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+				</element>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="staticText" uuid="9d31474f-96b2-41e5-b290-5db085c3b951" mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#E1E1E1" fontSize="16.0" bold="true" vTextAlign="Middle">
+				<text><![CDATA[Period]]></text>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="staticText" uuid="fc72f949-dd46-4f72-9a88-53760dc1aa63" mode="Opaque" x="0" y="120" width="555" height="30" backcolor="#E1E1E1" fontSize="16.0" bold="true" vTextAlign="Middle">
+				<text><![CDATA[Total]]></text>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="frame" uuid="51d7a4ac-3bd5-43ef-81c2-1cb8955e39bc" x="409" y="35" width="139" height="62">
+				<element kind="staticText" uuid="1b1b96e5-7371-4f7a-b3c9-e0a30f4ec231" x="0" y="1" width="139" height="25" fontName="DejaVu Serif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Dividens:]]></text>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</element>
+				<element kind="textField" uuid="3b24aa5b-d04f-4fa5-88d6-4b0e666116e8" x="0" y="26" width="139" height="36" fontName="DejaVu Serif" fontSize="18.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$V{TOTAL_DIVIDENDS}]]></expression>
+					<patternExpression><![CDATA["€ #,##0.00"]]></patternExpression>
+					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+				</element>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="frame" uuid="22384d7c-5c2b-44e9-a591-8cbfd307234d" x="11" y="35" width="139" height="62">
+				<element kind="staticText" uuid="3a67820b-08f2-45c2-a187-cae7721e53e9" x="0" y="0" width="139" height="25" fontName="DejaVu Serif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[P/L Change]]></text>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</element>
+				<element kind="textField" uuid="9ab4c2be-1950-47eb-8c28-9c3ddb5239fe" x="0" y="26" width="139" height="36" fontName="DejaVu Serif" fontSize="18.0" evaluationTime="Report" bold="true" hTextAlign="Center" vTextAlign="Middle" style="IndicatorStyle">
+					<expression><![CDATA[$V{TOTAL_VALUE_INDICATOR}]]></expression>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</element>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="frame" uuid="eab57d2d-8535-43e2-9ebd-f120480bfe29" x="210" y="35" width="139" height="62">
+				<element kind="staticText" uuid="883348ef-2726-4461-a51b-fc67e6cf8893" x="0" y="0" width="139" height="25" fontName="DejaVu Serif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Invested]]></text>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</element>
+				<element kind="textField" uuid="ec2ce75c-c8e8-4091-931f-934f74afa257" x="0" y="26" width="139" height="36" fontName="DejaVu Serif" fontSize="18.0" evaluationTime="Report" bold="true" hTextAlign="Center" vTextAlign="Middle" style="IndicatorStyle">
+					<expression><![CDATA[$V{TOTAL_INVESTED}]]></expression>
+					<patternExpression><![CDATA["€ #,##0.00"]]></patternExpression>
+					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+				</element>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="frame" uuid="abdf6b89-a12b-4baa-a2b2-344cb6b4510e" x="210" y="160" width="140" height="55">
+				<element kind="staticText" uuid="7fbcda2a-ad8d-4317-8c1f-89152df735c6" x="0" y="0" width="140" height="25" fontName="DejaVu Serif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Total P/L:]]></text>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</element>
+				<element kind="textField" uuid="0a6dd13a-3f35-4644-8109-bbccc2771914" x="0" y="25" width="140" height="30" fontName="DejaVu Serif" fontSize="18.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$V{TOTAL_PL}]]></expression>
+					<patternExpression><![CDATA["€ #,##0.00"]]></patternExpression>
+					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+				</element>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+		</band>
+	</detail>
+</jasperReport>
