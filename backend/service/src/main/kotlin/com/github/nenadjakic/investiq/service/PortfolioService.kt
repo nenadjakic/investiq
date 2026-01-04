@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.service
 
+import com.github.nenadjakic.investiq.common.dto.ActivePositionResponse
 import com.github.nenadjakic.investiq.common.dto.AssetTypeValueResponse
 import com.github.nenadjakic.investiq.common.dto.PeriodChangeResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioChartResponse
@@ -21,6 +22,7 @@ import com.github.nenadjakic.investiq.common.dto.TotalDividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
 import com.github.nenadjakic.investiq.data.enum.AssetType
+import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
 import com.github.nenadjakic.investiq.data.repository.AssetHistoryRepository
@@ -38,8 +40,8 @@ class PortfolioService(
     private val assetHistoryRepository: AssetHistoryRepository
 )  {
 
-    fun getPortfolioSummary(periodDays: Int = 5): PortfolioSummaryResponse {
-        val latestSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
+    fun getPortfolioSummary(periodDays: Int = 5, platform: Platform? = null): PortfolioSummaryResponse {
+        val latestSnapshot = portfolioRepository.getLatestPortfolioSnapshot(platform)
             ?: throw NoSuchElementException("No portfolio data available")
 
         // Use rounded values for presentation and for percentage calculations to make results deterministic
@@ -65,7 +67,7 @@ class PortfolioService(
         }
 
         val periodStartDate = latestSnapshot.snapshotDate.minusDays(periodDays.toLong())
-        val periodSnapshot = portfolioRepository.getSnapshotOnOrBefore(periodStartDate)
+        val periodSnapshot = portfolioRepository.getSnapshotOnOrBefore(periodStartDate, platform)
 
         val periodChange = calculatePeriodChange(
             latestSnapshot.snapshotDate,
@@ -75,7 +77,7 @@ class PortfolioService(
             periodDays
         )
 
-        val dividendCostYield = portfolioRepository.getTotalDividendCostYield()?.dividendCostYield
+        val dividendCostYield = portfolioRepository.getTotalDividendCostYield(platform)?.dividendCostYield
             ?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
 
         return PortfolioSummaryResponse(
@@ -93,8 +95,8 @@ class PortfolioService(
         )
     }
 
-    fun getIndustrySectorAllocation(): List<IndustrySectorValueResponse> {
-        val rows = portfolioRepository.getValueByIndustrySector()
+    fun getIndustrySectorAllocation(platform: Platform? = null): List<IndustrySectorValueResponse> {
+        val rows = portfolioRepository.getValueByIndustrySector(platform)
         return rows.map { r ->
             IndustrySectorValueResponse(
                 industry = r.industry,
@@ -104,8 +106,8 @@ class PortfolioService(
         }
     }
 
-    fun getCountryAllocation(): List<CountryValueResponse> {
-        val rows = portfolioRepository.getValueByCountry()
+    fun getCountryAllocation(platform: Platform? = null): List<CountryValueResponse> {
+        val rows = portfolioRepository.getValueByCountry(platform)
         return rows.map { r ->
             CountryValueResponse(
                 country = r.country,
@@ -114,8 +116,8 @@ class PortfolioService(
         }
     }
 
-    fun getCurrencyExposure(): List<CurrencyValueResponse> {
-        val rows = portfolioRepository.getValueByCurrency()
+    fun getCurrencyExposure(platform: Platform? = null): List<CurrencyValueResponse> {
+        val rows = portfolioRepository.getValueByCurrency(platform)
         return rows.map { r ->
             CurrencyValueResponse(
                 currency = r.currency,
@@ -124,8 +126,8 @@ class PortfolioService(
         }
     }
 
-    fun getAssetTypeAllocation(): List<AssetTypeValueResponse> {
-        val rows = portfolioRepository.getValueByAssetType()
+    fun getAssetTypeAllocation(platform: Platform? = null): List<AssetTypeValueResponse> {
+        val rows = portfolioRepository.getValueByAssetType(platform)
         return rows.map { r ->
             AssetTypeValueResponse(
                 assetType = r.assetType,
@@ -134,12 +136,12 @@ class PortfolioService(
         }
     }
 
-    fun getPortfolioValueSeries(days: Int?): PortfolioChartResponse {
+    fun getPortfolioValueSeries(days: Int?, platform: Platform? = null): PortfolioChartResponse {
         val indices = listOf("^GSPC", "^IXIC", "^STOXX50E", "^STOXX")
         val endDate = LocalDate.now()
         val startDate = if (days == null) null else endDate.minusDays(days.toLong())
 
-        val dailyData = portfolioRepository.findDailyValuesBetween(startDate, endDate)
+        val dailyData = portfolioRepository.findDailyValuesBetween(startDate, endDate, platform)
 
         if (dailyData.isEmpty()) {
             return PortfolioChartResponse(
@@ -187,8 +189,8 @@ class PortfolioService(
         )
     }
 
-    fun getMonthlyInvested(months: Int?): MonthlyInvestedResponse {
-         val series = portfolioRepository.findMonthlyInvested(months)
+    fun getMonthlyInvested(months: Int?, platform: Platform? = null): MonthlyInvestedResponse {
+         val series = portfolioRepository.findMonthlyInvested(months, platform)
             .map {
                 val yearMonth = YearMonth.of(it.year, it.month)
             MonthlyInvestedEntry(yearMonth.toString(), it.invested)
@@ -197,8 +199,8 @@ class PortfolioService(
         return MonthlyInvestedResponse(series)
     }
 
-    fun getMonthlyDividends(months: Int?): MonthlyDividendResponse {
-        val rows = portfolioRepository.findMonthlyDividends(months)
+    fun getMonthlyDividends(months: Int?, platform: Platform? = null): MonthlyDividendResponse {
+        val rows = portfolioRepository.findMonthlyDividends(months, platform)
         val series = rows.map { row ->
             val yearMonth = YearMonth.of(row.year, row.month)
             MonthlyDividendEntry(yearMonth.toString(), row.amount)
@@ -210,11 +212,11 @@ class PortfolioService(
     /**
      * Returns the list of current holdings (positions) with calculated P/L and portfolio percentages.
      */
-    fun getPortfolioHoldings(): List<AssetHoldingResponse> {
-        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
+    fun getPortfolioHoldings(platform: Platform? = null): List<AssetHoldingResponse> {
+        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot(platform)
             ?: return emptyList()
 
-        val assetSnapshots = portfolioRepository.getLatestAssetSnapshots()
+        val assetSnapshots = portfolioRepository.getLatestAssetSnapshots(platform)
 
         val totalValue = portfolioSnapshot.totalValue
         if (totalValue <= BigDecimal.ZERO) {
@@ -222,7 +224,7 @@ class PortfolioService(
         }
 
         // Get dividend cost yield per asset and create a map by assetId
-        val dividendYieldMap = portfolioRepository.getAssetDividendCostYield()
+        val dividendYieldMap = portfolioRepository.getAssetDividendCostYield(platform)
             .associateBy { it.assetId }
 
         return assetSnapshots.mapNotNull { snapshot ->
@@ -278,25 +280,25 @@ class PortfolioService(
         }.sortedByDescending { it.currentPrice * it.shares }
     }
 
-    fun getConsolidatedPortfolioHoldings(): List<CompanyAssetHoldingResponse> {
-        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
+    fun getConsolidatedPortfolioHoldings(platform: Platform? = null): List<CompanyAssetHoldingResponse> {
+        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot(platform)
             ?: return emptyList()
 
-        val assetSnapshots = portfolioRepository.getLatestAssetSnapshotsGroupedByCompany()
+        val assetSnapshots = portfolioRepository.getLatestAssetSnapshotsGroupedByCompany(platform)
 
         val totalValue = portfolioSnapshot.totalValue
         if (totalValue <= BigDecimal.ZERO) {
             return emptyList()
         }
 
-        val dividendYieldMap = portfolioRepository.getAssetDividendCostYieldGroupedByCompany()
+        val dividendYieldMap = portfolioRepository.getAssetDividendCostYieldGroupedByCompany(platform)
             .associateBy { it.name }
 
         return assetSnapshots.map { snapshot ->
             val marketValue = snapshot.marketValueEur ?: BigDecimal.ZERO
             val profitLoss = snapshot.unrealizedPlEur?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
-            val profitLossPercentage = if (marketValue > BigDecimal.ZERO) {
-                (profitLoss / marketValue * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
+            val profitLossPercentage = if (snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO) {
+                (profitLoss / snapshot.costBasisEur!! * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
             } else BigDecimal.ZERO
 
             val portfolioPercentage = if (totalValue > BigDecimal.ZERO) {
@@ -322,11 +324,11 @@ class PortfolioService(
     /**
      * Returns active positions summary with invested amount and market value contributions.
      */
-    fun getActivePositions(): List<com.github.nenadjakic.investiq.common.dto.ActivePositionResponse> {
-        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
+    fun getActivePositions(platform: Platform? = null): List<com.github.nenadjakic.investiq.common.dto.ActivePositionResponse> {
+        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot(platform)
             ?: return emptyList()
 
-        val assetSnapshots = portfolioRepository.getLatestAssetSnapshots()
+        val assetSnapshots = portfolioRepository.getLatestAssetSnapshots(platform)
 
         val totalValue = portfolioSnapshot.totalValue
         val totalInvested = portfolioSnapshot.totalInvested
@@ -376,7 +378,7 @@ class PortfolioService(
                     .setScale(2, RoundingMode.HALF_UP)
             } else BigDecimal.ZERO
 
-            com.github.nenadjakic.investiq.common.dto.ActivePositionResponse(
+            ActivePositionResponse(
                 platform = null,
                 type = AssetType.valueOf(snapshot.type!!),
                 ticker = snapshot.ticker,
@@ -446,12 +448,12 @@ class PortfolioService(
         }
     }
 
-    fun getTopBottomPerformers(limit: Int = 5): TopBottomPerformersResponse {
+    fun getTopBottomPerformers(limit: Int = 5, platform: Platform? = null): TopBottomPerformersResponse {
         if (limit <= 0) {
             return TopBottomPerformersResponse(emptyList(), emptyList())
         }
 
-        val rows = portfolioRepository.getLatestAssetPerformances()
+        val rows = portfolioRepository.getLatestAssetPerformances(platform)
         if (rows.isEmpty()) {
             return TopBottomPerformersResponse(emptyList(), emptyList())
         }
@@ -479,8 +481,8 @@ class PortfolioService(
      * Returns dividend cost yield for each asset in the portfolio.
      * Dividend cost yield = (Annualized Dividend / Cost Basis) * 100
      */
-    fun getAssetDividendCostYield(): List<AssetDividendCostYieldResponse> {
-        return portfolioRepository.getAssetDividendCostYield().map { row ->
+    fun getAssetDividendCostYield(platform: Platform? = null): List<AssetDividendCostYieldResponse> {
+        return portfolioRepository.getAssetDividendCostYield(platform).map { row ->
             AssetDividendCostYieldResponse(
                 assetId = row.assetId,
                 ticker = row.ticker,
@@ -498,8 +500,8 @@ class PortfolioService(
      * Returns total dividend cost yield for the entire portfolio.
      * Dividend cost yield = (Annualized Total Dividend / Total Cost Basis) * 100
      */
-    fun getTotalDividendCostYield(): TotalDividendCostYieldResponse? {
-        val row = portfolioRepository.getTotalDividendCostYield() ?: return null
+    fun getTotalDividendCostYield(platform: Platform? = null): TotalDividendCostYieldResponse? {
+        val row = portfolioRepository.getTotalDividendCostYield(platform) ?: return null
         return TotalDividendCostYieldResponse(
             totalDividendEur = row.totalDividendEur.setScale(2, RoundingMode.HALF_UP),
             annualizedDividendEur = row.annualizedDividendEur.setScale(2, RoundingMode.HALF_UP),
@@ -512,9 +514,9 @@ class PortfolioService(
     /**
      * Returns combined dividend cost yield response with both per-asset and total portfolio yield.
      */
-    fun getDividendCostYield(): DividendCostYieldResponse {
-        val assets = getAssetDividendCostYield()
-        val total = getTotalDividendCostYield()
+    fun getDividendCostYield(platform: Platform? = null): DividendCostYieldResponse {
+        val assets = getAssetDividendCostYield(platform)
+        val total = getTotalDividendCostYield(platform)
         return DividendCostYieldResponse(assets = assets, total = total)
     }
 
@@ -530,7 +532,7 @@ class PortfolioService(
         
         for (symbol in indexSymbols) {
             val asset = assetRepository.findBySymbol(symbol) ?: continue
-            
+
             // Get historical prices for the date range
             val priceMap = mutableMapOf<LocalDate, BigDecimal>()
 
@@ -577,8 +579,8 @@ class PortfolioService(
      * HHI is calculated using portfolio percentages expressed as percentage points and summing their squares
      * (so range is 0..10000). Returned value is scaled to 2 decimals.
      */
-    fun getPortfolioConcentration(): PortfolioConcentrationResponse {
-        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot()
+    fun getPortfolioConcentration(platform: Platform? = null): PortfolioConcentrationResponse {
+        val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot(platform)
             ?: return PortfolioConcentrationResponse(
                 top1 = BigDecimal.ZERO,
                 top3 = BigDecimal.ZERO,
@@ -598,7 +600,7 @@ class PortfolioService(
             )
         }
 
-        val grouped = portfolioRepository.getLatestAssetSnapshotsGroupedByCompany()
+        val grouped = portfolioRepository.getLatestAssetSnapshotsGroupedByCompany(platform)
 
         // Build list of pairs (name, marketValue)
         val values = grouped.map { g ->

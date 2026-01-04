@@ -1,61 +1,76 @@
 <nav class="border-b border-gray-200 mb-6 px-6 lg:px-10 space-y-8">
-  <div class="flex space-x-8">
-    <button (click)="setActiveTab('overview')"
-            class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
-            [class.border-blue-500]="activeTab() === 'overview'"
-            [class.text-blue-600]="activeTab() === 'overview'"
-            [class.border-transparent]="activeTab() !== 'overview'"
-            [class.text-gray-500]="activeTab() !== 'overview'">
-      Overview
-    </button>
-    <button (click)="setActiveTab('performance')"
-            class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
-            [class.border-blue-500]="activeTab() === 'performance'"
-            [class.text-blue-600]="activeTab() === 'performance'"
-            [class.border-transparent]="activeTab() !== 'performance'"
-            [class.text-gray-500]="activeTab() !== 'performance'">
-      Performance
-    </button>
-    <button (click)="setActiveTab('allocation')"
-            class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
-            [class.border-blue-500]="activeTab() === 'allocation'"
-            [class.text-blue-600]="activeTab() === 'allocation'"
-            [class.border-transparent]="activeTab() !== 'allocation'"
-            [class.text-gray-500]="activeTab() !== 'allocation'">
-      Allocation
-    </button>
-    <button (click)="setActiveTab('holdings')"
-            class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
-            [class.border-blue-500]="activeTab() === 'holdings'"
-            [class.text-blue-600]="activeTab() === 'holdings'"
-            [class.border-transparent]="activeTab() !== 'holdings'"
-            [class.text-gray-500]="activeTab() !== 'holdings'">
-      Holdings
-    </button>
-    <button (click)="setActiveTab('insights')"
-            class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
-            [class.border-blue-500]="activeTab() === 'insights'"
-            [class.text-blue-600]="activeTab() === 'insights'"
-            [class.border-transparent]="activeTab() !== 'insights'"
-            [class.text-gray-500]="activeTab() !== 'insights'">
-      Insights
-    </button>
-    <button (click)="setActiveTab('details')"
-            class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
-            [class.border-blue-500]="activeTab() === 'details'"
-            [class.text-blue-600]="activeTab() === 'details'"
-            [class.border-transparent]="activeTab() !== 'details'"
-            [class.text-gray-500]="activeTab() !== 'details'">
-      Details
-    </button>
-    <button (click)="setActiveTab('analysis')"
-            class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
-            [class.border-blue-500]="activeTab() === 'analysis'"
-            [class.text-blue-600]="activeTab() === 'analysis'"
-            [class.border-transparent]="activeTab() !== 'analysis'"
-            [class.text-gray-500]="activeTab() !== 'analysis'">
-      Analysis
-    </button>
+  <div class="flex justify-between items-end w-full">
+    <div class="flex space-x-8">
+      <button (click)="setActiveTab('overview')"
+              class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
+              [class.border-blue-500]="activeTab() === 'overview'"
+              [class.text-blue-600]="activeTab() === 'overview'"
+              [class.border-transparent]="activeTab() !== 'overview'"
+              [class.text-gray-500]="activeTab() !== 'overview'">
+        Overview
+      </button>
+      <button (click)="setActiveTab('performance')"
+              class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
+              [class.border-blue-500]="activeTab() === 'performance'"
+              [class.text-blue-600]="activeTab() === 'performance'"
+              [class.border-transparent]="activeTab() !== 'performance'"
+              [class.text-gray-500]="activeTab() !== 'performance'">
+        Performance
+      </button>
+      <button (click)="setActiveTab('allocation')"
+              class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
+              [class.border-blue-500]="activeTab() === 'allocation'"
+              [class.text-blue-600]="activeTab() === 'allocation'"
+              [class.border-transparent]="activeTab() !== 'allocation'"
+              [class.text-gray-500]="activeTab() !== 'allocation'">
+        Allocation
+      </button>
+      <button (click)="setActiveTab('holdings')"
+              class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
+              [class.border-blue-500]="activeTab() === 'holdings'"
+              [class.text-blue-600]="activeTab() === 'holdings'"
+              [class.border-transparent]="activeTab() !== 'holdings'"
+              [class.text-gray-500]="activeTab() !== 'holdings'">
+        Holdings
+      </button>
+      <button (click)="setActiveTab('insights')"
+              class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
+              [class.border-blue-500]="activeTab() === 'insights'"
+              [class.text-blue-600]="activeTab() === 'insights'"
+              [class.border-transparent]="activeTab() !== 'insights'"
+              [class.text-gray-500]="activeTab() !== 'insights'">
+        Insights
+      </button>
+      <button (click)="setActiveTab('details')"
+              class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
+              [class.border-blue-500]="activeTab() === 'details'"
+              [class.text-blue-600]="activeTab() === 'details'"
+              [class.border-transparent]="activeTab() !== 'details'"
+              [class.text-gray-500]="activeTab() !== 'details'">
+        Details
+      </button>
+      <button (click)="setActiveTab('analysis')"
+              class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 hover:text-gray-700 hover:border-gray-300"
+              [class.border-blue-500]="activeTab() === 'analysis'"
+              [class.text-blue-600]="activeTab() === 'analysis'"
+              [class.border-transparent]="activeTab() !== 'analysis'"
+              [class.text-gray-500]="activeTab() !== 'analysis'">
+        Analysis
+      </button>
+    </div>
+
+    <div class="flex items-center">
+      <label for="platform-select" class="mr-3 text-sm text-gray-600 hidden md:inline-block transform -translate-y-3">Platform</label>
+      <select id="platform-select"
+              class="rounded-sm border border-gray-300 px-3 py-0.5 text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transform -translate-y-3"
+              [(ngModel)]="selectedPlatformModel"
+              (ngModelChange)="onPlatformChange($event)">
+        <option [ngValue]="null">All platforms</option>
+        @for (p of platforms; track p.value) {
+          <option [ngValue]="p">{{p.label}}</option>
+        }
+      </select>
+    </div>
   </div>
 </nav>
 <div class="px-6 py-8 lg:px-10 space-y-8">

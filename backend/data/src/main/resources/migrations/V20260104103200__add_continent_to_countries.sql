@@ -1,7 +1,3 @@
--- Migration: normalize continents into their own table and link countries via continent_id (UUID PK)
-
--- Ensure uuid functions are available via extensions (created earlier migrations)
--- 1) Create continents table and seed continent rows with stable UUID IDs
 CREATE TABLE continents (
   id uuid NOT NULL,
   "name" varchar(30) NOT NULL,
@@ -9,7 +5,6 @@ CREATE TABLE continents (
   CONSTRAINT uq_continents_name UNIQUE (name)
 );
 
--- Use fixed UUIDs so seeded rows are stable and updates can reference them
 INSERT INTO continents (id, name) VALUES
   ('b90df7e1-0e2e-4ad9-b1e5-a7148a58dc63','Africa'),
   ('b0536170-f569-4613-ab06-58e9adff2c62','Antarctica'),
@@ -20,10 +15,8 @@ INSERT INTO continents (id, name) VALUES
   ('1594893d-ea31-41d2-99a6-6c8b2078ce75','South America')
 ;
 
--- 2) Add nullable continent_id (UUID) to countries so we can populate existing rows
 ALTER TABLE countries ADD COLUMN continent_id UUID;
 
--- 3) Populate continent_id for existing countries based on iso2 codes
 -- Africa
 UPDATE countries SET continent_id = 'b90df7e1-0e2e-4ad9-b1e5-a7148a58dc63' WHERE iso2_code IN (
   'DZ','AO','BJ','BW','BF','BI','CM','CV','CF','TD','KM','CG','CD','CI','DJ','GQ','ER','ET','GA','GM','GH','GN','GW','KE','LS','LR','LY','MG','MW','ML','MR','MU','MA','MZ','NA','NE','NG','RW','RE','SC','SL','SO','ZA','SS','SD','SZ','TG','TN','UG','EH','ZM','ZW','YT','ST','IO','TZ','SN','SH','EG'
@@ -57,7 +50,6 @@ UPDATE countries SET continent_id = 'd0e64035-cc2e-452d-afad-a781ee88a3f4' WHERE
   'AU','NZ','FJ','KI','MH','FM','NR','PW','PG','SB','TO','TV','VU','WF','WS','AS','GU','NC','PF','CK','PN','TK','NF','MP','CX','CC','NU'
 );
 
--- 4) Enforce NOT NULL and add foreign key
 ALTER TABLE countries ALTER COLUMN continent_id SET NOT NULL;
 
 ALTER TABLE countries ADD CONSTRAINT fk_countries_continent

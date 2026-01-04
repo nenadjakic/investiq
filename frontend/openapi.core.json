@@ -461,6 +461,22 @@
         "summary": "Get portfolio summary",
         "description": "Returns aggregated portfolio statistics including total value, returns, and changes",
         "operationId": "getPortfolioSummary",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved portfolio summary",
@@ -496,6 +512,20 @@
               "format": "int32",
               "default": 5,
               "minimum": 1
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
             }
           }
         ],
@@ -549,6 +579,20 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
           }
         ],
         "responses": {
@@ -592,6 +636,20 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
           }
         ],
         "responses": {
@@ -625,6 +683,20 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
           }
         ],
         "responses": {
@@ -642,6 +714,22 @@
         "summary": "Get current portfolio holdings",
         "description": "Returns a list of all current portfolio positions with detailed information.",
         "operationId": "getHoldings",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved holdings list",
@@ -667,6 +755,22 @@
         "summary": "Get active positions summary",
         "description": "Returns active positions with invested amount, invested %, P/L (EUR and %), market value and market value %",
         "operationId": "getActivePositions",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved positions",
@@ -692,6 +796,22 @@
         "summary": "Get dividend cost yield",
         "description": "Returns dividend cost yield for each asset and total portfolio. Yield is calculated as (Annualized Dividend / Cost Basis) * 100, annualized from first purchase date.",
         "operationId": "getDividendCostYield",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved dividend cost yield",
@@ -717,6 +837,22 @@
         "summary": "Get consolidated portfolio holdings by company or ETF",
         "description": "Returns a list of all current portfolio positions grouped by company or ETF with profit/loss and dividend yield.",
         "operationId": "getConsolidatedHoldings",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved consolidated holdings list",
@@ -724,6 +860,47 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CompanyAssetHoldingResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/portfolio/concentration": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get portfolio concentration and HHI",
+        "description": "Returns top1/top3/top5/top10 concentration percentages and Herfindahl–Hirschman Index (HHI)",
+        "operationId": "getPortfolioConcentration",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved concentration metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioConcentrationResponse"
                 }
               }
             }
@@ -750,6 +927,20 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
             }
           }
         ],
@@ -785,6 +976,22 @@
         "summary": "Get combined allocation",
         "description": "Returns allocations by currency, industry/sector and country together",
         "operationId": "getCombinedAllocation",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved allocation",
@@ -807,6 +1014,22 @@
         "summary": "Get portfolio allocation by industry and sector",
         "description": "Returns aggregated market value grouped by industry and sector for the latest snapshot",
         "operationId": "getIndustrySectorAllocation",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved allocation",
@@ -829,6 +1052,22 @@
         "summary": "Get portfolio exposure by currency",
         "description": "Returns aggregated market value grouped by asset currency for the latest snapshot",
         "operationId": "getCurrencyExposure",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved exposure",
@@ -851,6 +1090,22 @@
         "summary": "Get portfolio allocation by country",
         "description": "Returns aggregated market value grouped by company country for the latest snapshot",
         "operationId": "getCountryAllocation",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved allocation",
@@ -873,6 +1128,22 @@
         "summary": "Get portfolio allocation by asset type",
         "description": "Returns aggregated market value grouped by asset type for the latest snapshot",
         "operationId": "getAssetTypeAllocation",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved allocation",
@@ -2021,6 +2292,27 @@
             "type": "number"
           },
           "dividendCostYield": {
+            "type": "number"
+          }
+        }
+      },
+      "PortfolioConcentrationResponse": {
+        "type": "object",
+        "description": "Portfolio concentration metrics and HHI",
+        "properties": {
+          "top1": {
+            "type": "number"
+          },
+          "top3": {
+            "type": "number"
+          },
+          "top5": {
+            "type": "number"
+          },
+          "top10": {
+            "type": "number"
+          },
+          "hhi": {
             "type": "number"
           }
         }

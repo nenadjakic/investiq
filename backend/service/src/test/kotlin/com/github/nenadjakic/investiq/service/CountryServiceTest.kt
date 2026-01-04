@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.service
 
+import com.github.nenadjakic.investiq.data.entity.core.Continent
 import com.github.nenadjakic.investiq.data.entity.core.Country
 import com.github.nenadjakic.investiq.data.repository.CountryRepository
 import org.junit.jupiter.api.Assertions.*
@@ -10,6 +11,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
+import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
 class CountryServiceTest {
@@ -36,8 +38,8 @@ class CountryServiceTest {
 
     @Test
     fun `findAll should return list of CountryResponse when countries exist`() {
-        val germany = Country(iso2Code = "DE", name = "Germany")
-        val usa = Country(iso2Code = "US", name = "United States")
+        val germany = Country(iso2Code = "DE", name = "Germany", Continent(UUID.randomUUID(), "Europe"))
+        val usa = Country(iso2Code = "US", name = "United States", Continent(UUID.randomUUID(), "North America"))
 
         `when`(countryRepository.findAll()).thenReturn(listOf(germany, usa))
 
@@ -53,7 +55,7 @@ class CountryServiceTest {
 
     @Test
     fun `findAll should return single country correctly`() {
-        val france = Country(iso2Code = "FR", name = "France")
+        val france = Country(iso2Code = "FR", name = "France", Continent(UUID.randomUUID(), "Europe"))
 
         `when`(countryRepository.findAll()).thenReturn(listOf(france))
 

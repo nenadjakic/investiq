@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import com.github.nenadjakic.investiq.data.enum.Platform
 
 @Tag(name = "Portfolio Controller", description = "Portfolio overview, holdings and performance analytics")
 @Validated
@@ -61,8 +62,10 @@ class PortfolioController(
         ]
     )
     @GetMapping("/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getPortfolioSummary(): ResponseEntity<PortfolioSummaryResponse> =
-        ResponseEntity.ok(portfolioService.getPortfolioSummary())
+    fun getPortfolioSummary(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<PortfolioSummaryResponse> =
+        ResponseEntity.ok(portfolioService.getPortfolioSummary(platform = platform))
 
     @Operation(
         operationId = "getPortfolioPerformanceChart",
@@ -77,9 +80,10 @@ class PortfolioController(
     )
     @GetMapping("/chart/performance", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPortfolioPerformanceChart(
-        @RequestParam(required = false) days: Int?
+        @RequestParam(required = false) days: Int?,
+        @RequestParam(required = false) platform: Platform?
     ): ResponseEntity<PortfolioChartResponse> =
-        ResponseEntity.ok(portfolioService.getPortfolioValueSeries(days))
+        ResponseEntity.ok(portfolioService.getPortfolioValueSeries(days, platform))
 
     @Operation(
         operationId = "getIndustrySectorAllocation",
@@ -99,8 +103,10 @@ class PortfolioController(
         ]
     )
     @GetMapping("/allocation/industry-sector", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getIndustrySectorAllocation(): ResponseEntity<List<IndustrySectorValueResponse>> =
-        ResponseEntity.ok(portfolioService.getIndustrySectorAllocation())
+    fun getIndustrySectorAllocation(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<List<IndustrySectorValueResponse>> =
+        ResponseEntity.ok(portfolioService.getIndustrySectorAllocation(platform))
 
     @Operation(
         operationId = "getMonthlyInvested",
@@ -121,8 +127,10 @@ class PortfolioController(
     )
     @GetMapping("/monthly-invested", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getMonthlyInvested(
-        @RequestParam(required = false) months: Int?): ResponseEntity<MonthlyInvestedResponse> =
-        ResponseEntity.ok(portfolioService.getMonthlyInvested(months))
+        @RequestParam(required = false) months: Int?,
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<MonthlyInvestedResponse> =
+        ResponseEntity.ok(portfolioService.getMonthlyInvested(months, platform))
 
     @Operation(
         operationId = "getMonthlyDividends",
@@ -140,8 +148,10 @@ class PortfolioController(
     )
     @GetMapping("/monthly-dividends", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getMonthlyDividends(
-        @RequestParam(required = false) months: Int?): ResponseEntity<MonthlyDividendResponse> =
-        ResponseEntity.ok(portfolioService.getMonthlyDividends(months))
+        @RequestParam(required = false) months: Int?,
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<MonthlyDividendResponse> =
+        ResponseEntity.ok(portfolioService.getMonthlyDividends(months, platform))
 
     @Operation(
         operationId = "getPortfolioPerformanceData",
@@ -157,10 +167,11 @@ class PortfolioController(
     @GetMapping("/performance-data", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPortfolioPerformanceData(
         @RequestParam(required = false) days: Int?,
-        @RequestParam(required = false) months: Int?
+        @RequestParam(required = false) months: Int?,
+        @RequestParam(required = false) platform: Platform?
     ): ResponseEntity<PortfolioPerformanceResponse> {
-        val chart = portfolioService.getPortfolioValueSeries(days)
-        val monthly = portfolioService.getMonthlyInvested(months)
+        val chart = portfolioService.getPortfolioValueSeries(days, platform)
+        val monthly = portfolioService.getMonthlyInvested(months, platform)
         return ResponseEntity.ok(PortfolioPerformanceResponse(chart = chart, monthlyInvested = monthly))
     }
 
@@ -175,11 +186,13 @@ class PortfolioController(
         ]
     )
     @GetMapping("/allocation", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getAllocation(): ResponseEntity<PortfolioAllocationResponse> {
-        val currency = portfolioService.getCurrencyExposure()
-        val industry = portfolioService.getIndustrySectorAllocation()
-        val country = portfolioService.getCountryAllocation()
-        val assetType = portfolioService.getAssetTypeAllocation()
+    fun getAllocation(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<PortfolioAllocationResponse> {
+        val currency = portfolioService.getCurrencyExposure(platform)
+        val industry = portfolioService.getIndustrySectorAllocation(platform)
+        val country = portfolioService.getCountryAllocation(platform)
+        val assetType = portfolioService.getAssetTypeAllocation(platform)
         return ResponseEntity.ok(
             PortfolioAllocationResponse(
                 byCurrency = currency,
@@ -208,8 +221,10 @@ class PortfolioController(
         ]
     )
     @GetMapping("/allocation/country", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getCountryAllocation(): ResponseEntity<List<CountryValueResponse>> =
-        ResponseEntity.ok(portfolioService.getCountryAllocation())
+    fun getCountryAllocation(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<List<CountryValueResponse>> =
+        ResponseEntity.ok(portfolioService.getCountryAllocation(platform))
 
     @Operation(
         operationId = "getCurrencyExposure",
@@ -229,8 +244,10 @@ class PortfolioController(
         ]
     )
     @GetMapping("/allocation/currency", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getCurrencyExposure(): ResponseEntity<List<CurrencyValueResponse>> =
-        ResponseEntity.ok(portfolioService.getCurrencyExposure())
+    fun getCurrencyExposure(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<List<CurrencyValueResponse>> =
+        ResponseEntity.ok(portfolioService.getCurrencyExposure(platform))
 
     @Operation(
         operationId = "getAssetTypeAllocation",
@@ -243,8 +260,10 @@ class PortfolioController(
         ]
     )
     @GetMapping("/allocation/asset-type", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getAssetTypeAllocation(): ResponseEntity<List<AssetTypeValueResponse>> =
-        ResponseEntity.ok(portfolioService.getAssetTypeAllocation())
+    fun getAssetTypeAllocation(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<List<AssetTypeValueResponse>> =
+        ResponseEntity.ok(portfolioService.getAssetTypeAllocation(platform))
 
     @Operation(
         operationId = "getHoldings",
@@ -269,8 +288,10 @@ class PortfolioController(
         ]
     )
     @GetMapping("/holdings", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getHoldings(): ResponseEntity<List<AssetHoldingResponse>> =
-         ResponseEntity.ok(portfolioService.getPortfolioHoldings())
+    fun getHoldings(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<List<AssetHoldingResponse>> =
+         ResponseEntity.ok(portfolioService.getPortfolioHoldings(platform))
 
     @Operation(
         operationId = "getConsolidatedHoldings",
@@ -295,8 +316,10 @@ class PortfolioController(
         ]
     )
     @GetMapping("/consolidated-holdings", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getConsolidatedHoldings(): ResponseEntity<List<CompanyAssetHoldingResponse>> =
-        ResponseEntity.ok(portfolioService.getConsolidatedPortfolioHoldings())
+    fun getConsolidatedHoldings(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<List<CompanyAssetHoldingResponse>> =
+        ResponseEntity.ok(portfolioService.getConsolidatedPortfolioHoldings(platform))
 
     @Operation(
         operationId = "getPortfolioConcentration",
@@ -317,8 +340,10 @@ class PortfolioController(
         ]
     )
     @GetMapping("/concentration", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getPortfolioConcentration(): ResponseEntity<PortfolioConcentrationResponse> =
-        ResponseEntity.ok(portfolioService.getPortfolioConcentration())
+    fun getPortfolioConcentration(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<PortfolioConcentrationResponse> =
+        ResponseEntity.ok(portfolioService.getPortfolioConcentration(platform))
 
     @Operation(
         operationId = "getTopBottomPerformers",
@@ -333,9 +358,10 @@ class PortfolioController(
     )
     @GetMapping("/performers", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getTopBottomPerformers(
-         @Min(1) @RequestParam(required = false, defaultValue = "5") limit: Int
+         @Min(1) @RequestParam(required = false, defaultValue = "5") limit: Int,
+         @RequestParam(required = false) platform: Platform?
     ): ResponseEntity<com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse> =
-        ResponseEntity.ok(portfolioService.getTopBottomPerformers(limit))
+        ResponseEntity.ok(portfolioService.getTopBottomPerformers(limit, platform))
 
     @Operation(
         operationId = "getActivePositions",
@@ -349,8 +375,10 @@ class PortfolioController(
         ]
     )
     @GetMapping("/holdings/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getActivePositions(): ResponseEntity<List<com.github.nenadjakic.investiq.common.dto.ActivePositionResponse>> =
-        ResponseEntity.ok(portfolioService.getActivePositions())
+    fun getActivePositions(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<List<com.github.nenadjakic.investiq.common.dto.ActivePositionResponse>> =
+        ResponseEntity.ok(portfolioService.getActivePositions(platform))
 
     @Operation(
         operationId = "getDividendCostYield",
@@ -375,7 +403,8 @@ class PortfolioController(
         ]
     )
     @GetMapping("/dividend-cost-yield", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getDividendCostYield(): ResponseEntity<DividendCostYieldResponse> =
-        ResponseEntity.ok(portfolioService.getDividendCostYield())
-
+    fun getDividendCostYield(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<DividendCostYieldResponse> =
+        ResponseEntity.ok(portfolioService.getDividendCostYield(platform))
  }

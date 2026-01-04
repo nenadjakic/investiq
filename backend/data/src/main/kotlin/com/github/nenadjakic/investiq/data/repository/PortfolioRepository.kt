@@ -8,13 +8,14 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.util.UUID
 import java.sql.Date
+import com.github.nenadjakic.investiq.data.enum.Platform
 
 @Repository
 class PortfolioRepository(
     private val jdbcTemplate: JdbcTemplate
 ) {
 
-    fun getLatestPortfolioSnapshot(): PortfolioSnapshot? {
+    fun getLatestPortfolioSnapshot(platform: Platform? = null): PortfolioSnapshot? {
         val sql = """
             SELECT 
                 snapshot_date,
@@ -24,13 +25,13 @@ class PortfolioRepository(
                 total_realized_pl,
                 total_holdings,
                 total_dividends_eur
-            FROM public.get_latest_portfolio_snapshot()
+            FROM public.get_latest_portfolio_snapshot(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, portfolioSnapshotMapper).firstOrNull()
+        return jdbcTemplate.query(sql, portfolioSnapshotMapper, platform?.name).firstOrNull()
     }
 
-    fun getSnapshotOnOrBefore(date: LocalDate): PortfolioSnapshot? {
+    fun getSnapshotOnOrBefore(date: LocalDate, platform: Platform? = null): PortfolioSnapshot? {
         val sql = """
             select 
                 snapshot_date,
@@ -40,13 +41,17 @@ class PortfolioRepository(
                 total_realized_pl,
                 total_holdings,
                 total_dividends_eur
-            from public.get_portfolio_snapshot_at_date_or_before(?)
+            from public.get_portfolio_snapshot_at_date_or_before(?, ?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, portfolioSnapshotMapper, date).firstOrNull()
+        return jdbcTemplate.query(sql, portfolioSnapshotMapper, date, platform?.name).firstOrNull()
     }
 
-    fun findDailyValuesBetween(startDate: LocalDate?, endDate: LocalDate): List<PortfolioDailyValue> {
+    fun findDailyValuesBetween(
+        startDate: LocalDate?,
+        endDate: LocalDate,
+        platform: Platform? = null
+    ): List<PortfolioDailyValue> {
         val fromDate: LocalDate = if (startDate != null) {
             startDate
         } else {
@@ -57,78 +62,90 @@ class PortfolioRepository(
 
         if (fromDate.isAfter(endDate)) return emptyList()
 
-        val sql = """
+        val sql = StringBuilder(
+            """
             SELECT snapshot_date,
-                SUM(cost_basis_eur) as total_invested, 
-                SUM(market_value_eur) as total_value
+                   SUM(cost_basis_eur) AS total_invested,
+                   SUM(market_value_eur) AS total_value
             FROM asset_daily_snapshots
             WHERE snapshot_date BETWEEN ? AND ?
-            GROUP BY snapshot_date
-            order by snapshot_date
-        """.trimIndent()
+        """
+        )
 
-        return jdbcTemplate.query(sql, portfolioDailyValueMapper, Date.valueOf(fromDate), Date.valueOf(endDate))
+        val params = mutableListOf<Any>(
+            Date.valueOf(fromDate),
+            Date.valueOf(endDate)
+        )
+
+        if (platform != null) {
+            sql.append(" AND platform = ?")
+            params.add(platform.name)
+        }
+
+        sql.append(" GROUP BY snapshot_date ORDER BY snapshot_date")
+
+        return jdbcTemplate.query(sql.toString(), portfolioDailyValueMapper, *params.toTypedArray())
     }
 
     /**
      * Returns a list of IndustrySectorValue representing the total market value of holdings
      * grouped by industry and sector as of the latest snapshot date.
      */
-    fun getValueByIndustrySector(): List<IndustrySectorValue> {
+    fun getValueByIndustrySector(platform: Platform? = null): List<IndustrySectorValue> {
         val sql = """
             select 
                 industry,
                 sector,
                 value_eur
-            from public.get_portfolio_sector_industry_allocation()
+            from public.get_portfolio_sector_industry_allocation(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, industrySectorValueMapper)
+        return jdbcTemplate.query(sql, industrySectorValueMapper, platform?.name)
     }
 
     /**
      * Returns a list of CountryValue representing the total market value of holdings
      * grouped by country as of the latest snapshot date.
      */
-    fun getValueByCountry(): List<CountryValue> {
+    fun getValueByCountry(platform: Platform? = null): List<CountryValue> {
         val sql = """
             select
                 country,
                 value_eur
-            from public.get_portfolio_country_allocation()
+            from public.get_portfolio_country_allocation(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, countryValueMapper)
+        return jdbcTemplate.query(sql, countryValueMapper, platform?.name)
     }
 
     /**
      * Returns a list of CurrencyValue representing the total market value of holdings
      * grouped by asset currency as of the latest snapshot date.
      */
-    fun getValueByCurrency(): List<CurrencyValue> {
+    fun getValueByCurrency(platform: Platform? = null): List<CurrencyValue> {
         val sql = """
             select
                 currency,
                 value_eur
-            from public.get_portfolio_currency_allocation()
+            from public.get_portfolio_currency_allocation(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, currencyValueMapper)
+        return jdbcTemplate.query(sql, currencyValueMapper, platform?.name)
     }
 
     /**
      * Returns a list of AssetTypeValue representing the total market value of holdings
      * grouped by asset type as of the latest snapshot date.
      */
-    fun getValueByAssetType(): List<AssetTypeValue> {
+    fun getValueByAssetType(platform: Platform? = null): List<AssetTypeValue> {
         val sql = """
             select
                 asset_type,
                 value_eur
-            from public.get_portfolio_asset_type_allocation()
+            from public.get_portfolio_asset_type_allocation(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, assetTypeValueMapper)
+        return jdbcTemplate.query(sql, assetTypeValueMapper, platform?.name)
     }
 
     /**
@@ -137,31 +154,49 @@ class PortfolioRepository(
      * @param fromDate The date from which to start calculating monthly investments.
      * @return A list of MonthlyInvestedRow representing the total invested amount per month.
      */
-    fun findMonthlyInvestedFrom(fromDate: LocalDate): List<MonthlyInvestedRow> {
-        val sql = """
+    fun findMonthlyInvestedFrom(fromDate: LocalDate, platform: Platform? = null): List<MonthlyInvestedRow> {
+        val sql = StringBuilder("""
             SELECT 
                 year, 
                 month, 
                 SUM(transaction_value_eur + COALESCE(fee_amount_eur, 0)) AS invested
             FROM vw_transaction_analytics
             WHERE transaction_type = 'BUY' AND transaction_date_only >= ?
+        """.trimIndent())
+
+        val params = mutableListOf<Any>(
+            Date.valueOf(fromDate)
+        )
+
+        if (platform != null) {
+            sql.append(" AND transaction_platform = ?")
+            params.add(platform.name)
+        }
+
+        sql.append("""
             GROUP BY year, month
             ORDER BY year, month
-        """.trimIndent()
+        """)
 
-        return jdbcTemplate.query(sql, monthlyInvestedRowMapper, Date.valueOf(fromDate))
+        return jdbcTemplate.query(sql.toString(), monthlyInvestedRowMapper, *params.toTypedArray())
     }
 
     /**
      * Returns the date of the first BUY transaction (transaction_date_only) or null if none.
      */
-    fun getFirstInvestmentDate(): LocalDate? {
-        val sql = """
+    fun getFirstInvestmentDate(platform: Platform? = null): LocalDate? {
+        val sql = StringBuilder("""
             SELECT MIN(transaction_date_only) 
             FROM vw_transaction_analytics 
             WHERE transaction_type = 'BUY'
-        """.trimIndent()
-        val date = jdbcTemplate.queryForObject(sql, Date::class.java)
+        """.trimIndent())
+        val params = mutableListOf<Any>()
+
+        if (platform != null) {
+            sql.append(" AND transaction_platform = ?")
+            params.add(platform.name)
+        }
+        val date = jdbcTemplate.queryForObject(sql.toString(), Date::class.java, *params.toTypedArray())
         return date?.toLocalDate()
     }
 
@@ -170,18 +205,18 @@ class PortfolioRepository(
      * If months is null, the range starts from the first BUY transaction date.
      * This method fills missing months with zero invested.
      */
-    fun findMonthlyInvested(months: Int?): List<MonthlyInvestedRow> {
+    fun findMonthlyInvested(months: Int?, platform: Platform? = null): List<MonthlyInvestedRow> {
         if (months != null && months <= 0) return emptyList()
 
         val fromDate: LocalDate = if (months == null) {
             // start from the first investment date
-            getFirstInvestmentDate() ?: return emptyList()
+            getFirstInvestmentDate(platform) ?: return emptyList()
         } else {
             val startYM = YearMonth.now().minusMonths((months - 1).toLong())
             startYM.atDay(1)
         }
 
-        val raw = findMonthlyInvestedFrom(fromDate)
+        val raw = findMonthlyInvestedFrom(fromDate, platform)
 
         val startYM = YearMonth.from(fromDate)
         val actualMonths = if (months == null) {
@@ -202,32 +237,52 @@ class PortfolioRepository(
      * Finds the total dividends per month starting from the specified date.
      * @param fromDate The date from which to start calculating monthly dividends.
      */
-    fun findMonthlyDividendsFrom(fromDate: LocalDate): List<MonthlyDividendRow> {
-        val sql = """
+    fun findMonthlyDividendsFrom(fromDate: LocalDate, platform: Platform? = null): List<MonthlyDividendRow> {
+        val sql = StringBuilder("""
             SELECT 
                 year,
                 month,
                 SUM(transaction_value_eur) AS amount
             FROM vw_transaction_analytics
             WHERE transaction_type = 'DIVIDEND' AND transaction_date_only >= ?
+        """.trimIndent())
+
+        val params = mutableListOf<Any>(
+            Date.valueOf(fromDate)
+        )
+
+        if (platform != null) {
+            sql.append(" AND transaction_platform = ?")
+            params.add(platform.name)
+        }
+
+        sql.append("""
             GROUP BY year, month
             ORDER BY year, month
-        """.trimIndent()
+        """)
 
-        return jdbcTemplate.query(sql, monthlyDividendRowMapper, Date.valueOf(fromDate))
+        return jdbcTemplate.query(sql.toString(), monthlyDividendRowMapper, *params.toTypedArray())
     }
 
     /**
      * Returns the date of the first DIVIDEND transaction or null if none.
      */
-    fun getFirstDividendDate(): LocalDate? {
-        val sql = """
+    fun getFirstDividendDate(platform: Platform? = null): LocalDate? {
+        val sql = StringBuilder("""
             SELECT 
                 MIN(transaction_date_only)
             FROM vw_transaction_analytics
             WHERE transaction_type = 'DIVIDEND'
-        """.trimIndent()
-        val date = jdbcTemplate.queryForObject(sql, Date::class.java)
+        """.trimIndent())
+
+        val params = mutableListOf<Any>()
+
+        if (platform != null) {
+            sql.append(" AND transaction_platform = ?")
+            params.add(platform.name)
+        }
+
+        val date = jdbcTemplate.queryForObject(sql.toString(), Date::class.java, *params.toTypedArray())
         return date?.toLocalDate()
     }
 
@@ -236,17 +291,17 @@ class PortfolioRepository(
      * If months is null, the range starts from the first DIVIDEND transaction date.
      * This method fills missing months with zero amount.
      */
-    fun findMonthlyDividends(months: Int?): List<MonthlyDividendRow> {
+    fun findMonthlyDividends(months: Int?, platform: Platform? = null): List<MonthlyDividendRow> {
         if (months != null && months <= 0) return emptyList()
 
         val fromDate: LocalDate = if (months == null) {
-            getFirstDividendDate() ?: return emptyList()
+            getFirstDividendDate(platform) ?: return emptyList()
         } else {
             val startYM = YearMonth.now().minusMonths((months - 1).toLong())
             startYM.atDay(1)
         }
 
-        val raw = findMonthlyDividendsFrom(fromDate)
+        val raw = findMonthlyDividendsFrom(fromDate, platform)
 
         val startYM = YearMonth.from(fromDate)
         val actualMonths = if (months == null) {
@@ -267,7 +322,7 @@ class PortfolioRepository(
      * Returns latest asset snapshots aggregated per asset and platform (one row per asset+platform for the latest snapshot_date).
      * Aggregates quantity, market_value and cost basis and computes weighted averages for per-share fields.
      */
-    fun getLatestAssetSnapshots(): List<AssetSnapshot> {
+    fun getLatestAssetSnapshots(platform: Platform? = null): List<AssetSnapshot> {
         val sql = """
             select
                 snapshot_date,
@@ -281,10 +336,10 @@ class PortfolioRepository(
                 ticker,
                 name,
                 asset_type
-            from public.get_latest_portfolio_holdings()
+            from public.get_latest_portfolio_holdings(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, assetSnapshotMapper)
+        return jdbcTemplate.query(sql, assetSnapshotMapper, platform?.name)
     }
 
     /**
@@ -293,7 +348,7 @@ class PortfolioRepository(
      * Aggregates cost basis, market value and unrealized P/L.
      * Also aggregates tickers associated with each holding.
      */
-    fun getLatestAssetSnapshotsGroupedByCompany(): List<AssetSnapshotGroupedByCompany> {
+    fun getLatestAssetSnapshotsGroupedByCompany(platform: Platform? = null): List<AssetSnapshotGroupedByCompany> {
         val sql = """
             select
                 snapshot_date,
@@ -303,10 +358,10 @@ class PortfolioRepository(
                 market_value_eur,
                 unrealized_pl_eur,
                 tickers
-            from public.get_latest_portfolio_holdings_grouped()
+            from public.get_latest_portfolio_holdings_grouped(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, assetSnapshotGroupedByCompanyMapper)
+        return jdbcTemplate.query(sql, assetSnapshotGroupedByCompanyMapper, platform?.name)
     }
 
     /**
@@ -316,7 +371,7 @@ class PortfolioRepository(
      *  - else if unrealized_pl_eur and cost_basis_eur available and cost_basis_eur > 0: unrealized_pl / cost_basis * 100
      *  - else 0
      */
-    fun getLatestAssetPerformances(): List<LatestAssetPerformance> {
+    fun getLatestAssetPerformances(platform: Platform? = null): List<LatestAssetPerformance> {
         val sql = """
             select 
                 asset_id,
@@ -325,10 +380,10 @@ class PortfolioRepository(
                 type,
                 currency_code,
                 percentage
-            from public.get_latest_asset_performance_percentage()
+            from public.get_latest_asset_performance_percentage(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, latestAssetPerformanceMapper)
+        return jdbcTemplate.query(sql, latestAssetPerformanceMapper, platform?.name)
     }
 
     /**
@@ -337,7 +392,7 @@ class PortfolioRepository(
      * Annualized dividend is calculated from all dividends since the first purchase of each asset,
      * then annualized based on the holding period.
      */
-    fun getAssetDividendCostYield(): List<AssetDividendCostYield> {
+    fun getAssetDividendCostYield(platform: Platform? = null): List<AssetDividendCostYield> {
         val sql = """
             select
                 asset_id,
@@ -349,13 +404,13 @@ class PortfolioRepository(
                 days_held,
                 annualized_dividend_eur,
                 dividend_cost_yield
-            from public.get_latest_asset_dividend_performance()
+            from public.get_latest_asset_dividend_performance(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, assetDividendCostYieldMapper)
+        return jdbcTemplate.query(sql, assetDividendCostYieldMapper, platform?.name)
     }
 
-    fun getAssetDividendCostYieldGroupedByCompany(): List<CompanyEtfDividendCostYield> {
+    fun getAssetDividendCostYieldGroupedByCompany(platform: Platform? = null): List<CompanyEtfDividendCostYield> {
         val sql = """
             select
                 holding_id,
@@ -365,10 +420,10 @@ class PortfolioRepository(
                 total_annualized_dividend,
                 dividend_cost_yield,
                 days_held
-            from public.get_latest_holding_dividend_performance()
+            from public.get_latest_holding_dividend_performance(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, assetDividendCostYieldGroupedByCompanyMapper)
+        return jdbcTemplate.query(sql, assetDividendCostYieldGroupedByCompanyMapper, platform?.name)
     }
 
     /**
@@ -377,7 +432,7 @@ class PortfolioRepository(
      * Annualized dividend is calculated from all dividends since the first investment,
      * then annualized based on the overall holding period.
      */
-    fun getTotalDividendCostYield(): TotalDividendCostYield? {
+    fun getTotalDividendCostYield(platform: Platform? = null): TotalDividendCostYield? {
         val sql = """
            select 
                 total_dividend_eur,
@@ -386,10 +441,10 @@ class PortfolioRepository(
                 days_held,
                 annualized_dividend_eur,
                 dividend_cost_yield
-            from public.get_latest_portfolio_dividend_performance()
+            from public.get_latest_portfolio_dividend_performance(?)
         """.trimIndent()
 
-        return jdbcTemplate.query(sql, totalDividendCostYieldMapper).firstOrNull()
+        return jdbcTemplate.query(sql, totalDividendCostYieldMapper, platform?.name).firstOrNull()
     }
 
     private val portfolioSnapshotMapper = RowMapper<PortfolioSnapshot> { rs, _ ->

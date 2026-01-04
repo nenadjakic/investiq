@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { AssetHoldingResponse, CompanyAssetHoldingResponse, PortfolioControllerService } from '../../app/core/api';
+import { PlatformService } from '../../app/core/platform.service';
 import { ToastService } from '../../shared/toast.service';
 
 @Component({
@@ -12,6 +13,7 @@ import { ToastService } from '../../shared/toast.service';
 })
 export class Holdings implements OnInit {
   private portfolioControllerService = inject(PortfolioControllerService);
+  private platformService = inject(PlatformService);
   private toastService = inject(ToastService);
 
   holdings = signal<AssetHoldingResponse[]>([]);
@@ -123,6 +125,13 @@ export class Holdings implements OnInit {
     });
   });
 
+  constructor() {
+    effect(() => {
+      this.loadHoldings();
+      this.loadConsolidatedHoldings();
+    });
+  }
+
   ngOnInit(): void {
     this.loadHoldings();
     this.loadConsolidatedHoldings();
@@ -147,7 +156,7 @@ export class Holdings implements OnInit {
     this.loading.set(true);
     this.loadError.set(false);
     this.portfolioControllerService
-      .getHoldings()
+      .getHoldings(this.platformService.getPlatformValue())
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (data) => {
@@ -170,7 +179,7 @@ export class Holdings implements OnInit {
     this.consolidatedLoading.set(true);
     this.consolidatedLoadError.set(false);
     this.portfolioControllerService
-      .getConsolidatedHoldings()
+      .getConsolidatedHoldings(this.platformService.getPlatformValue())
       .pipe(finalize(() => this.consolidatedLoading.set(false)))
       .subscribe({
         next: (data) => {

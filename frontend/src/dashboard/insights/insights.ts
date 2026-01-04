@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import { Component, OnInit, computed, inject, effect, signal } from "@angular/core";
 import { finalize } from "rxjs/operators";
 import {
   PortfolioControllerService,
@@ -8,6 +8,7 @@ import {
   TransactionResponse,
 } from "../../app/core/api";
 import { ToastService } from "../../shared/toast.service";
+import { PlatformService } from '../../app/core/platform.service';
 
 @Component({
   selector: 'app-insights',
@@ -19,6 +20,7 @@ export class Insights implements OnInit {
   private portfolioControllerService = inject(PortfolioControllerService);
   private transactionControllerService = inject(TransactionControllerService);
   private toast = inject(ToastService);
+  private platformService = inject(PlatformService);
 
   recentTransactions = signal<TransactionResponse[]>([]);
   txLoading = signal<boolean>(false);
@@ -30,6 +32,12 @@ export class Insights implements OnInit {
 
   topPerformers = computed(() => this.performers()?.top ?? []);
   bottomPerformers = computed(() => this.performers()?.bottom ?? []);
+
+  constructor() {
+    effect(() => {
+      this.loadPerformers();
+    });
+  }
 
   ngOnInit(): void {
     this.loadRecentTransactions();
@@ -58,7 +66,7 @@ export class Insights implements OnInit {
     this.perfLoading.set(true);
     this.perfError.set(null);
     this.portfolioControllerService
-      .getTopBottomPerformers(7)
+      .getTopBottomPerformers(7, this.platformService.getPlatformValue())
       .pipe(finalize(() => this.perfLoading.set(false)))
       .subscribe({
         next: (data) => {

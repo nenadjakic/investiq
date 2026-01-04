@@ -39,6 +39,8 @@ import { PortfolioAllocationResponse } from '../model/portfolio-allocation-respo
 // @ts-ignore
 import { PortfolioChartResponse } from '../model/portfolio-chart-response';
 // @ts-ignore
+import { PortfolioConcentrationResponse } from '../model/portfolio-concentration-response';
+// @ts-ignore
 import { PortfolioPerformanceResponse } from '../model/portfolio-performance-response';
 // @ts-ignore
 import { PortfolioSummaryResponse } from '../model/portfolio-summary-response';
@@ -65,13 +67,18 @@ export class PortfolioControllerService extends BaseService {
      * Get active positions summary
      * Returns active positions with invested amount, invested %, P/L (EUR and %), market value and market value %
      * @endpoint get /portfolio/holdings/summary
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getActivePositions(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ActivePositionResponse>;
-    public getActivePositions(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ActivePositionResponse>>;
-    public getActivePositions(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ActivePositionResponse>>;
-    public getActivePositions(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getActivePositions(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ActivePositionResponse>;
+    public getActivePositions(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ActivePositionResponse>>;
+    public getActivePositions(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ActivePositionResponse>>;
+    public getActivePositions(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -103,6 +110,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<ActivePositionResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -117,13 +125,18 @@ export class PortfolioControllerService extends BaseService {
      * Get portfolio allocation by asset type
      * Returns aggregated market value grouped by asset type for the latest snapshot
      * @endpoint get /portfolio/allocation/asset-type
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAssetTypeAllocation(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AssetTypeValueResponse>;
-    public getAssetTypeAllocation(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AssetTypeValueResponse>>;
-    public getAssetTypeAllocation(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AssetTypeValueResponse>>;
-    public getAssetTypeAllocation(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getAssetTypeAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AssetTypeValueResponse>;
+    public getAssetTypeAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AssetTypeValueResponse>>;
+    public getAssetTypeAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AssetTypeValueResponse>>;
+    public getAssetTypeAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -155,6 +168,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<AssetTypeValueResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -169,13 +183,18 @@ export class PortfolioControllerService extends BaseService {
      * Get combined allocation
      * Returns allocations by currency, industry/sector and country together
      * @endpoint get /portfolio/allocation
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getCombinedAllocation(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioAllocationResponse>;
-    public getCombinedAllocation(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioAllocationResponse>>;
-    public getCombinedAllocation(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioAllocationResponse>>;
-    public getCombinedAllocation(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getCombinedAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioAllocationResponse>;
+    public getCombinedAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioAllocationResponse>>;
+    public getCombinedAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioAllocationResponse>>;
+    public getCombinedAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -207,6 +226,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<PortfolioAllocationResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -221,13 +241,18 @@ export class PortfolioControllerService extends BaseService {
      * Get consolidated portfolio holdings by company or ETF
      * Returns a list of all current portfolio positions grouped by company or ETF with profit/loss and dividend yield.
      * @endpoint get /portfolio/consolidated-holdings
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getConsolidatedHoldings(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CompanyAssetHoldingResponse>;
-    public getConsolidatedHoldings(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CompanyAssetHoldingResponse>>;
-    public getConsolidatedHoldings(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CompanyAssetHoldingResponse>>;
-    public getConsolidatedHoldings(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getConsolidatedHoldings(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CompanyAssetHoldingResponse>;
+    public getConsolidatedHoldings(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CompanyAssetHoldingResponse>>;
+    public getConsolidatedHoldings(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CompanyAssetHoldingResponse>>;
+    public getConsolidatedHoldings(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -259,6 +284,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<CompanyAssetHoldingResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -273,13 +299,18 @@ export class PortfolioControllerService extends BaseService {
      * Get portfolio allocation by country
      * Returns aggregated market value grouped by company country for the latest snapshot
      * @endpoint get /portfolio/allocation/country
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getCountryAllocation(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CountryValueResponse>;
-    public getCountryAllocation(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CountryValueResponse>>;
-    public getCountryAllocation(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CountryValueResponse>>;
-    public getCountryAllocation(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getCountryAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CountryValueResponse>;
+    public getCountryAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CountryValueResponse>>;
+    public getCountryAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CountryValueResponse>>;
+    public getCountryAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -311,6 +342,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<CountryValueResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -325,13 +357,18 @@ export class PortfolioControllerService extends BaseService {
      * Get portfolio exposure by currency
      * Returns aggregated market value grouped by asset currency for the latest snapshot
      * @endpoint get /portfolio/allocation/currency
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getCurrencyExposure(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CurrencyValueResponse>;
-    public getCurrencyExposure(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CurrencyValueResponse>>;
-    public getCurrencyExposure(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CurrencyValueResponse>>;
-    public getCurrencyExposure(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getCurrencyExposure(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CurrencyValueResponse>;
+    public getCurrencyExposure(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CurrencyValueResponse>>;
+    public getCurrencyExposure(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CurrencyValueResponse>>;
+    public getCurrencyExposure(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -363,6 +400,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<CurrencyValueResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -377,13 +415,18 @@ export class PortfolioControllerService extends BaseService {
      * Get dividend cost yield
      * Returns dividend cost yield for each asset and total portfolio. Yield is calculated as (Annualized Dividend / Cost Basis) * 100, annualized from first purchase date.
      * @endpoint get /portfolio/dividend-cost-yield
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getDividendCostYield(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<DividendCostYieldResponse>;
-    public getDividendCostYield(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<DividendCostYieldResponse>>;
-    public getDividendCostYield(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<DividendCostYieldResponse>>;
-    public getDividendCostYield(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getDividendCostYield(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<DividendCostYieldResponse>;
+    public getDividendCostYield(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<DividendCostYieldResponse>>;
+    public getDividendCostYield(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<DividendCostYieldResponse>>;
+    public getDividendCostYield(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -415,6 +458,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<DividendCostYieldResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -429,13 +473,18 @@ export class PortfolioControllerService extends BaseService {
      * Get current portfolio holdings
      * Returns a list of all current portfolio positions with detailed information.
      * @endpoint get /portfolio/holdings
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getHoldings(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AssetHoldingResponse>;
-    public getHoldings(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AssetHoldingResponse>>;
-    public getHoldings(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AssetHoldingResponse>>;
-    public getHoldings(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getHoldings(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AssetHoldingResponse>;
+    public getHoldings(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AssetHoldingResponse>>;
+    public getHoldings(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AssetHoldingResponse>>;
+    public getHoldings(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -467,6 +516,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<AssetHoldingResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -481,13 +531,18 @@ export class PortfolioControllerService extends BaseService {
      * Get portfolio allocation by industry and sector
      * Returns aggregated market value grouped by industry and sector for the latest snapshot
      * @endpoint get /portfolio/allocation/industry-sector
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getIndustrySectorAllocation(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<IndustrySectorValueResponse>;
-    public getIndustrySectorAllocation(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<IndustrySectorValueResponse>>;
-    public getIndustrySectorAllocation(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<IndustrySectorValueResponse>>;
-    public getIndustrySectorAllocation(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getIndustrySectorAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<IndustrySectorValueResponse>;
+    public getIndustrySectorAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<IndustrySectorValueResponse>>;
+    public getIndustrySectorAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<IndustrySectorValueResponse>>;
+    public getIndustrySectorAllocation(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -519,6 +574,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<IndustrySectorValueResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -534,17 +590,20 @@ export class PortfolioControllerService extends BaseService {
      * Returns dividends per month for the last N months (null &#x3D; entire history)
      * @endpoint get /portfolio/monthly-dividends
      * @param months 
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getMonthlyDividends(months?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public getMonthlyDividends(months?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public getMonthlyDividends(months?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public getMonthlyDividends(months?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getMonthlyDividends(months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public getMonthlyDividends(months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public getMonthlyDividends(months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public getMonthlyDividends(months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>months, 'months');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -591,17 +650,20 @@ export class PortfolioControllerService extends BaseService {
      * Returns invested euros per month for the last N months
      * @endpoint get /portfolio/monthly-invested
      * @param months 
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getMonthlyInvested(months?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<MonthlyInvestedResponse>;
-    public getMonthlyInvested(months?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MonthlyInvestedResponse>>;
-    public getMonthlyInvested(months?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MonthlyInvestedResponse>>;
-    public getMonthlyInvested(months?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getMonthlyInvested(months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<MonthlyInvestedResponse>;
+    public getMonthlyInvested(months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MonthlyInvestedResponse>>;
+    public getMonthlyInvested(months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MonthlyInvestedResponse>>;
+    public getMonthlyInvested(months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>months, 'months');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -645,21 +707,82 @@ export class PortfolioControllerService extends BaseService {
     }
 
     /**
+     * Get portfolio concentration and HHI
+     * Returns top1/top3/top5/top10 concentration percentages and Herfindahl–Hirschman Index (HHI)
+     * @endpoint get /portfolio/concentration
+     * @param platform 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getPortfolioConcentration(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioConcentrationResponse>;
+    public getPortfolioConcentration(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioConcentrationResponse>>;
+    public getPortfolioConcentration(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioConcentrationResponse>>;
+    public getPortfolioConcentration(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/portfolio/concentration`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<PortfolioConcentrationResponse>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                params: localVarQueryParameters,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Get portfolio value time series
      * Returns daily market value and invested amount for the specified time period, optionally including benchmark indices
      * @endpoint get /portfolio/chart/performance
      * @param days 
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getPortfolioPerformanceChart(days?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioChartResponse>;
-    public getPortfolioPerformanceChart(days?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioChartResponse>>;
-    public getPortfolioPerformanceChart(days?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioChartResponse>>;
-    public getPortfolioPerformanceChart(days?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getPortfolioPerformanceChart(days?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioChartResponse>;
+    public getPortfolioPerformanceChart(days?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioChartResponse>>;
+    public getPortfolioPerformanceChart(days?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioChartResponse>>;
+    public getPortfolioPerformanceChart(days?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>days, 'days');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -708,19 +831,22 @@ export class PortfolioControllerService extends BaseService {
      * @endpoint get /portfolio/performance-data
      * @param days 
      * @param months 
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getPortfolioPerformanceData(days?: number, months?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioPerformanceResponse>;
-    public getPortfolioPerformanceData(days?: number, months?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioPerformanceResponse>>;
-    public getPortfolioPerformanceData(days?: number, months?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioPerformanceResponse>>;
-    public getPortfolioPerformanceData(days?: number, months?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getPortfolioPerformanceData(days?: number, months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioPerformanceResponse>;
+    public getPortfolioPerformanceData(days?: number, months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioPerformanceResponse>>;
+    public getPortfolioPerformanceData(days?: number, months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioPerformanceResponse>>;
+    public getPortfolioPerformanceData(days?: number, months?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>days, 'days');
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>months, 'months');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -767,13 +893,18 @@ export class PortfolioControllerService extends BaseService {
      * Get portfolio summary
      * Returns aggregated portfolio statistics including total value, returns, and changes
      * @endpoint get /portfolio/summary
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getPortfolioSummary(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioSummaryResponse>;
-    public getPortfolioSummary(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioSummaryResponse>>;
-    public getPortfolioSummary(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioSummaryResponse>>;
-    public getPortfolioSummary(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getPortfolioSummary(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PortfolioSummaryResponse>;
+    public getPortfolioSummary(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PortfolioSummaryResponse>>;
+    public getPortfolioSummary(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PortfolioSummaryResponse>>;
+    public getPortfolioSummary(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -805,6 +936,7 @@ export class PortfolioControllerService extends BaseService {
         return this.httpClient.request<PortfolioSummaryResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -820,17 +952,20 @@ export class PortfolioControllerService extends BaseService {
      * Returns top and bottom performing assets with their percentage change
      * @endpoint get /portfolio/performers
      * @param limit 
+     * @param platform 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getTopBottomPerformers(limit?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopBottomPerformersResponse>;
-    public getTopBottomPerformers(limit?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopBottomPerformersResponse>>;
-    public getTopBottomPerformers(limit?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopBottomPerformersResponse>>;
-    public getTopBottomPerformers(limit?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getTopBottomPerformers(limit?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopBottomPerformersResponse>;
+    public getTopBottomPerformers(limit?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopBottomPerformersResponse>>;
+    public getTopBottomPerformers(limit?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopBottomPerformersResponse>>;
+    public getTopBottomPerformers(limit?: number, platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>limit, 'limit');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
 
         let localVarHeaders = this.defaultHeaders;
 
