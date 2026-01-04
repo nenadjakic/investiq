@@ -1,5 +1,3 @@
-![status](https://img.shields.io/badge/status-in--development-yellow)
-
 ![kotlin](https://img.shields.io/badge/kotlin-language-7F52FF?logo=kotlin&logoColor=white)
 ![springboot](https://img.shields.io/badge/spring_boot-framework-6DB33F?logo=springboot&logoColor=white)
 ![postgresql](https://img.shields.io/badge/postgresql-database-316192?logo=postgresql&logoColor=white)
