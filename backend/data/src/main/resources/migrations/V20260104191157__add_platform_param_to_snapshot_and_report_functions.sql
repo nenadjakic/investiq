@@ -564,7 +564,7 @@ AS $$
         SELECT
             s.asset_id,
             CASE WHEN a.asset_type = 'ETF' THEN a.id ELSE a.company_id END AS holding_id,
-            s.cost_basis_eur,
+            SUM(s.cost_basis_eur) AS cost_basis_eur,
             COALESCE(d.total_dividend_eur,0) AS total_dividend_eur,
             fb.first_buy_date,
             CASE
@@ -580,6 +580,7 @@ AS $$
             LEFT JOIN total_dividends d ON s.asset_id = d.asset_id
         WHERE s.quantity <> 0
             AND (p_platform IS NULL OR s.platform = p_platform)
+        GROUP BY s.asset_id, a.asset_type, a.id, a.company_id, d.total_dividend_eur, fb.first_buy_date
     )
     SELECT
         holding_id,

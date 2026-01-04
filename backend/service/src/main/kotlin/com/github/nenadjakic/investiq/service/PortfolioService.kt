@@ -297,8 +297,8 @@ class PortfolioService(
         return assetSnapshots.map { snapshot ->
             val marketValue = snapshot.marketValueEur ?: BigDecimal.ZERO
             val profitLoss = snapshot.unrealizedPlEur?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
-            val profitLossPercentage = if (marketValue > BigDecimal.ZERO) {
-                (profitLoss / marketValue * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
+            val profitLossPercentage = if (snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO) {
+                (profitLoss / snapshot.costBasisEur!! * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
             } else BigDecimal.ZERO
 
             val portfolioPercentage = if (totalValue > BigDecimal.ZERO) {
