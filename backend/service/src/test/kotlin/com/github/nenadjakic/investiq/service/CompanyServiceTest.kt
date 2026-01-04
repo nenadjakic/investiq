@@ -1,6 +1,7 @@
 package com.github.nenadjakic.investiq.service
 
 import com.github.nenadjakic.investiq.data.entity.core.Company
+import com.github.nenadjakic.investiq.data.entity.core.Continent
 import com.github.nenadjakic.investiq.data.entity.core.Country
 import com.github.nenadjakic.investiq.data.entity.core.Industry
 import com.github.nenadjakic.investiq.data.entity.core.Sector
@@ -40,7 +41,7 @@ class CompanyServiceTest {
 
     @Test
     fun `findAll should return list of CompanyResponse when companies exist`() {
-        val usa = Country(iso2Code = "US", name = "United States")
+        val usa = Country(iso2Code = "US", name = "United States", Continent(id = UUID.randomUUID(), name = "North America"))
         val sector = Sector(id = UUID.randomUUID(), name = "Technology")
         val industry = Industry(id = UUID.randomUUID(), name = "Semiconductors", sector = sector)
 
@@ -66,8 +67,8 @@ class CompanyServiceTest {
 
     @Test
     fun `findAll should return multiple companies correctly`() {
-        val usa = Country(iso2Code = "US", name = "United States")
-        val germany = Country(iso2Code = "DE", name = "Germany")
+        val usa = Country(iso2Code = "US", name = "United States", Continent(id = UUID.randomUUID(), name = "North America"))
+        val germany = Country(iso2Code = "DE", name = "Germany", Continent(id = UUID.randomUUID(), name = "Europe"))
         val techSector = Sector(id = UUID.randomUUID(), name = "Technology")
         val autoSector = Sector(id = UUID.randomUUID(), name = "Consumer Cyclical")
         val semiconductorIndustry = Industry(id = UUID.randomUUID(), name = "Semiconductors", sector = techSector)

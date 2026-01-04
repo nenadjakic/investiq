@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.service
 
+import com.github.nenadjakic.investiq.data.entity.core.Continent
 import com.github.nenadjakic.investiq.data.entity.core.Country
 import com.github.nenadjakic.investiq.data.entity.core.Exchange
 import com.github.nenadjakic.investiq.data.repository.ExchangeRepository
@@ -38,8 +39,8 @@ class ExchangeServiceTest {
 
     @Test
     fun `findAll should return list of ExchangeResponse when exchanges exist`() {
-        val germany = Country(iso2Code = "DE", name = "Germany")
-        val usa = Country(iso2Code = "US", name = "United States")
+        val germany = Country(iso2Code = "DE", name = "Germany", Continent(UUID.randomUUID(), "Europe"))
+        val usa = Country(iso2Code = "US", name = "United States", Continent(UUID.randomUUID(), "North America"))
 
         val fse = Exchange(
             id = UUID.randomUUID(),
@@ -78,7 +79,7 @@ class ExchangeServiceTest {
 
     @Test
     fun `findAll should return exchange without acronym`() {
-        val uk = Country(iso2Code = "GB", name = "United Kingdom")
+        val uk = Country(iso2Code = "GB", name = "United Kingdom", Continent(UUID.randomUUID(), "Europe"))
         val lse = Exchange(
             id = UUID.randomUUID(),
             mic = "XLON",
