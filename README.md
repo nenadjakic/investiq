@@ -48,6 +48,7 @@ This README is the first place a user or contributor sees - it explains what the
     - app-rest: REST API & OpenAPI spec
     - scheduler: periodic ingestion and recalculation jobs
     - app-cli: batch / import
+    - agent: lightweight standalone AI agent/service that performs specialized tasks and can run independently or in container
     - common / service: shared domain logic and analytics
 - Data
     - PostgreSQL for normalized time-series, transactions and derived analytics
@@ -65,6 +66,7 @@ This README is the first place a user or contributor sees - it explains what the
 
 ### Repository layout (helpful pointers)
 - backend/
+    - agent/ - lightweight AI agent service — standalone Spring Boot module; see `backend/agent/README.md`
     - app-rest/ - HTTP API (controllers, OpenAPI)
     - app-cli/ - CLI utilities (import CSV data)
     - scheduler/ - scheduled ingestion & recompute jobs
@@ -91,6 +93,15 @@ cd frontend
 npm ci
 npm start
 ```
+
+### Outputs & reports
+- Backend artifacts (jars): each module produces build artifacts under `backend/<module>/build/libs/` and there is an aggregated `backend/build/libs/` for multi-module artifacts.
+- Test reports and coverage: unit test reports and jacoco coverage are generated at `backend/<module>/build/reports/tests/` and `backend/<module>/build/reports/jacoco/` respectively. A quick way to generate reports for all backend modules:
+```bash
+cd backend
+./gradlew test jacocoTestReport
+```
+- Frontend production build: `frontend/dist/` (used by `infrastructure` Docker image / nginx)
 
 ### Important repo-specific notes
 - OpenAPI-driven workflow: update backend controllers/DTOs → ensure OpenAPI spec is published by app-rest → run frontend/npm run generate:api to regenerate typed client.

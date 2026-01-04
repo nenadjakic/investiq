@@ -110,32 +110,31 @@ fun IBKRTrade.toStagingTransactions(
         }
 
         IBKRAction.SELL -> {
-            {
-                val sell = StagingTransaction(
-                    platform = Platform.IBKR,
-                    transactionType = TransactionType.SELL,
-                    importStatus = ImportStatus.PENDING,
-                    transactionDate = this.time.atOffset(ZoneOffset.UTC),
-                    price = this.price,
-                    quantity = abs(this.quantity!!),
-                    externalSymbol = this.ticker,
-                    resolvedAsset = asset,
-                )
-                stagingTransactions.add(sell)
-                if (this.commission != null && this.commission!! != 0.0) {
-                    stagingTransactions.add(
-                        StagingTransaction(
-                            platform = Platform.IBKR,
-                            transactionType = TransactionType.FEE,
-                            importStatus = ImportStatus.PENDING,
-                            transactionDate = this.time.atOffset(ZoneOffset.UTC),
-                            amount = abs(this.commission!!),
-                            relatedStagingTransaction = sell
-                        )
+            val sell = StagingTransaction(
+                platform = Platform.IBKR,
+                transactionType = TransactionType.SELL,
+                importStatus = ImportStatus.PENDING,
+                transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                price = this.price,
+                quantity = abs(this.quantity!!),
+                externalSymbol = this.ticker,
+                resolvedAsset = asset,
+            )
+            stagingTransactions.add(sell)
+            if (this.commission != null && this.commission!! != 0.0) {
+                stagingTransactions.add(
+                    StagingTransaction(
+                        platform = Platform.IBKR,
+                        transactionType = TransactionType.FEE,
+                        importStatus = ImportStatus.PENDING,
+                        transactionDate = this.time.atOffset(ZoneOffset.UTC),
+                        amount = abs(this.commission!!),
+                        relatedStagingTransaction = sell
                     )
-                }
+                )
             }
         }
+
         IBKRAction.WITHDRAWAL -> {
             stagingTransactions.add(
                 StagingTransaction(

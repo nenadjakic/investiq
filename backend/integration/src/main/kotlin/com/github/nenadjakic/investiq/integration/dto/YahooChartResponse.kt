@@ -1,20 +1,20 @@
 package com.github.nenadjakic.investiq.integration.dto
 
-class YahooChartResponse() {
+class YahooChartResponse {
     var chart: ChartContainer? = null
 
-    class ChartContainer() {
+    class ChartContainer {
         var result: MutableList<Result>? = null
         var error: Any? = null
     }
 
-    class Result() {
+    class Result {
         var meta: Meta? = null
         var timestamp: MutableList<Long>? = null
         var indicators: Indicators? = null
     }
 
-    class Meta() {
+    class Meta {
         var symbol: String? = null
         var currency: String? = null
         var exchangeName: String? = null
@@ -22,12 +22,12 @@ class YahooChartResponse() {
         var timezone: String? = null
     }
 
-    class Indicators() {
+    class Indicators {
         var quote: MutableList<Quote>? = null
         var adjclose: MutableList<AdjClose>? = null
     }
 
-    class Quote() {
+    class Quote {
         var open: MutableList<Double?>? = null
         var close: MutableList<Double?>? = null
         var low: MutableList<Double?>? = null
@@ -35,7 +35,7 @@ class YahooChartResponse() {
         var volume: MutableList<Long?>? = null
     }
 
-    class AdjClose() {
+    class AdjClose {
         var adjclose: MutableList<Double?>? = null
     }
 }

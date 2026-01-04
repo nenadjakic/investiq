@@ -78,7 +78,7 @@ class StagingTransactionService(
             .map { it.toStagingTransactionResponse() }
     }
 
-    @Transactional()
+    @Transactional
     fun findById(id: UUID): StagingTransactionResponse =
         stagingTransactionRepository.findById(id)
         .orElseThrow { IllegalArgumentException("Staging transaction not found: $id") }

@@ -11,7 +11,6 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
-import java.util.UUID
 
 /**
  * Entity representing an ETF (Exchange-Traded Fund), which is a specific type of Asset.

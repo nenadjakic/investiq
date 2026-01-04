@@ -2,6 +2,7 @@ package com.github.nenadjakic.toon
 
 import com.github.nenadjakic.toon.converter.ToonHttpMessageConverter
 import com.github.nenadjakic.toon.serializer.ReflectionToonSerializer
+import com.github.nenadjakic.toon.serializer.ToonSerializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -13,12 +14,12 @@ class ToonAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    fun toonSerializer(@Value("\${toon.delimiter:,}") delimiter: String): ReflectionToonSerializer =
+    fun toonSerializer(@Value($$"${toon.delimiter:,}") delimiter: String): ToonSerializer =
         ReflectionToonSerializer(delimiter)
 
     @Bean
     @ConditionalOnMissingBean
-    fun toonHttpMessageConverter(serializer: ReflectionToonSerializer): HttpMessageConverter<Any> =
+    fun toonHttpMessageConverter(serializer: ToonSerializer): HttpMessageConverter<Any> =
         ToonHttpMessageConverter(serializer)
 
 }

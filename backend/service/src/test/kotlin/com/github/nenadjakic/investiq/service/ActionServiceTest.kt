@@ -1,7 +1,6 @@
 package com.github.nenadjakic.investiq.service
 
 import com.github.nenadjakic.investiq.data.entity.Action
-import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.asset.Stock
 import com.github.nenadjakic.investiq.data.entity.transaction.Buy
 import com.github.nenadjakic.investiq.data.entity.transaction.Transaction
@@ -65,7 +64,7 @@ class ActionServiceTest {
 
     @Test
     fun `applyFactor should adjust buy quantity and price`() {
-        val method = ActionService::class.java.getDeclaredMethod("applyFactor", Transaction::class.java, java.math.BigDecimal::class.java)
+        val method = ActionService::class.java.getDeclaredMethod("applyFactor", Transaction::class.java, BigDecimal::class.java)
         method.isAccessible = true
 
         val buy = Buy()

@@ -3,7 +3,6 @@ package com.github.nenadjakic.investiq.agent.controller
 import com.github.nenadjakic.investiq.agent.tool.AgentTool
 import com.github.nenadjakic.investiq.agent.tool.AgentTool.SectorAllocationResponse
 import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
-import com.github.nenadjakic.investiq.common.dto.CountryValueResponse
 import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
 import org.springframework.http.ResponseEntity

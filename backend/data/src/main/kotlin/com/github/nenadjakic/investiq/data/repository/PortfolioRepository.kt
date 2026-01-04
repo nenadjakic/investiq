@@ -338,7 +338,7 @@ class PortfolioRepository(
      * then annualized based on the holding period.
      */
     fun getAssetDividendCostYield(): List<AssetDividendCostYield> {
-        val sql = $$"""
+        val sql = """
             select
                 asset_id,
                 ticker,

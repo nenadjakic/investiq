@@ -19,7 +19,7 @@ class ReportService(
 ) {
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-    @Value("\${investiq.scheduler.report.output-path}")
+    @Value($$"${investiq.scheduler.report.output-path}")
     private lateinit var outputPath: String
 
 

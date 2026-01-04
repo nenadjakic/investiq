@@ -9,6 +9,7 @@
 This document describes the backend module in this repository and how it is structured and intended to be used.
 
 ## Project layout
+- **agent** - lightweight standalone AI agent service. Runs as a Spring Boot application and performs background/specialized tasks (data collection, event forwarding, AI-assist).
 - **app-rest** - the HTTP REST API that serves the frontend and external clients. This is the primary API surface.
 - **app-cli** - command-line utilities and batch tasks used for one-off jobs (imports, exports, ad-hoc analytics).
 - **scheduler** - scheduled jobs (market data ingestion, nightly analytics recomputation, periodic cleanup).
@@ -29,6 +30,10 @@ This document describes the backend module in this repository and how it is stru
 - To run only the REST module (recommended for development):
 ```bash        
   ./gradlew :app-rest:bootRun
+```
+- To run the agent module locally:
+```bash
+  ./gradlew :agent:bootRun
 ```
 - To run the whole backend project (boots default project(s)):
 ```bash
@@ -52,6 +57,16 @@ This document describes the backend module in this repository and how it is stru
     - seed/sample data used for local development
 - Migrations are applied automatically by the app-rest module on startup using Flyway. In production, ensure that migrations are applied in a controlled manner during deployment.
 - To run migrations manually, you can use the Flyway CLI or a database client to execute
+
+### Outputs & reports
+- Built artifacts (jars): `backend/<module>/build/libs/` (e.g. `backend/agent/build/libs/`)
+- Test reports: `backend/<module>/build/reports/tests/test/index.html`
+- Coverage reports: `backend/<module>/build/reports/jacoco/index.html`
+- To generate reports for all backend modules, run:
+```bash
+cd backend
+./gradlew test jacocoTestReport
+```
 
 ### API and OpenAPI
 - Look for API docs endpoints when running the backend (/v3/api-docs or /swagger-ui.html).

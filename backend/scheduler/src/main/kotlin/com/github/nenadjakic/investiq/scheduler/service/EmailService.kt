@@ -1,6 +1,5 @@
 package com.github.nenadjakic.investiq.scheduler.service
 
-import jakarta.mail.internet.MimeMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -18,10 +17,10 @@ class EmailService(
 ) {
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-    @Value("\${investiq.scheduler.report.recipient-email}")
+    @Value($$"${investiq.scheduler.report.recipient-email}")
     private lateinit var recipientEmail: String
 
-    @Value("\${spring.mail.username}")
+    @Value($$"${spring.mail.username}")
     private lateinit var fromEmail: String
 
     /**

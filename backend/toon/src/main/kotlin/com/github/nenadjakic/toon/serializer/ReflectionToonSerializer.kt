@@ -2,24 +2,14 @@ package com.github.nenadjakic.toon.serializer
 
 import com.github.nenadjakic.toon.annotation.ToonIgnore
 import com.github.nenadjakic.toon.annotation.ToonProperty
-import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaField
 
-class ReflectionToonSerializer(private val defaultDelimiter: String = ",") {
+class ReflectionToonSerializer(private val defaultDelimiter: String = ","): ToonSerializer {
 
-    private fun orderProps(props: Collection<KProperty1<out Any, *>>): List<KProperty1<out Any, *>> {
-        return props.sortedWith(compareBy({ p ->
-            p.findAnnotation<ToonProperty>()?.order ?: Int.MAX_VALUE
-        }, { p ->
-            // maintain declared order as tie-breaker by using property name as stable key
-            p.name
-        }))
-    }
-
-    fun serialize(obj: Any, indent: Int = 0): String {
+    override fun serialize(obj: Any, indent: Int): String {
         val sb = StringBuilder()
         val space = " ".repeat(indent)
 
@@ -29,8 +19,7 @@ class ReflectionToonSerializer(private val defaultDelimiter: String = ",") {
                 return sb.toString()
             }
 
-            val first = obj.firstOrNull()
-            when (first) {
+            when (val first = obj.firstOrNull()) {
                 null -> {
                     val listValues = obj.joinToString(defaultDelimiter) { it.toString() }
                     sb.appendLine("${space}[${obj.size}]: $listValues")
@@ -77,11 +66,11 @@ class ReflectionToonSerializer(private val defaultDelimiter: String = ",") {
             // ignore if constructor parameter is annotated (e.g. @ToonIgnore on primary constructor param)
             if (prop.name in ctorIgnored) return@filterNot true
             // ignore kotlin's @Transient on property
-            if (prop.findAnnotation<kotlin.jvm.Transient>() != null) return@filterNot true
+            if (prop.findAnnotation<Transient>() != null) return@filterNot true
             // ignore java field level transient/annotations if present on the backing field
             val f = prop.javaField
             if (f != null) {
-                if (f.getAnnotation(kotlin.jvm.Transient::class.java) != null) return@filterNot true
+                if (f.getAnnotation(Transient::class.java) != null) return@filterNot true
                 if (f.getAnnotation(java.beans.Transient::class.java) != null) return@filterNot true
                 if (f.getAnnotation(ToonIgnore::class.java) != null) return@filterNot true
                 if (java.lang.reflect.Modifier.isTransient(f.modifiers)) return@filterNot true
@@ -93,17 +82,14 @@ class ReflectionToonSerializer(private val defaultDelimiter: String = ",") {
 
         for (prop in orderedProps) {
             val name = prop.findAnnotation<ToonProperty>()?.name ?: prop.name
-            val value = prop.call(obj)
-
-            when (value) {
+            when (val value = prop.call(obj)) {
                 null -> sb.appendLine("$space$name: null")
                 is String, is Number, is Boolean -> sb.appendLine("$space$name: $value")
                 is List<*> -> {
                     if (value.isEmpty()) {
                         sb.appendLine("$space$name[0]:")
                     } else {
-                        val first = value.firstOrNull()
-                        when (first) {
+                        when (val first = value.firstOrNull()) {
                             null -> {
                                 val listValues = value.joinToString(defaultDelimiter) { it.toString() }
                                 sb.appendLine("$space$name[${value.size}]: $listValues")

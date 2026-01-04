@@ -97,7 +97,7 @@ class ReflectionToonSerializerTest {
         val lines = actual.lines()
         val headerLineIndex = lines.indexOfFirst { headerRegex.containsMatchIn(it) }
         val rowLines = if (headerLineIndex >= 0) lines.drop(headerLineIndex + 1).takeWhile { it.isNotBlank() } else emptyList()
-        assertTrue(rowLines.size == 3, "Expected 3 rows for hikes but found ${'$'}{rowLines.size}")
+        assertTrue(rowLines.size == 3, $$"Expected 3 rows for hikes but found ${rowLines.size}")
 
         val expectedById = mapOf(
             "1" to mapOf("id" to "1", "name" to "Blue Lake Trail", "distanceKm" to "7.5", "elevationGain" to "320", "companion" to "ana", "wasSunny" to "true"),
@@ -108,8 +108,8 @@ class ReflectionToonSerializerTest {
         for (row in rowLines) {
             val vals = row.trim().split(",")
             val rowMap = headerList.zip(vals).associate { it.first to it.second }
-            val id = rowMap["id"] ?: error("Missing id in row: ${'$'}row")
-            val expectedRow = expectedById[id] ?: error("Unexpected id in row: ${'$'}id")
+            val id = rowMap["id"] ?: error($$"Missing id in row: $row")
+            val expectedRow = expectedById[id] ?: error($$"Unexpected id in row: $id")
             assertEquals(expectedRow, rowMap)
         }
 
@@ -171,7 +171,7 @@ class ReflectionToonSerializerTest {
         for (row in rowLines) {
             val vals = row.trim().split(",")
             val rowMap = headerList.zip(vals).associate { it.first to it.second }
-            val id = rowMap["person_id"] ?: error("Missing person_id in row: ${'$'}row")
+            val id = rowMap["person_id"] ?: error($$"Missing person_id in row: $row")
             assertEquals(expectedById[id], rowMap)
         }
     }
@@ -194,7 +194,7 @@ class ReflectionToonSerializerTest {
         val lines = out.lines()
         val headerLineIndex = lines.indexOfFirst { headerRegex.containsMatchIn(it) }
         val rowLines = if (headerLineIndex >= 0) lines.drop(headerLineIndex + 1).takeWhile { it.isNotBlank() } else emptyList()
-        assertTrue(rowLines.size == 2, "Expected 2 rows for elems but found ${'$'}{rowLines.size}")
+        assertTrue(rowLines.size == 2, $$"Expected 2 rows for elems but found ${rowLines.size}")
 
         val expectedById = mapOf(
             "1" to mapOf("person_id" to "1", "full_name" to "A"),
@@ -204,7 +204,7 @@ class ReflectionToonSerializerTest {
         for (row in rowLines) {
             val vals = row.trim().split('|')
             val rowMap = headerList.zip(vals).associate { it.first to it.second }
-            val id = rowMap["person_id"] ?: error("Missing person_id in row: ${'$'}row")
+            val id = rowMap["person_id"] ?: error($$"Missing person_id in row: $row")
             assertEquals(expectedById[id], rowMap)
         }
     }

@@ -54,10 +54,7 @@ class YahooFinanceCurrencyService(
         val closes = quote?.close ?: emptyList()
 
         timestamps.forEachIndexed { idx, ts ->
-            val priceNullable = closes.getOrNull(idx)
-            if (priceNullable == null) {
-                return@forEachIndexed
-            }
+            val priceNullable = closes.getOrNull(idx) ?: return@forEachIndexed
 
             val dt = LocalDate.ofInstant(Instant.ofEpochSecond(ts), ZoneId.of("UTC"))
 

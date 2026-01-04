@@ -1,6 +1,5 @@
 package com.github.nenadjakic.investiq.restapp.controller
 
-import com.github.nenadjakic.investiq.common.dto.ImportResult
 import com.github.nenadjakic.investiq.common.dto.StagingTransactionEditRequest
 import com.github.nenadjakic.investiq.common.dto.StagingTransactionResponse
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus

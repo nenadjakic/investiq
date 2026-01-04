@@ -16,7 +16,7 @@ docker compose --env-file .env up --build
 - **PostgreSQL**: `localhost:8432` (db: `investiq_db`, user: `postgres`, password: `postgres`) - configured via `.env`
 - **app-rest**: `http://localhost:8080` - REST API with Swagger UI at `/swagger-ui.html`
 - **scheduler**: `http://localhost:8081` - Background job scheduler
-- **agent**: `http://localhost:8082` - Lightweight AI agent (optional)
+- **agent**: `http://localhost:8082` - Lightweight AI agent service. See `backend/agent/README.md` for module details.
 - **frontend**: `http://localhost:4200` - Angular SPA served by nginx (production build)
 
 ## Dockerfiles

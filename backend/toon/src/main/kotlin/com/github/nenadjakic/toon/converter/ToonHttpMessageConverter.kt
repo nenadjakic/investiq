@@ -1,6 +1,6 @@
 package com.github.nenadjakic.toon.converter
 
-import com.github.nenadjakic.toon.serializer.ReflectionToonSerializer
+import com.github.nenadjakic.toon.serializer.ToonSerializer
 import org.springframework.http.HttpInputMessage
 import org.springframework.http.HttpOutputMessage
 import org.springframework.http.MediaType
@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets
 val TOON_MEDIA_TYPE = MediaType("application", "toon")
 
 class ToonHttpMessageConverter(
-    private val serializer: ReflectionToonSerializer = ReflectionToonSerializer()
+    private val serializer: ToonSerializer
 
 ) : AbstractHttpMessageConverter<Any>(TOON_MEDIA_TYPE) {
 

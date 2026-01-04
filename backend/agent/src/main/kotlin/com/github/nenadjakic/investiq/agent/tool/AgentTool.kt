@@ -1,8 +1,6 @@
 package com.github.nenadjakic.investiq.agent.tool
 
 import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
-import com.github.nenadjakic.investiq.common.dto.AssetTypeValueResponse
-import com.github.nenadjakic.investiq.common.dto.CountryValueResponse
 import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
