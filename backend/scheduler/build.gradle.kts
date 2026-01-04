@@ -30,16 +30,19 @@ dependencies {
     implementation(libs.spring.boot.starter.cache)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.validation)
+    implementation(libs.spring.boot.starter.mail)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.apache.commons.csv)
     implementation(libs.apache.poi)
     implementation(libs.apache.poi.ooxml)
     implementation(libs.kotlinx.coroutines.core)
-
+    implementation(libs.jasperreports)
+    implementation(libs.jasperreports.pdf)
+    implementation(libs.jasperreports.fonts)
 
     runtimeOnly(libs.postgresql)
 
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    developmentOnly(libs.spring.boot.devtools)
 
     implementation(libs.spring.boot.flyway)
     implementation(libs.flyway.core)
@@ -51,9 +54,6 @@ dependencies {
     testImplementation(libs.spring.boot.starter.test)
 }
 
-tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
-    standardInput = System.`in`
-}
 tasks.test {
     useJUnitPlatform()
 }
