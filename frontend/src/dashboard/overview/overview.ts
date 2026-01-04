@@ -1,5 +1,6 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { PortfolioChartResponse, PortfolioControllerService, PortfolioSummaryResponse } from '../../app/core/api';
+import { PlatformService } from '../../app/core/platform.service';
 import { CommonModule } from '@angular/common';
 import { EChartsCoreOption } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
@@ -20,6 +21,7 @@ interface IndexOption {
 export class Overview implements OnInit {
   private portfolioControllerService = inject(PortfolioControllerService);
   private toastService = inject(ToastService);
+  private platformService = inject(PlatformService);
 
   summary = signal<PortfolioSummaryResponse | null>(null);
   summaryError = signal(false);
@@ -113,6 +115,27 @@ export class Overview implements OnInit {
          });
       }
     });
+    effect(() => {
+      this.loadSummary();
+      const current = this.selectedPeriod();
+      if (current === 'ALL') {
+        this.loadChartData(undefined);
+      } else {
+        this.setPeriod(current);
+      }
+    });
+    // Also watch explicit refresh key to force reload (robust fallback)
+    effect(() => {
+      const r = this.platformService.refresh();
+      try { console.debug('[Overview] refresh key ->', r); } catch (e) {}
+      this.loadSummary();
+      const current = this.selectedPeriod();
+      if (current === 'ALL') {
+        this.loadChartData(undefined);
+      } else {
+        this.setPeriod(current);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -156,7 +179,7 @@ export class Overview implements OnInit {
 
   private loadSummary(): void {
     this.summaryError.set(false);
-    this.portfolioControllerService.getPortfolioSummary().subscribe({
+    this.portfolioControllerService.getPortfolioSummary(this.platformService.getPlatformValue()).subscribe({
       next: (data) => this.summary.set(data),
       error: (err) => {
         this.summaryError.set(true);
@@ -170,7 +193,9 @@ export class Overview implements OnInit {
     this.chartError.set(false);
 
     this.portfolioControllerService.getPortfolioPerformanceChart(
-      days).subscribe({
+      days,
+      this.platformService.getPlatformValue()
+    ).subscribe({
       next: (data) => this.chartData.set(data),
       error: (err) => {
         this.chartError.set(true);

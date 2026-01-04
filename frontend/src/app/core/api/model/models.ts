@@ -27,6 +27,7 @@ export * from './performer-response';
 export * from './period-change-response';
 export * from './portfolio-allocation-response';
 export * from './portfolio-chart-response';
+export * from './portfolio-concentration-response';
 export * from './portfolio-performance-response';
 export * from './portfolio-summary-response';
 export * from './sector-response';

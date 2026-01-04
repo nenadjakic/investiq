@@ -7,6 +7,7 @@ import {
   PortfolioChartResponse,
   PortfolioControllerService,
 } from '../../app/core/api';
+import { PlatformService } from '../../app/core/platform.service';
 import { ToastService } from '../../shared/toast.service';
 
 @Component({
@@ -18,6 +19,7 @@ import { ToastService } from '../../shared/toast.service';
 export class Performance implements OnInit {
   private portfolioControllerService = inject(PortfolioControllerService);
   private toastService = inject(ToastService);
+  private platformService = inject(PlatformService);
 
   chartData = signal<PortfolioChartResponse | null>(null);
   monthlyInvested = signal<MonthlyInvestedResponse | null>(null);
@@ -179,6 +181,13 @@ export class Performance implements OnInit {
         }
       }
     });
+    // reload when platform changes
+    effect(() => {
+      const p = this.platformService.platform();
+      try { console.debug('[Performance] platform effect ->', p); } catch (e) {}
+      const days = this.mapPeriodToDays(this.selectedPeriod());
+      this.loadChartData(days);
+    });
   }
 
   ngOnInit(): void {
@@ -194,7 +203,7 @@ export class Performance implements OnInit {
   }
 
   private loadPerformanceChart(days: number | undefined): void {
-    this.portfolioControllerService.getPortfolioPerformanceChart(days).subscribe({
+    this.portfolioControllerService.getPortfolioPerformanceChart(days, this.platformService.getPlatformValue()).subscribe({
       next: (data) => this.chartData.set(data ?? null),
       error: (err) => {
         this.chartError.set(true);
@@ -208,7 +217,7 @@ export class Performance implements OnInit {
     this.monthlyError.set(false);
     this.monthlyInvested.set(null);
 
-    this.portfolioControllerService.getMonthlyInvested(months).subscribe({
+    this.portfolioControllerService.getMonthlyInvested(months, this.platformService.getPlatformValue()).subscribe({
       next: (data) => this.monthlyInvested.set(data ?? null),
       error: (err) => {
         this.monthlyError.set(true);
@@ -222,7 +231,7 @@ export class Performance implements OnInit {
     this.monthlyDividendsError.set(false);
     this.monthlyDividends.set(null);
 
-    this.portfolioControllerService.getMonthlyDividends(months).subscribe({
+    this.portfolioControllerService.getMonthlyDividends(months, this.platformService.getPlatformValue()).subscribe({
       next: (data) => this.monthlyDividends.set(data ?? null),
       error: (err) => {
         this.monthlyDividendsError.set(true);

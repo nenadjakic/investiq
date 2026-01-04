@@ -3,6 +3,8 @@ package com.github.nenadjakic.investiq.data.entity.core
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 /**
@@ -26,4 +28,8 @@ data class Country(
      */
     @Column(name = "name", nullable = false, length = 200, unique = true)
     val name: String,
+
+    @ManyToOne
+    @JoinColumn(name = "continent_id")
+    val continent: Continent
 )

@@ -7,6 +7,7 @@ import {
   CountryValueResponse,
   CurrencyValueResponse,
 } from '../../app/core/api';
+import { PlatformService } from '../../app/core/platform.service';
 import { CommonModule } from '@angular/common';
 import { EChartsCoreOption, registerMap } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
@@ -19,6 +20,7 @@ import { NgxEchartsDirective } from 'ngx-echarts';
 })
 export class Allocation implements OnInit {
   private portfolioControllerService = inject(PortfolioControllerService);
+  private platformService = inject(PlatformService);
 
   sectorData = signal<IndustrySectorValueResponse[]>([]);
   countryData = signal<CountryValueResponse[]>([]);
@@ -524,6 +526,10 @@ export class Allocation implements OnInit {
         });
       }
     });
+
+    effect(() => {
+      this.loadSectorAllocation();
+    });
   }
 
   ngOnInit(): void {
@@ -533,7 +539,7 @@ export class Allocation implements OnInit {
   loadSectorAllocation(): void {
     this.dataError.set(false);
 
-    this.portfolioControllerService.getCombinedAllocation().subscribe({
+    this.portfolioControllerService.getCombinedAllocation(this.platformService.getPlatformValue()).subscribe({
       next: (data) => {
         this.sectorData.set(Array.isArray(data.byIndustrySector) ? data.byIndustrySector : []);
         this.countryData.set(Array.isArray(data.byCountry) ? data.byCountry : []);
@@ -724,7 +730,6 @@ export class Allocation implements OnInit {
     if (unmappedCountries.length > 0) {
       const unique = Array.from(new Set(unmappedCountries.filter(Boolean)));
       if (unique.length > 0) {
-        // eslint-disable-next-line no-console
         console.warn('Countries not mapped to continent:', unique);
       }
     }

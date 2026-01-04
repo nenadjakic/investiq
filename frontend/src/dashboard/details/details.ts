@@ -1,7 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import { Component, OnInit, computed, effect, inject, signal } from "@angular/core";
 import { finalize } from "rxjs/operators";
 import { ActivePositionResponse, PortfolioControllerService } from "../../app/core/api";
+import { PlatformService } from '../../app/core/platform.service';
 import { ToastService } from "../../shared/toast.service";
 
 @Component({
@@ -13,6 +14,7 @@ import { ToastService } from "../../shared/toast.service";
 export class Details implements OnInit {
   private portfolioControllerService = inject(PortfolioControllerService);
   private toastService = inject(ToastService);
+  private platformService = inject(PlatformService);
 
   positions = signal<ActivePositionResponse[]>([]);
   loading = signal<boolean>(false);
@@ -89,6 +91,11 @@ export class Details implements OnInit {
     };
   });
 
+  constructor() {effect(() => {
+      this.loadPositions();
+    });
+  }
+
   ngOnInit(): void {
     this.loadPositions();
   }
@@ -112,7 +119,7 @@ export class Details implements OnInit {
     this.loading.set(true);
     this.loadError.set(false);
     this.portfolioControllerService
-      .getActivePositions()
+      .getActivePositions(this.platformService.getPlatformValue())
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (data) => {
