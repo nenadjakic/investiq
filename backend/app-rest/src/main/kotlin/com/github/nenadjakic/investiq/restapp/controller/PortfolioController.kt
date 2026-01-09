@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.restapp.controller
 
+import com.github.nenadjakic.investiq.common.dto.ActivePositionResponse
 import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.AssetTypeValueResponse
 import com.github.nenadjakic.investiq.common.dto.CompanyAssetHoldingResponse
@@ -14,6 +15,7 @@ import com.github.nenadjakic.investiq.common.dto.PortfolioPerformanceResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioAllocationResponse
 import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
+import com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -360,7 +362,7 @@ class PortfolioController(
     fun getTopBottomPerformers(
          @Min(1) @RequestParam(required = false, defaultValue = "5") limit: Int,
          @RequestParam(required = false) platform: Platform?
-    ): ResponseEntity<com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse> =
+    ): ResponseEntity<TopBottomPerformersResponse> =
         ResponseEntity.ok(portfolioService.getTopBottomPerformers(limit, platform))
 
     @Operation(
@@ -377,7 +379,7 @@ class PortfolioController(
     @GetMapping("/holdings/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getActivePositions(
         @RequestParam(required = false) platform: Platform?
-    ): ResponseEntity<List<com.github.nenadjakic.investiq.common.dto.ActivePositionResponse>> =
+    ): ResponseEntity<List<ActivePositionResponse>> =
         ResponseEntity.ok(portfolioService.getActivePositions(platform))
 
     @Operation(
