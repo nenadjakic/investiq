@@ -4,7 +4,7 @@ import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.IndustrySectorValueResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
-import com.github.nenadjakic.toon.serializer.ReflectionToonSerializer
+import com.github.nenadjakic.toon.serializer.ToonSerializer
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -14,7 +14,7 @@ import java.math.RoundingMode
 @Service
 class AgentTool(
     private val portfolioService: PortfolioService,
-    private val toonSerializer: ReflectionToonSerializer
+    private val toonSerializer: ToonSerializer
 ) {
 
     @Tool(description = """
