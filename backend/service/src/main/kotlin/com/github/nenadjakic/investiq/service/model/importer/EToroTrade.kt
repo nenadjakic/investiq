@@ -48,8 +48,12 @@ fun EToroTrade.toStagingTransactions(
     currencyHistoryService: CurrencyHistoryService,
     ): Collection<StagingTransaction> {
     val extractDepositCurrency: (String) -> String = { text ->
-        Regex("""\b([A-Z]{2,5})\b""")
-            .find(text)!!.value
+        if (text == "-") {
+            "USD"
+        } else {
+            Regex("""\b([A-Z]{2,5})\b""")
+                .find(text)!!.value
+        }
     }
     val extractBuySellCurrency: (String) -> String = {
         it.substringAfter("/")

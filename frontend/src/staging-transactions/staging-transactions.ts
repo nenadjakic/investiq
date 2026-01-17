@@ -56,6 +56,7 @@ export class StagingTransactions implements OnInit {
   assetSearchQuery = signal<string>('');
   assetsLoading = signal(false);
   assetDropdownOpen = signal(false);
+  selectedAssetSymbol = signal<string>('');
 
   // Computed signals
   paginatedTransactions = computed(() => this.pageData().content || []);
@@ -215,6 +216,9 @@ export class StagingTransactions implements OnInit {
     this.detailLoading.set(false);
     this.updateError.set(null);
     this.updateLoading.set(false);
+    this.assetSearchQuery.set('');
+    this.assetDropdownOpen.set(false);
+    this.selectedAssetSymbol.set('');
     this.editForm.reset({ asset: '', quantity: null, price: null, amount: null, grossAmount: null, taxPercentage: null, taxAmount: null });
   }
 
@@ -276,14 +280,17 @@ export class StagingTransactions implements OnInit {
       });
   }
 
-  selectAsset(symbol: string) {
-    this.editForm.get('asset')?.setValue(symbol);
+  selectAsset(assetId: string) {
+    const asset = this.assets().find(a => a.id === assetId);
+    this.editForm.get('asset')?.setValue(assetId);
+    this.selectedAssetSymbol.set(asset?.symbol || '');
     this.assetSearchQuery.set('');
     this.assetDropdownOpen.set(false);
   }
 
   clearAsset() {
     this.editForm.get('asset')?.setValue('');
+    this.selectedAssetSymbol.set('');
     this.assetSearchQuery.set('');
   }
 
@@ -333,7 +340,7 @@ export class StagingTransactions implements OnInit {
 
   private setFormValues(detail: StagingTransactionResponse) {
     this.editForm.setValue({
-      asset: detail.resolvedAsset?.symbol || '',
+      asset: detail.resolvedAsset?.id || '',
       quantity: detail.quantity ?? null,
       price: detail.price ?? null,
       amount: detail.amount ?? null,
@@ -341,6 +348,7 @@ export class StagingTransactions implements OnInit {
       taxPercentage: null,
       taxAmount: null,
     });
+    this.selectedAssetSymbol.set(detail.resolvedAsset?.symbol || '');
   }
 
   saveChanges() {
@@ -374,8 +382,9 @@ export class StagingTransactions implements OnInit {
         next: () => {
           this.toast.success('Staging transaction saved', 'Saved');
           this.updateLoading.set(false);
-          // Refresh detail + list to reflect changes
-          this.findAndRefreshCurrent();
+          // Refresh list and close modal
+          this.loadTransactions(this.currentPage());
+          this.closeDetails();
         },
         error: (err) => {
           this.updateError.set('Save failed');
