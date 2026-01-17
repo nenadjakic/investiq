@@ -435,7 +435,7 @@
 									/>
 								} @else {
 									<div class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm bg-gray-50 flex items-center justify-between">
-										<span class="font-medium">{{ editForm.get('asset')?.value }}</span>
+										<span class="font-medium">{{ selectedAssetSymbol() }}</span>
 										<button
 											type="button"
 											(click)="clearAsset()"
@@ -451,7 +451,7 @@
 										@for (asset of filteredAssets(); track asset.id) {
 											<button
 												type="button"
-												(click)="selectAsset(asset.symbol!!)"
+												(click)="selectAsset(asset.id!!)"
 												class="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 border-b border-gray-100 last:border-b-0 flex flex-col"
 											>
 												<div class="font-medium text-gray-900">{{ asset.symbol }}</div>

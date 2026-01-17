@@ -178,12 +178,13 @@ fun Trading212Trade.toStagingTransactions(
                     externalSymbol = this.ticker,
                     resolvedAsset = asset,
                     resolutionNote = null,
-                    grossAmount = this.numberOfShares * this.pricePerShare,
+                    amount = this.total,
                     taxAmount = this.withholdingTax,
-                    currency = currencies[this.currencyPricePerShare],
+                    currency = currencies[this.currencyTotal],
                 ).also {
-                    it.amount = it.grossAmount!! - it.taxAmount!!
-                    it.taxPercentage = it.taxAmount!! / (it.grossAmount!! - it.taxAmount!!) * 100
+                    it.grossAmount = it.amount!! + it.taxAmount!!
+                }.also {
+                    it.taxPercentage = it.taxAmount!! / it.grossAmount!! * 100
                 }
             )
         }

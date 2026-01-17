@@ -119,6 +119,7 @@ fun IBKRTrade.toStagingTransactions(
                 quantity = abs(this.quantity!!),
                 externalSymbol = this.ticker,
                 resolvedAsset = asset,
+                currency = currencies[this.currency],
             )
             stagingTransactions.add(sell)
             if (this.commission != null && this.commission!! != 0.0) {
