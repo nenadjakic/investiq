@@ -366,6 +366,57 @@
         }
       }
     },
+    "/exchange": {
+      "get": {
+        "tags": [
+          "Exchange Controller"
+        ],
+        "summary": "Find all exchanges",
+        "description": "Returns a list of exchanges",
+        "operationId": "findAllExchanges",
+        "responses": {
+          "200": {
+            "description": "List of exchanges",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExchangeResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Exchange Controller"
+        ],
+        "summary": "Create exchange",
+        "description": "Creates a new exchange",
+        "operationId": "createExchange",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExchangeAddRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Exchange created successfully"
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      }
+    },
     "/company": {
       "get": {
         "tags": [
@@ -1331,31 +1382,6 @@
         }
       }
     },
-    "/exchange": {
-      "get": {
-        "tags": [
-          "Exchange Controller"
-        ],
-        "summary": "Find all exchanges",
-        "description": "Returns a list of exchanges",
-        "operationId": "findAllExchanges",
-        "responses": {
-          "200": {
-            "description": "List of exchanges",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ExchangeResponse"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/currency": {
       "get": {
         "tags": [
@@ -1621,6 +1647,36 @@
           "sectorId"
         ]
       },
+      "ExchangeAddRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "mic": {
+            "type": "string",
+            "maxLength": 10,
+            "minLength": 0
+          },
+          "acronym": {
+            "type": "string",
+            "maxLength": 10,
+            "minLength": 0
+          },
+          "countryId": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "acronym",
+          "countryId",
+          "mic",
+          "name"
+        ]
+      },
       "CompanyAddRequest": {
         "type": "object",
         "properties": {
@@ -1825,11 +1881,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "first": {
             "type": "boolean"
@@ -1853,6 +1909,9 @@
             "type": "integer",
             "format": "int64"
           },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
           "paged": {
             "type": "boolean"
           },
@@ -1863,9 +1922,6 @@
           "pageSize": {
             "type": "integer",
             "format": "int32"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
           },
           "unpaged": {
             "type": "boolean"
@@ -1986,11 +2042,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "first": {
             "type": "boolean"
@@ -2621,11 +2677,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
           "first": {
             "type": "boolean"

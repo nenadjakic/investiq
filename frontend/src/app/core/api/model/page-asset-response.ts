@@ -18,8 +18,8 @@ export interface PageAssetResponse {
     size?: number;
     content?: Array<AssetResponse>;
     number?: number;
-    pageable?: PageableObject;
     sort?: SortObject;
+    pageable?: PageableObject;
     first?: boolean;
     last?: boolean;
     numberOfElements?: number;
