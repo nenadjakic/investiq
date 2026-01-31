@@ -18,11 +18,11 @@ export interface PageStagingTransactionResponse {
     size?: number;
     content?: Array<StagingTransactionResponse>;
     number?: number;
-    sort?: SortObject;
     pageable?: PageableObject;
-    numberOfElements?: number;
+    sort?: SortObject;
     first?: boolean;
     last?: boolean;
+    numberOfElements?: number;
     empty?: boolean;
 }
 

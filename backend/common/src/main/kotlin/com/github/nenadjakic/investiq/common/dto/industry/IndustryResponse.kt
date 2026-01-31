@@ -1,5 +1,6 @@
-package com.github.nenadjakic.investiq.common.dto
+package com.github.nenadjakic.investiq.common.dto.industry
 
+import com.github.nenadjakic.investiq.common.dto.SectorSimpleResponse
 import java.util.UUID
 
 data class IndustryResponse(

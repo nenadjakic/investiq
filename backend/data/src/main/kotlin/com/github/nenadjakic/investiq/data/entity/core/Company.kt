@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import java.util.UUID
 
@@ -20,7 +21,7 @@ data class Company(
      */
     @Id
     @Column(name = "id", nullable = false)
-    val id: UUID? = null,
+    var id: UUID? = null,
 
     /**
      * Company name (e.g., "Acme Corp.", "Example Technologies, Inc.").
@@ -50,4 +51,11 @@ data class Company(
      */
     //@OneToMany(mappedBy = "company")
     //val assets: MutableSet<Asset> = mutableSetOf()
-)
+) {
+    @PrePersist
+    fun prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID()
+        }
+    }
+}

@@ -1,10 +1,12 @@
 package com.github.nenadjakic.investiq.restapp.controller
 
-import com.github.nenadjakic.investiq.common.dto.TransactionResponse
+import com.github.nenadjakic.investiq.common.dto.transaction.BuyRequest
+import com.github.nenadjakic.investiq.common.dto.transaction.TransactionResponse
 import com.github.nenadjakic.investiq.service.TransactionService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springdoc.core.annotations.ParameterObject
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -12,11 +14,14 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 @Tag(name = "Transaction Controller", description = "Endpoints for managing transactions")
 @RestController
 @RequestMapping("/transaction")
+@Validated
 class TransactionController(
     private val transactionService: TransactionService
 ) {
@@ -61,5 +66,26 @@ class TransactionController(
     fun copyValidatedTransactions(): ResponseEntity<Void> {
         transactionService.copy()
         return ResponseEntity.noContent().build()
+    }
+
+    @Operation(
+        summary = "Add a buy transaction",
+        description = "Creates a new buy transaction and returns the location of the created resource",
+        operationId = "addBuyTransaction",
+        responses = [
+            ApiResponse(responseCode = "201", description = "Buy transaction created"),
+            ApiResponse(responseCode = "400", description = "Invalid input data")
+        ]
+    )
+    @PostMapping(path = ["buy"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun addBuyTransaction(@Valid @RequestBody request: BuyRequest): ResponseEntity<Void> {
+        transactionService.addBuyTransaction(request).let {
+            val location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(it)
+                .toUri()
+            return ResponseEntity.created(location).build()
+        }
     }
 }

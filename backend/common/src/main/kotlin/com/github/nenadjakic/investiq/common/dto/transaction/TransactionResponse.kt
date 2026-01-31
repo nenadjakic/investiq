@@ -1,5 +1,7 @@
-package com.github.nenadjakic.investiq.common.dto
+package com.github.nenadjakic.investiq.common.dto.transaction
 
+import com.github.nenadjakic.investiq.common.dto.AssetResponse
+import com.github.nenadjakic.investiq.common.dto.CurrencyResponse
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.enum.TransactionType
 import java.math.BigDecimal
