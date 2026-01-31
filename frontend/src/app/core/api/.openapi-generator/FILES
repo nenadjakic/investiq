@@ -24,6 +24,8 @@ model/asset-holding-response.ts
 model/asset-response.ts
 model/asset-simple-response.ts
 model/asset-type-value-response.ts
+model/buy-request.ts
+model/company-add-request.ts
 model/company-asset-holding-response.ts
 model/company-response.ts
 model/country-response.ts
@@ -33,6 +35,7 @@ model/currency-simple-response.ts
 model/currency-value-response.ts
 model/dividend-cost-yield-response.ts
 model/exchange-response.ts
+model/industry-add-request.ts
 model/industry-response.ts
 model/industry-sector-value-response.ts
 model/industry-simple-response.ts

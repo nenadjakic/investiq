@@ -1,5 +1,6 @@
-package com.github.nenadjakic.investiq.common.dto
+package com.github.nenadjakic.investiq.common.dto.exchange
 
+import com.github.nenadjakic.investiq.common.dto.CountryResponse
 import java.util.UUID
 
 data class ExchangeResponse (

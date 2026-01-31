@@ -1,5 +1,8 @@
 package com.github.nenadjakic.investiq.common.dto
 
+import com.github.nenadjakic.investiq.common.dto.company.CompanyResponse
+import com.github.nenadjakic.investiq.common.dto.exchange.ExchangeResponse
+import com.github.nenadjakic.investiq.common.dto.industry.IndustryResponse
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.asset.ListedAsset
 import com.github.nenadjakic.investiq.data.entity.asset.Stock

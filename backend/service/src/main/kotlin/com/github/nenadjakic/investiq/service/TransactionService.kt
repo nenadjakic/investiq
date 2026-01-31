@@ -1,6 +1,7 @@
 package com.github.nenadjakic.investiq.service
 
-import com.github.nenadjakic.investiq.common.dto.TransactionResponse
+import com.github.nenadjakic.investiq.common.dto.transaction.TransactionResponse
+import com.github.nenadjakic.investiq.common.dto.transaction.BuyRequest
 import com.github.nenadjakic.investiq.common.extension.toTransactionResponse
 import com.github.nenadjakic.investiq.data.entity.transaction.Buy
 import com.github.nenadjakic.investiq.data.entity.transaction.Deposit
@@ -11,6 +12,8 @@ import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.Sell
 import com.github.nenadjakic.investiq.data.entity.transaction.Transaction
 import com.github.nenadjakic.investiq.data.enum.TransactionType
+import com.github.nenadjakic.investiq.data.repository.AssetRepository
+import com.github.nenadjakic.investiq.data.repository.CurrencyRepository
 import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
 import com.github.nenadjakic.investiq.data.repository.TransactionRepository
 import jakarta.transaction.Transactional
@@ -22,11 +25,15 @@ import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
+import java.time.ZoneId
+import java.util.UUID
 
 @Service
 class TransactionService(
     private val stagingTransactionRepository: StagingTransactionRepository,
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
+    private val assetRepository: AssetRepository,
+    private val currencyRepository: CurrencyRepository,
 ) {
 
     @Scheduled(fixedDelayString = "PT1H")
@@ -207,5 +214,35 @@ class TransactionService(
             .map { Hibernate.unproxy(it, Transaction::class.java) }
             .map { it.toTransactionResponse() }
             .content
+    }
+
+    @Transactional
+    fun addBuyTransaction(request: BuyRequest): UUID {
+        val currency = currencyRepository.getReferenceById(request.currency!!)
+        val transactions = mutableListOf<Transaction>()
+        val buy = Buy().apply {
+            this.platform = request.platform!!
+            this.asset = assetRepository.getReferenceById(request.assetId!!)
+            this.date = request.transactionDate!!.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+            this.quantity = request.quantity!!
+            this.price = request.price!!
+            this.currency = currency
+        }
+        transactions.add(buy)
+        request.fee?.let {
+            if (it > BigDecimal.ZERO) {
+                val fee = Fee().apply {
+                    this.platform = request.platform!!
+                    this.date = request.transactionDate!!.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+                    this.amount = it
+                    this.currency = currency
+                    this.relatedTransaction = buy
+                }
+                transactions.add(fee)
+            }
+        }
+
+        transactionRepository.saveAll(transactions)
+        return buy.id!!
     }
 }

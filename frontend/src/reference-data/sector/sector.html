@@ -1,0 +1,47 @@
+<div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+  <div class="flex items-center justify-between gap-4 px-5 pt-5">
+    <div class="shrink-0">
+      <h2 class="text-lg font-semibold text-gray-900">Sectors</h2>
+      <p class="text-sm text-gray-500">Top-level grouping.</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <input
+        type="text"
+        placeholder="Search sectors..."
+        class="w-48 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        [value]="sectorsSearchTerm()"
+        (input)="onSectorsSearch($event)"
+      />
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          type="button"
+          class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed cursor-pointer"
+          (click)="prevSectorsPage()"
+          [disabled]="!canGoToPrevSectorsPage"
+        >
+          Previous
+        </button>
+        <span class="text-sm font-semibold text-gray-500">{{ sectorsCurrentPage() }} / {{ totalSectorsPages }}</span>
+        <button
+          type="button"
+          class="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed cursor-pointer"
+          (click)="nextSectorsPage()"
+          [disabled]="!canGoToNextSectorsPage"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 divide-y divide-gray-100">
+    @for (sector of paginatedSectors; track $index) {
+    <div class="px-5 py-3 flex items-start justify-between">
+      <div>
+        <div class="text-sm font-semibold text-gray-900">{{ sector.name }}</div>
+        <div class="text-xs text-gray-500">Industries: {{ sector.industries?.length || 0 }}</div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

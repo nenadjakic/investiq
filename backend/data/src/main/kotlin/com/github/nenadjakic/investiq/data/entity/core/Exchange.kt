@@ -26,7 +26,7 @@ data class Exchange(
      */
     @Id
     @Column(name = "id", nullable = false)
-    var id: UUID?,
+    var id: UUID? = null,
 
     /**
      * ISO 10383 Market Identifier Code (MIC), e.g., "XFRA".

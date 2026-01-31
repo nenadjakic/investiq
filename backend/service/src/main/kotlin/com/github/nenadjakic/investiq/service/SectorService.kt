@@ -1,6 +1,6 @@
 package com.github.nenadjakic.investiq.service
 
-import com.github.nenadjakic.investiq.common.dto.IndustrySimpleResponse
+import com.github.nenadjakic.investiq.common.dto.industry.IndustrySimpleResponse
 import com.github.nenadjakic.investiq.common.dto.SectorResponse
 import com.github.nenadjakic.investiq.data.repository.SectorRepository
 import org.springframework.stereotype.Service

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import java.util.UUID
 
@@ -42,4 +43,11 @@ data class Industry (
     @ManyToOne(optional = false)
     @JoinColumn(name = "sector_id", nullable = false)
     val sector: Sector,
-)
+) {
+    @PrePersist
+    fun prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID()
+        }
+    }
+}
