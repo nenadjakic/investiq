@@ -15,6 +15,7 @@ export * from './currency-response';
 export * from './currency-simple-response';
 export * from './currency-value-response';
 export * from './dividend-cost-yield-response';
+export * from './exchange-add-request';
 export * from './exchange-response';
 export * from './industry-add-request';
 export * from './industry-response';
