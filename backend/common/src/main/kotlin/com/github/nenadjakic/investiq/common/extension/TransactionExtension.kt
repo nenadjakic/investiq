@@ -1,7 +1,7 @@
 package com.github.nenadjakic.investiq.common.extension
 
 import com.github.nenadjakic.investiq.common.dto.transaction.TransactionResponse
-import com.github.nenadjakic.investiq.common.dto.toAssetResponse
+import com.github.nenadjakic.investiq.common.dto.asset.toAssetResponse
 import com.github.nenadjakic.investiq.common.dto.toResponse
 import com.github.nenadjakic.investiq.data.entity.transaction.*
 

@@ -13,7 +13,7 @@ import com.github.nenadjakic.investiq.common.dto.MonthlyDividendResponse
 import com.github.nenadjakic.investiq.common.dto.CountryValueResponse
 import com.github.nenadjakic.investiq.common.dto.CurrencyValueResponse
 import com.github.nenadjakic.investiq.common.dto.AssetHoldingResponse
-import com.github.nenadjakic.investiq.common.dto.AssetSimpleResponse
+import com.github.nenadjakic.investiq.common.dto.asset.AssetSimpleResponse
 import com.github.nenadjakic.investiq.common.dto.PerformerResponse
 import com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse
 import com.github.nenadjakic.investiq.common.dto.AssetDividendCostYieldResponse

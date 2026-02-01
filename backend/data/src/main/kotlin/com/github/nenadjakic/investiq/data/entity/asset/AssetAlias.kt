@@ -8,6 +8,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import java.util.UUID
@@ -54,4 +55,11 @@ data class AssetAlias(
     @ManyToOne
     @JoinColumn(name = "asset_id", nullable = false)
     val asset: Asset,
-)
+) {
+    @PrePersist
+    fun prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID()
+        }
+    }
+}

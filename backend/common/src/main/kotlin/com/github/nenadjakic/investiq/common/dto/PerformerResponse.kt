@@ -1,5 +1,6 @@
 package com.github.nenadjakic.investiq.common.dto
 
+import com.github.nenadjakic.investiq.common.dto.asset.AssetSimpleResponse
 import java.math.BigDecimal
 
 data class TopBottomPerformersResponse(
