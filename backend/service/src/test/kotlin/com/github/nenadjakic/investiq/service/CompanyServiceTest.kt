@@ -6,6 +6,8 @@ import com.github.nenadjakic.investiq.data.entity.core.Country
 import com.github.nenadjakic.investiq.data.entity.core.Industry
 import com.github.nenadjakic.investiq.data.entity.core.Sector
 import com.github.nenadjakic.investiq.data.repository.CompanyRepository
+import com.github.nenadjakic.investiq.data.repository.CountryRepository
+import com.github.nenadjakic.investiq.data.repository.IndustryRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,11 +24,17 @@ class CompanyServiceTest {
     @Mock
     private lateinit var companyRepository: CompanyRepository
 
+    @Mock
+    private lateinit var countryRepository: CountryRepository
+
+    @Mock
+    private lateinit var industryRepository: IndustryRepository
+
     private lateinit var companyService: CompanyService
 
     @BeforeEach
     fun setUp() {
-        companyService = CompanyService(companyRepository)
+        companyService = CompanyService(companyRepository, countryRepository, industryRepository)
     }
 
     @Test
