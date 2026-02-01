@@ -3,6 +3,7 @@ package com.github.nenadjakic.investiq.service
 import com.github.nenadjakic.investiq.data.entity.core.Continent
 import com.github.nenadjakic.investiq.data.entity.core.Country
 import com.github.nenadjakic.investiq.data.entity.core.Exchange
+import com.github.nenadjakic.investiq.data.repository.CountryRepository
 import com.github.nenadjakic.investiq.data.repository.ExchangeRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -20,11 +21,14 @@ class ExchangeServiceTest {
     @Mock
     private lateinit var exchangeRepository: ExchangeRepository
 
+    @Mock
+    private lateinit var countryRepository: CountryRepository
+
     private lateinit var exchangeService: ExchangeService
 
     @BeforeEach
     fun setUp() {
-        exchangeService = ExchangeService(exchangeRepository)
+        exchangeService = ExchangeService(exchangeRepository, countryRepository)
     }
 
     @Test
