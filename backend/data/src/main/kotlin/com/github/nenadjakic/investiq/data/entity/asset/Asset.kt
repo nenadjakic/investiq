@@ -15,6 +15,7 @@ import jakarta.persistence.InheritanceType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
+import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import java.util.UUID
@@ -69,4 +70,11 @@ abstract class Asset {
 
     @OneToMany(mappedBy = "asset", cascade = [CascadeType.ALL])
     val aliases: MutableSet<AssetAlias> = mutableSetOf()
+
+    @PrePersist
+    fun prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID()
+        }
+    }
 }

@@ -8,7 +8,9 @@ import com.github.nenadjakic.investiq.data.repository.CompanyRepository
 import com.github.nenadjakic.investiq.data.repository.CountryRepository
 import com.github.nenadjakic.investiq.data.repository.IndustryRepository
 import jakarta.transaction.Transactional
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class CompanyService(
@@ -30,4 +32,7 @@ class CompanyService(
             return companyRepository.save(it).toCompanyResponse()
         }
     }
+
+    fun findById(id: UUID): CompanyResponse? =
+        companyRepository.findByIdOrNull(id)?.toCompanyResponse()
 }

@@ -11,11 +11,13 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.util.UUID
 
 @Tag(name = "Company Controller", description = "Endpoints for managing companies")
 @RestController
@@ -39,6 +41,26 @@ class CompanyController(
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findAll(): ResponseEntity<List<CompanyResponse>> =
         ResponseEntity.ok(companyService.findAll())
+
+    @Operation(
+        summary = "Find company by ID",
+        description = "Returns a company by its ID",
+        operationId = "findCompanyById",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Company found"
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Company not found"
+            )
+        ]
+    )
+    @GetMapping(value = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun findById(@PathVariable id: UUID): ResponseEntity<CompanyResponse> {
+        return ResponseEntity.ofNullable(companyService.findById(id))
+    }
 
     @Operation(
         summary = "Create a new company",

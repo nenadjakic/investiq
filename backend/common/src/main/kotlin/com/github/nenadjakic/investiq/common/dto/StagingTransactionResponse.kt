@@ -1,5 +1,7 @@
 package com.github.nenadjakic.investiq.common.dto
 
+import com.github.nenadjakic.investiq.common.dto.asset.AssetResponse
+import com.github.nenadjakic.investiq.common.dto.asset.toAssetResponse
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.StagingTransaction
 import com.github.nenadjakic.investiq.data.enum.Platform
