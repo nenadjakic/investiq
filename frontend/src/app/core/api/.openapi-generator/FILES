@@ -18,6 +18,7 @@ encoder.ts
 git_push.sh
 index.ts
 model/active-position-response.ts
+model/asset-add-request.ts
 model/asset-alias-response.ts
 model/asset-dividend-cost-yield-response.ts
 model/asset-holding-response.ts

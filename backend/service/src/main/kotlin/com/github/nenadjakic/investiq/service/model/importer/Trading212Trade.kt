@@ -26,7 +26,7 @@ data class Trading212Trade(
     val pricePerShare: Double,
     val currencyPricePerShare: String,
     val exchangeRate: Double,
-    val currencyResult: String,
+    val currencyResult: String?,
     val total: Double,
     val currencyTotal: String,
     val withholdingTax: Double,
