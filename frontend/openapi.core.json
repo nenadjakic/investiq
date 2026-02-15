@@ -272,6 +272,118 @@
         }
       }
     },
+    "/transaction/withdrawal": {
+      "post": {
+        "tags": [
+          "Transaction Controller"
+        ],
+        "summary": "Add a withdrawal transaction",
+        "description": "Creates a new withdrawal transaction and returns the location of the created resource",
+        "operationId": "addWithdrawalTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Withdrawal transaction created"
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      }
+    },
+    "/transaction/sell": {
+      "post": {
+        "tags": [
+          "Transaction Controller"
+        ],
+        "summary": "Add a sell transaction",
+        "description": "Creates a new sell transaction and returns the location of the created resource",
+        "operationId": "addSellTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SellRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Sell transaction created"
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      }
+    },
+    "/transaction/dividend": {
+      "post": {
+        "tags": [
+          "Transaction Controller"
+        ],
+        "summary": "Add a dividend transaction",
+        "description": "Creates a new dividend transaction and returns the location of the created resource",
+        "operationId": "addDividendTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DividendRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Dividend transaction created"
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      }
+    },
+    "/transaction/deposit": {
+      "post": {
+        "tags": [
+          "Transaction Controller"
+        ],
+        "summary": "Add a deposit transaction",
+        "description": "Creates a new deposit transaction and returns the location of the created resource",
+        "operationId": "addDepositTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Deposit transaction created"
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      }
+    },
     "/transaction/copy": {
       "post": {
         "tags": [
@@ -1702,6 +1814,147 @@
           "asset",
           "id"
         ]
+      },
+      "WithdrawalRequest": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "fee": {
+            "type": "number"
+          }
+        }
+      },
+      "SellRequest": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "assetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "price": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "fee": {
+            "type": "number"
+          }
+        }
+      },
+      "DividendRequest": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "assetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "grossAmount": {
+            "type": "number"
+          },
+          "taxAmount": {
+            "type": "number"
+          },
+          "taxPercentage": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "netAmount": {
+            "type": "number"
+          }
+        }
+      },
+      "DepositRequest": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "TRADING212",
+              "ETORO",
+              "IBKR",
+              "REVOLUT"
+            ]
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "fee": {
+            "type": "number"
+          }
+        }
       },
       "BuyRequest": {
         "type": "object",

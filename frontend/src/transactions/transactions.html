@@ -1,4 +1,13 @@
 <div class="px-6 py-8 lg:px-10 space-y-8">
+  <!-- Add Transaction Button -->
+  <div class="flex justify-end">
+    <button
+      (click)="openAddModal()"
+      class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+    >
+      Add Transaction
+    </button>
+  </div>
   
   <!-- Loading state -->
   @if (loading()) {
@@ -138,3 +147,8 @@
     </div>
   }
 </div>
+
+<!-- Add Transaction Modal -->
+<app-add-transaction-modal
+  (transactionCreated)="onTransactionCreated()"
+></app-add-transaction-modal>
