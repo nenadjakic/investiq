@@ -1,0 +1,337 @@
+<!-- Add Asset Modal -->
+@if (isOpen()) {
+<div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+	<div class="bg-white rounded-lg shadow-lg max-w-3xl w-full">
+		<div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+			<h2 class="text-lg font-semibold text-gray-900">Add New Asset</h2>
+			<button
+				type="button"
+				(click)="closeModal()"
+				class="text-gray-400 hover:text-gray-600"
+			>
+				<span class="text-2xl">×</span>
+			</button>
+		</div>
+
+		<div class="px-6 py-4 grid grid-cols-2 gap-6">
+			<!-- Left column: Required fields -->
+			<div class="space-y-4">
+				<!-- Asset Type -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Asset Type *</label>
+					<select
+						[value]="newAsset().assetType"
+						(change)="updateAssetField('assetType', $any($event.target).value)"
+						(blur)="onFieldBlur('assetType')"
+						[disabled]="addFormLoading()"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['assetType'] && formErrors()['assetType']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					>
+						<option value="STOCK">Stock</option>
+						<option value="ETF">ETF</option>
+						<option value="INDEX">Index</option>
+					</select>
+					@if (formTouched()['assetType'] && formErrors()['assetType']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['assetType'] }}</span>
+					}
+				</div>
+
+			<!-- Fields specific to STOCK type -->
+			@if (newAsset().assetType === 'STOCK') {
+				<!-- Symbol -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Symbol *</label>
+					<input
+						type="text"
+						[value]="newAsset().symbol"
+						(input)="updateAssetField('symbol', $any($event.target).value)"
+						(blur)="onFieldBlur('symbol')"
+						[disabled]="addFormLoading()"
+						placeholder="e.g., AAPL"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['symbol'] && formErrors()['symbol']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					/>
+					@if (formTouched()['symbol'] && formErrors()['symbol']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['symbol'] }}</span>
+					}
+				</div>
+
+				<!-- Name -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Name *</label>
+					<input
+						type="text"
+						[value]="newAsset().name"
+						(input)="updateAssetField('name', $any($event.target).value)"
+						(blur)="onFieldBlur('name')"
+						[disabled]="addFormLoading()"
+						placeholder="e.g., Apple Inc."
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['name'] && formErrors()['name']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					/>
+					@if (formTouched()['name'] && formErrors()['name']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['name'] }}</span>
+					}
+				</div>
+
+				<!-- Company ID -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Company *</label>
+					<select
+						[value]="newAsset().companyId"
+						(change)="updateAssetField('companyId', $any($event.target).value)"
+						(blur)="onFieldBlur('companyId')"
+						[disabled]="addFormLoading() || loadingRefData()"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['companyId'] && formErrors()['companyId']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					>
+						<option value="">-- Select Company --</option>
+						@for (company of companies(); track company.id) {
+						<option [value]="company.id || ''">{{ company.name }}</option>
+						}
+					</select>
+					@if (formTouched()['companyId'] && formErrors()['companyId']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['companyId'] }}</span>
+					}
+				</div>
+
+				<!-- Currency Code -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Currency Code *</label>
+					<select
+						[value]="newAsset().currencyCode"
+						(change)="updateAssetField('currencyCode', $any($event.target).value)"
+						(blur)="onFieldBlur('currencyCode')"
+						[disabled]="addFormLoading() || loadingRefData()"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['currencyCode'] && formErrors()['currencyCode']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					>
+						<option value="">-- Select Currency --</option>
+						@for (currency of currencies(); track currency.code) {
+						<option [value]="currency.code || ''">{{ currency.code }} - {{ currency.name }}</option>
+						}
+					</select>
+					@if (formTouched()['currencyCode'] && formErrors()['currencyCode']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['currencyCode'] }}</span>
+					}
+				</div>
+
+				<!-- Exchange ID -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Exchange *</label>
+					<select
+						[value]="newAsset().exchangeId"
+						(change)="updateAssetField('exchangeId', $any($event.target).value)"
+						(blur)="onFieldBlur('exchangeId')"
+						[disabled]="addFormLoading() || loadingRefData()"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['exchangeId'] && formErrors()['exchangeId']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					>
+						<option value="">-- Select Exchange --</option>
+						@for (exchange of exchanges(); track exchange.id) {
+						<option [value]="exchange.id || ''">{{ exchange.name }} ({{ exchange.mic }})</option>
+						}
+					</select>
+					@if (formTouched()['exchangeId'] && formErrors()['exchangeId']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['exchangeId'] }}</span>
+					}
+				</div>
+			}
+
+			<!-- Fields specific to ETF type -->
+			@if (newAsset().assetType === 'ETF') {
+				<!-- Symbol -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Symbol *</label>
+					<input
+						type="text"
+						[value]="newAsset().symbol"
+						(input)="updateAssetField('symbol', $any($event.target).value)"
+						(blur)="onFieldBlur('symbol')"
+						[disabled]="addFormLoading()"
+						placeholder="e.g., SPY"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['symbol'] && formErrors()['symbol']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					/>
+					@if (formTouched()['symbol'] && formErrors()['symbol']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['symbol'] }}</span>
+					}
+				</div>
+
+				<!-- Name -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Name *</label>
+					<input
+						type="text"
+						[value]="newAsset().name"
+						(input)="updateAssetField('name', $any($event.target).value)"
+						(blur)="onFieldBlur('name')"
+						[disabled]="addFormLoading()"
+						placeholder="e.g., SPDR S&P 500 ETF"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['name'] && formErrors()['name']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					/>
+					@if (formTouched()['name'] && formErrors()['name']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['name'] }}</span>
+					}
+				</div>
+
+				<!-- Fund Manager -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Fund Manager</label>
+					<input
+						type="text"
+						[value]="newAsset().fundManager"
+						(input)="updateAssetField('fundManager', $any($event.target).value)"
+						[disabled]="addFormLoading()"
+						placeholder="Fund Manager (optional)"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					/>
+				</div>
+
+				<!-- Asset Class -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Asset Class</label>
+					<select
+						[value]="newAsset().assetClass"
+						(change)="updateAssetField('assetClass', $any($event.target).value)"
+						[disabled]="addFormLoading()"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					>
+						<option value="EQUITY">Equity</option>
+						<option value="BOND">Bond</option>
+						<option value="COMMODITY">Commodity</option>
+						<option value="MIXED">Mixed</option>
+					</select>
+				</div>
+
+				<!-- Currency Code -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Currency Code *</label>
+					<select
+						[value]="newAsset().currencyCode"
+						(change)="updateAssetField('currencyCode', $any($event.target).value)"
+						(blur)="onFieldBlur('currencyCode')"
+						[disabled]="addFormLoading() || loadingRefData()"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['currencyCode'] && formErrors()['currencyCode']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					>
+						<option value="">-- Select Currency --</option>
+						@for (currency of currencies(); track currency.code) {
+						<option [value]="currency.code || ''">{{ currency.code }} - {{ currency.name }}</option>
+						}
+					</select>
+					@if (formTouched()['currencyCode'] && formErrors()['currencyCode']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['currencyCode'] }}</span>
+					}
+				</div>
+			}
+
+			<!-- Fields specific to INDEX type -->
+			@if (newAsset().assetType === 'INDEX') {
+				<!-- Symbol -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Symbol *</label>
+					<input
+						type="text"
+						[value]="newAsset().symbol"
+						(input)="updateAssetField('symbol', $any($event.target).value)"
+						(blur)="onFieldBlur('symbol')"
+						[disabled]="addFormLoading()"
+						placeholder="e.g., SPX"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['symbol'] && formErrors()['symbol']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					/>
+					@if (formTouched()['symbol'] && formErrors()['symbol']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['symbol'] }}</span>
+					}
+				</div>
+
+				<!-- Name -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Name *</label>
+					<input
+						type="text"
+						[value]="newAsset().name"
+						(input)="updateAssetField('name', $any($event.target).value)"
+						(blur)="onFieldBlur('name')"
+						[disabled]="addFormLoading()"
+						placeholder="e.g., S&P 500"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['name'] && formErrors()['name']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					/>
+					@if (formTouched()['name'] && formErrors()['name']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['name'] }}</span>
+					}
+				</div>
+
+				<!-- Currency Code -->
+				<div class="flex flex-col gap-1">
+					<label class="text-sm font-medium text-gray-700">Currency Code *</label>
+					<select
+						[value]="newAsset().currencyCode"
+						(change)="updateAssetField('currencyCode', $any($event.target).value)"
+						(blur)="onFieldBlur('currencyCode')"
+						[disabled]="addFormLoading() || loadingRefData()"
+						[ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['currencyCode'] && formErrors()['currencyCode']}"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+					>
+						<option value="">-- Select Currency --</option>
+						@for (currency of currencies(); track currency.code) {
+						<option [value]="currency.code || ''">{{ currency.code }} - {{ currency.name }}</option>
+						}
+					</select>
+					@if (formTouched()['currencyCode'] && formErrors()['currencyCode']) {
+					<span class="text-xs text-red-500 font-medium">{{ formErrors()['currencyCode'] }}</span>
+					}
+				</div>
+			}
+
+			</div>
+
+			<!-- Right column: Aliases -->
+			<div>
+				<details class="rounded-lg border border-blue-200 bg-blue-50 p-4" open>
+					<summary class="cursor-pointer font-medium text-blue-900 hover:text-blue-700 flex items-center gap-2">
+						<span>📌 Aliases by Platform (optional)</span>
+					</summary>
+					<div class="space-y-3 mt-4 pt-4 border-t border-blue-200">
+						@for (platform of platforms; track platform) {
+						<div class="flex flex-col gap-1">
+							<label class="text-xs font-semibold text-blue-800">{{ platform }}</label>
+							<input
+								type="text"
+								[value]="newAsset().aliases?.[platform] || ''"
+								(input)="updateAssetAlias(platform, $any($event.target).value)"
+								[disabled]="addFormLoading()"
+								placeholder="Enter alias"
+								class="w-full rounded-lg border border-blue-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+							/>
+						</div>
+						}
+					</div>
+				</details>
+			</div>
+		</div>
+
+		<div class="px-6 py-4 border-t border-gray-200 flex gap-3 justify-end">
+			<button
+				type="button"
+				(click)="closeModal()"
+				[disabled]="addFormLoading()"
+				class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 text-sm font-medium"
+			>
+				Cancel
+			</button>
+			<button
+				type="button"
+				(click)="submitAddAsset()"
+				[disabled]="addFormLoading() || !isFormValid()"
+				class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+			>
+				{{ addFormLoading() ? 'Creating...' : 'Add Asset' }}
+			</button>
+		</div>
+	</div>
+</div>
+}
