@@ -1,4 +1,5 @@
 export * from './active-position-response';
+export * from './asset-add-request';
 export * from './asset-alias-response';
 export * from './asset-dividend-cost-yield-response';
 export * from './asset-holding-response';
