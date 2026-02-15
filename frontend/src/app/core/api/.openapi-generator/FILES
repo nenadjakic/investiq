@@ -34,7 +34,9 @@ model/country-value-response.ts
 model/currency-response.ts
 model/currency-simple-response.ts
 model/currency-value-response.ts
+model/deposit-request.ts
 model/dividend-cost-yield-response.ts
+model/dividend-request.ts
 model/exchange-add-request.ts
 model/exchange-response.ts
 model/industry-add-request.ts
@@ -57,12 +59,14 @@ model/portfolio-performance-response.ts
 model/portfolio-summary-response.ts
 model/sector-response.ts
 model/sector-simple-response.ts
+model/sell-request.ts
 model/sort-object.ts
 model/staging-transaction-edit-request.ts
 model/staging-transaction-response.ts
 model/top-bottom-performers-response.ts
 model/total-dividend-cost-yield-response.ts
 model/transaction-response.ts
+model/withdrawal-request.ts
 param.ts
 provide-api.ts
 variables.ts

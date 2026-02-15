@@ -1,0 +1,354 @@
+<!-- Add Transaction Modal -->
+@if (isOpen()) {
+  <div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Add New Transaction</h2>
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="text-gray-400 hover:text-gray-600"
+        >
+          <span class="text-2xl">×</span>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-6">
+        <!-- Transaction Type Selection -->
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Transaction Type *</label>
+          <div class="flex gap-2 flex-wrap">
+            @for (type of ['BUY', 'SELL', 'DEPOSIT', 'WITHDRAWAL', 'DIVIDEND']; track type) {
+              <button
+                type="button"
+                (click)="selectTransactionType(type)"
+                [ngClass]="{'bg-blue-600 text-white': transactionType() === type, 'bg-gray-100 text-gray-700 hover:bg-gray-200': transactionType() !== type}"
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                [disabled]="addFormLoading()"
+              >
+                {{ type }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Base Fields (Common to all transaction types) -->
+        <div class="grid grid-cols-2 gap-4">
+          <!-- Transaction Date -->
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-gray-700">Date *</label>
+            <input
+              type="date"
+              [value]="baseFormData().transactionDate"
+              (change)="updateBaseField('transactionDate', $any($event.target).value)"
+              (blur)="onFieldBlur('transactionDate')"
+              [disabled]="addFormLoading()"
+              [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['transactionDate'] && formErrors()['transactionDate']}"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+            />
+            @if (formTouched()['transactionDate'] && formErrors()['transactionDate']) {
+              <span class="text-xs text-red-500 font-medium">{{ formErrors()['transactionDate'] }}</span>
+            }
+          </div>
+
+          <!-- Platform -->
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-gray-700">Platform *</label>
+            <select
+              [value]="baseFormData().platform"
+              (change)="updateBaseField('platform', $any($event.target).value)"
+              (blur)="onFieldBlur('platform')"
+              [disabled]="addFormLoading()"
+              [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['platform'] && formErrors()['platform']}"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+            >
+              @for (platform of platforms; track platform) {
+                <option [value]="platform">{{ platform }}</option>
+              }
+            </select>
+            @if (formTouched()['platform'] && formErrors()['platform']) {
+              <span class="text-xs text-red-500 font-medium">{{ formErrors()['platform'] }}</span>
+            }
+          </div>
+
+          <!-- Currency -->
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-gray-700">Currency *</label>
+            <select
+              [value]="baseFormData().currency"
+              (change)="updateBaseField('currency', $any($event.target).value)"
+              (blur)="onFieldBlur('currency')"
+              [disabled]="addFormLoading() || loadingRefData()"
+              [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['currency'] && formErrors()['currency']}"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+            >
+              @for (currency of currencies(); track currency.code) {
+                <option [value]="currency.code || ''">{{ currency.code }}</option>
+              }
+            </select>
+            @if (formTouched()['currency'] && formErrors()['currency']) {
+              <span class="text-xs text-red-500 font-medium">{{ formErrors()['currency'] }}</span>
+            }
+          </div>
+
+          <!-- Transaction ID (Optional) -->
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-gray-700">Transaction ID</label>
+            <input
+              type="text"
+              [value]="baseFormData().transactionId"
+              (input)="updateBaseField('transactionId', $any($event.target).value)"
+              [disabled]="addFormLoading()"
+              placeholder="Optional"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+            />
+          </div>
+        </div>
+
+        <!-- Type-Specific Fields -->
+
+        <!-- BUY/SELL Transaction Fields -->
+        @if (transactionType() === 'BUY' || transactionType() === 'SELL') {
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+            <!-- Asset -->
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">Asset *</label>
+              <select
+                [value]="(transactionType() === 'BUY' ? buyFormData() : sellFormData()).assetId"
+                (change)="transactionType() === 'BUY' ? updateBuyField('assetId', $any($event.target).value) : updateSellField('assetId', $any($event.target).value)"
+                (blur)="onFieldBlur('assetId')"
+                [disabled]="addFormLoading() || loadingRefData()"
+                [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['assetId'] && formErrors()['assetId']}"
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+              >
+                <option value="">-- Select Asset --</option>
+                @for (asset of assets(); track asset.id) {
+                  <option [value]="asset.id || ''">{{ asset.symbol }} - {{ asset.company?.name || 'N/A' }}</option>
+                }
+              </select>
+              @if (formTouched()['assetId'] && formErrors()['assetId']) {
+                <span class="text-xs text-red-500 font-medium">{{ formErrors()['assetId'] }}</span>
+              }
+            </div>
+
+            <!-- Quantity -->
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">Quantity *</label>
+              <input
+                type="number"
+                step="0.00000001"
+                [value]="(transactionType() === 'BUY' ? buyFormData() : sellFormData()).quantity"
+                (input)="transactionType() === 'BUY' ? updateBuyField('quantity', $any($event.target).value) : updateSellField('quantity', $any($event.target).value)"
+                (blur)="onFieldBlur('quantity')"
+                [disabled]="addFormLoading()"
+                placeholder="0"
+                [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['quantity'] && formErrors()['quantity']}"
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+              />
+              @if (formTouched()['quantity'] && formErrors()['quantity']) {
+                <span class="text-xs text-red-500 font-medium">{{ formErrors()['quantity'] }}</span>
+              }
+            </div>
+
+            <!-- Price -->
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">Price *</label>
+              <input
+                type="number"
+                step="0.000001"
+                [value]="(transactionType() === 'BUY' ? buyFormData() : sellFormData()).price"
+                (input)="transactionType() === 'BUY' ? updateBuyField('price', $any($event.target).value) : updateSellField('price', $any($event.target).value)"
+                (blur)="onFieldBlur('price')"
+                [disabled]="addFormLoading()"
+                placeholder="0"
+                [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['price'] && formErrors()['price']}"
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+              />
+              @if (formTouched()['price'] && formErrors()['price']) {
+                <span class="text-xs text-red-500 font-medium">{{ formErrors()['price'] }}</span>
+              }
+            </div>
+
+            <!-- Fee (Optional) -->
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">Fee</label>
+              <input
+                type="number"
+                step="0.000001"
+                [value]="(transactionType() === 'BUY' ? buyFormData() : sellFormData()).fee"
+                (input)="transactionType() === 'BUY' ? updateBuyField('fee', $any($event.target).value) : updateSellField('fee', $any($event.target).value)"
+                [disabled]="addFormLoading()"
+                placeholder="0"
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+              />
+            </div>
+          </div>
+        }
+
+        <!-- DEPOSIT/WITHDRAWAL Transaction Fields -->
+        @if (transactionType() === 'DEPOSIT' || transactionType() === 'WITHDRAWAL') {
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+            <!-- Amount -->
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">Amount *</label>
+              <input
+                type="number"
+                step="0.01"
+                [value]="(transactionType() === 'DEPOSIT' ? depositFormData() : withdrawalFormData()).amount"
+                (input)="transactionType() === 'DEPOSIT' ? updateDepositField('amount', $any($event.target).value) : updateWithdrawalField('amount', $any($event.target).value)"
+                (blur)="onFieldBlur('amount')"
+                [disabled]="addFormLoading()"
+                placeholder="0"
+                [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['amount'] && formErrors()['amount']}"
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+              />
+              @if (formTouched()['amount'] && formErrors()['amount']) {
+                <span class="text-xs text-red-500 font-medium">{{ formErrors()['amount'] }}</span>
+              }
+            </div>
+
+            <!-- Fee (Optional) -->
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">Fee</label>
+              <input
+                type="number"
+                step="0.01"
+                [value]="(transactionType() === 'DEPOSIT' ? depositFormData() : withdrawalFormData()).fee"
+                (input)="transactionType() === 'DEPOSIT' ? updateDepositField('fee', $any($event.target).value) : updateWithdrawalField('fee', $any($event.target).value)"
+                [disabled]="addFormLoading()"
+                placeholder="0"
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+              />
+            </div>
+          </div>
+        }
+
+        <!-- DIVIDEND Transaction Fields -->
+        @if (transactionType() === 'DIVIDEND') {
+          <div class="space-y-4 pt-4 border-t border-gray-200">
+            <!-- Asset -->
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">Asset *</label>
+              <select
+                [value]="dividendFormData().assetId"
+                (change)="updateDividendField('assetId', $any($event.target).value)"
+                (blur)="onFieldBlur('assetId')"
+                [disabled]="addFormLoading() || loadingRefData()"
+                [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['assetId'] && formErrors()['assetId']}"
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+              >
+                <option value="">-- Select Asset --</option>
+                @for (asset of assets(); track asset.id) {
+                  <option [value]="asset.id || ''">{{ asset.symbol }} - {{ asset.company?.name || 'N/A' }}</option>
+                }
+              </select>
+              @if (formTouched()['assetId'] && formErrors()['assetId']) {
+                <span class="text-xs text-red-500 font-medium">{{ formErrors()['assetId'] }}</span>
+              }
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Gross Amount -->
+              <div class="flex flex-col gap-1">
+                <label class="text-sm font-medium text-gray-700">Gross Amount</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  [value]="dividendFormData().grossAmount"
+                  (input)="updateDividendField('grossAmount', $any($event.target).value)"
+                  (blur)="onFieldBlur('grossAmount')"
+                  [disabled]="addFormLoading()"
+                  placeholder="0"
+                  [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['grossAmount'] && formErrors()['grossAmount']}"
+                  class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+                />
+                @if (formTouched()['grossAmount'] && formErrors()['grossAmount']) {
+                  <span class="text-xs text-red-500 font-medium">{{ formErrors()['grossAmount'] }}</span>
+                }
+              </div>
+
+              <!-- Net Amount -->
+              <div class="flex flex-col gap-1">
+                <label class="text-sm font-medium text-gray-700">Net Amount</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  [value]="dividendFormData().netAmount"
+                  (input)="updateDividendField('netAmount', $any($event.target).value)"
+                  (blur)="onFieldBlur('netAmount')"
+                  [disabled]="addFormLoading()"
+                  placeholder="0"
+                  [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['netAmount'] && formErrors()['netAmount']}"
+                  class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+                />
+                @if (formTouched()['netAmount'] && formErrors()['netAmount']) {
+                  <span class="text-xs text-red-500 font-medium">{{ formErrors()['netAmount'] }}</span>
+                }
+              </div>
+
+              <!-- Tax Amount -->
+              <div class="flex flex-col gap-1">
+                <label class="text-sm font-medium text-gray-700">Tax Amount</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  [value]="dividendFormData().taxAmount"
+                  (input)="updateDividendField('taxAmount', $any($event.target).value)"
+                  (blur)="onFieldBlur('taxAmount')"
+                  [disabled]="addFormLoading()"
+                  placeholder="0"
+                  class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+                />
+              </div>
+
+              <!-- Tax Percentage -->
+              <div class="flex flex-col gap-1">
+                <label class="text-sm font-medium text-gray-700">Tax Percentage (%)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  [value]="dividendFormData().taxPercentage"
+                  (input)="updateDividendField('taxPercentage', $any($event.target).value)"
+                  (blur)="onFieldBlur('taxPercentage')"
+                  [disabled]="addFormLoading()"
+                  placeholder="0"
+                  [ngClass]="{'border-red-500 focus:ring-red-500': formTouched()['taxPercentage'] && formErrors()['taxPercentage']}"
+                  class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+                />
+                @if (formTouched()['taxPercentage'] && formErrors()['taxPercentage']) {
+                  <span class="text-xs text-red-500 font-medium">{{ formErrors()['taxPercentage'] }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 justify-end pt-4 border-t border-gray-200">
+          <button
+            type="button"
+            (click)="closeModal()"
+            [disabled]="addFormLoading()"
+            class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            (click)="submitForm()"
+            [disabled]="!isFormValid() || addFormLoading()"
+            class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            @if (addFormLoading()) {
+              <span>Adding...</span>
+            } @else {
+              <span>Add Transaction</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

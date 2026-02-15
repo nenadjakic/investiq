@@ -1,17 +1,20 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, OnInit, signal, computed } from "@angular/core";
+import { Component, inject, OnInit, signal, computed, ViewChild } from "@angular/core";
 import { PageTransactionResponse, TransactionControllerService } from "../app/core/api";
 import { ToastService } from "../shared/toast.service";
+import { AddTransactionModalComponent } from "./add-transaction-modal";
 
 @Component({
   selector: 'app-transactions',
   templateUrl: './transactions.html',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AddTransactionModalComponent],
 })
 export class Transactions implements OnInit {
     private transactionControllerService = inject(TransactionControllerService);
     private toast = inject(ToastService);
+
+    @ViewChild(AddTransactionModalComponent) addTransactionModal!: AddTransactionModalComponent;
     
     // Data
     pageData = signal<PageTransactionResponse>({});
@@ -102,5 +105,17 @@ export class Transactions implements OnInit {
         if (last >= 0 && this.currentPage() !== last) {
             this.goToPage(last);
         }
+    }
+
+    openAddModal() {
+        this.addTransactionModal.openModal();
+    }
+
+    closeAddModal() {
+        this.addTransactionModal.closeModal();
+    }
+
+    onTransactionCreated() {
+        this.loadTransactions(0);
     }
 }
