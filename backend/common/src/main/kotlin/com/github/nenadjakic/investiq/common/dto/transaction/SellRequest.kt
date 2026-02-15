@@ -8,7 +8,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class BuyRequest (
+data class SellRequest (
     val transactionId: UUID? = null,
 
     @param:NotNull(message = "Platform must not be null")
@@ -33,3 +33,4 @@ data class BuyRequest (
 
     val fee: BigDecimal? = null
 )
+

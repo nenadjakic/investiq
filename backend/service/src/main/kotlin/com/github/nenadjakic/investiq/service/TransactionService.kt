@@ -2,6 +2,10 @@ package com.github.nenadjakic.investiq.service
 
 import com.github.nenadjakic.investiq.common.dto.transaction.TransactionResponse
 import com.github.nenadjakic.investiq.common.dto.transaction.BuyRequest
+import com.github.nenadjakic.investiq.common.dto.transaction.SellRequest
+import com.github.nenadjakic.investiq.common.dto.transaction.DepositRequest
+import com.github.nenadjakic.investiq.common.dto.transaction.WithdrawalRequest
+import com.github.nenadjakic.investiq.common.dto.transaction.DividendRequest
 import com.github.nenadjakic.investiq.common.extension.toTransactionResponse
 import com.github.nenadjakic.investiq.data.entity.transaction.Buy
 import com.github.nenadjakic.investiq.data.entity.transaction.Deposit
@@ -11,6 +15,7 @@ import com.github.nenadjakic.investiq.data.entity.transaction.Fee
 import com.github.nenadjakic.investiq.data.entity.transaction.ImportStatus
 import com.github.nenadjakic.investiq.data.entity.transaction.Sell
 import com.github.nenadjakic.investiq.data.entity.transaction.Transaction
+import com.github.nenadjakic.investiq.data.entity.transaction.Withdrawal
 import com.github.nenadjakic.investiq.data.enum.TransactionType
 import com.github.nenadjakic.investiq.data.repository.AssetRepository
 import com.github.nenadjakic.investiq.data.repository.CurrencyRepository
@@ -157,7 +162,39 @@ class TransactionService(
                         }
                 }
 
-                TransactionType.WITHDRAWAL -> TODO()
+                TransactionType.WITHDRAWAL -> {
+                    val withdrawal = Withdrawal()
+                        .apply {
+                            this.platform = stagingTransaction.platform
+                            this.date = stagingTransaction.transactionDate
+                            this.tags = stagingTransaction.tags.toMutableSet()
+                            this.externalId = stagingTransaction.externalId
+                        }
+                        .also {
+                            it.amount = BigDecimal.valueOf(stagingTransaction.amount!!)
+                            it.currency = stagingTransaction.currency!!
+                        }
+                    transactions.add(withdrawal)
+                    related
+                        .filter { it.transactionType == TransactionType.FEE }
+                        .forEach { fee ->
+                            fee.importStatus = ImportStatus.IMPORTED
+                            transactions.add(
+                                Fee()
+                                    .apply {
+                                        this.platform = fee.platform
+                                        this.date = fee.transactionDate
+                                        this.tags = fee.tags.toMutableSet()
+                                        this.externalId = fee.externalId
+                                    }
+                                    .also {
+                                        it.amount = BigDecimal.valueOf(fee.amount!!)
+                                        it.relatedTransaction = withdrawal
+                                        it.currency = fee.currency!!
+                                    }
+                            )
+                        }
+                }
                 TransactionType.DIVIDEND -> {
                     val dividend = Dividend()
                         .apply {
@@ -244,5 +281,111 @@ class TransactionService(
 
         transactionRepository.saveAll(transactions)
         return buy.id!!
+    }
+
+    @Transactional
+    fun addSellTransaction(request: SellRequest): UUID {
+        val currency = currencyRepository.getReferenceById(request.currency!!)
+        val transactions = mutableListOf<Transaction>()
+        val sell = Sell().apply {
+            this.platform = request.platform!!
+            this.asset = assetRepository.getReferenceById(request.assetId!!)
+            this.date = request.transactionDate!!.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+            this.quantity = request.quantity!!
+            this.price = request.price!!
+            this.currency = currency
+        }
+        transactions.add(sell)
+        request.fee?.let {
+            if (it > BigDecimal.ZERO) {
+                val fee = Fee().apply {
+                    this.platform = request.platform!!
+                    this.date = request.transactionDate!!.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+                    this.amount = it
+                    this.currency = currency
+                    this.relatedTransaction = sell
+                }
+                transactions.add(fee)
+            }
+        }
+
+        transactionRepository.saveAll(transactions)
+        return sell.id!!
+    }
+
+    @Transactional
+    fun addDepositTransaction(request: DepositRequest): UUID {
+        val currency = currencyRepository.getReferenceById(request.currency!!)
+        val transactions = mutableListOf<Transaction>()
+        val deposit = Deposit().apply {
+            this.platform = request.platform!!
+            this.date = request.transactionDate!!.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+            this.amount = request.amount!!
+            this.currency = currency
+        }
+        transactions.add(deposit)
+        request.fee?.let {
+            if (it > BigDecimal.ZERO) {
+                val fee = Fee().apply {
+                    this.platform = request.platform!!
+                    this.date = request.transactionDate!!.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+                    this.amount = it
+                    this.currency = currency
+                    this.relatedTransaction = deposit
+                }
+                transactions.add(fee)
+            }
+        }
+
+        transactionRepository.saveAll(transactions)
+        return deposit.id!!
+    }
+
+    @Transactional
+    fun addWithdrawalTransaction(request: WithdrawalRequest): UUID {
+        val currency = currencyRepository.getReferenceById(request.currency!!)
+        val transactions = mutableListOf<Transaction>()
+        val withdrawal = Withdrawal().apply {
+            this.platform = request.platform!!
+            this.date = request.transactionDate!!.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+            this.amount = request.amount!!
+            this.currency = currency
+        }
+        transactions.add(withdrawal)
+        request.fee?.let {
+            if (it > BigDecimal.ZERO) {
+                val fee = Fee().apply {
+                    this.platform = request.platform!!
+                    this.date = request.transactionDate!!.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+                    this.amount = it
+                    this.currency = currency
+                    this.relatedTransaction = withdrawal
+                }
+                transactions.add(fee)
+            }
+        }
+
+        transactionRepository.saveAll(transactions)
+        return withdrawal.id!!
+    }
+
+    @Transactional
+    fun addDividendTransaction(request: DividendRequest): UUID {
+        val currency = currencyRepository.getReferenceById(request.currency!!)
+        val transactions = mutableListOf<Transaction>()
+        val dividend = Dividend().apply {
+            this.platform = request.platform!!
+            this.asset = assetRepository.getReferenceById(request.assetId!!)
+            this.date = request.transactionDate!!.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+            this.grossAmount = request.grossAmount!!
+            this.taxAmount = request.taxAmount!!
+            this.taxPercentage = request.taxPercentage!!
+            this.amount = request.getNetAmount()!!
+            this.currency = currency
+        }
+        transactions.add(dividend)
+
+        transactionRepository.saveAll(transactions)
+        return dividend.id!!
     }
 }
