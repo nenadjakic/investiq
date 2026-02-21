@@ -5,7 +5,10 @@ import com.github.nenadjakic.investiq.common.dto.transaction.SellRequest
 import com.github.nenadjakic.investiq.common.dto.transaction.DepositRequest
 import com.github.nenadjakic.investiq.common.dto.transaction.WithdrawalRequest
 import com.github.nenadjakic.investiq.common.dto.transaction.DividendRequest
+import com.github.nenadjakic.investiq.common.dto.transaction.TransactionFilterRequest
 import com.github.nenadjakic.investiq.common.dto.transaction.TransactionResponse
+import com.github.nenadjakic.investiq.data.enum.AssetType
+import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.service.TransactionService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -40,9 +43,10 @@ class TransactionController(
     )
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findAll(
+        @ParameterObject @ModelAttribute filter: TransactionFilterRequest,
         @ParameterObject @PageableDefault(size = 50, sort = ["date"], direction = Sort.Direction.DESC) pageable: Pageable
     ): ResponseEntity<Page<TransactionResponse>> {
-        return ResponseEntity.ok(transactionService.findAll(pageable))
+        return ResponseEntity.ok(transactionService.findAll(filter, pageable))
     }
 
     @Operation(

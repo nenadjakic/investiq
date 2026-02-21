@@ -6,7 +6,9 @@ import com.github.nenadjakic.investiq.common.dto.transaction.SellRequest
 import com.github.nenadjakic.investiq.common.dto.transaction.DepositRequest
 import com.github.nenadjakic.investiq.common.dto.transaction.WithdrawalRequest
 import com.github.nenadjakic.investiq.common.dto.transaction.DividendRequest
+import com.github.nenadjakic.investiq.common.dto.transaction.TransactionFilterRequest
 import com.github.nenadjakic.investiq.common.extension.toTransactionResponse
+import com.github.nenadjakic.investiq.data.entity.transaction.AssetTransaction
 import com.github.nenadjakic.investiq.data.entity.transaction.Buy
 import com.github.nenadjakic.investiq.data.entity.transaction.Deposit
 import com.github.nenadjakic.investiq.data.entity.transaction.Dividend
@@ -21,12 +23,15 @@ import com.github.nenadjakic.investiq.data.repository.AssetRepository
 import com.github.nenadjakic.investiq.data.repository.CurrencyRepository
 import com.github.nenadjakic.investiq.data.repository.StagingTransactionRepository
 import com.github.nenadjakic.investiq.data.repository.TransactionRepository
+import jakarta.persistence.criteria.Join
+import jakarta.persistence.criteria.JoinType
 import jakarta.transaction.Transactional
 import org.hibernate.Hibernate
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -237,9 +242,11 @@ class TransactionService(
 
     @Transactional
     fun findAll(
+        transactionFilterRequest: TransactionFilterRequest,
         pageable: Pageable
     ): Page<TransactionResponse> {
-        return transactionRepository.findAll(pageable)
+
+        return transactionRepository.findAll(getSpecification(transactionFilterRequest),  pageable)
             .map { Hibernate.unproxy(it, Transaction::class.java) }
             .map { it.toTransactionResponse() }
     }
@@ -387,5 +394,70 @@ class TransactionService(
 
         transactionRepository.saveAll(transactions)
         return dividend.id!!
+    }
+
+    private fun getSpecification(request: TransactionFilterRequest): Specification<Transaction> {
+        return Specification<Transaction> { root, query, criteriaBuilder ->
+            var predicate = criteriaBuilder.conjunction()
+
+            val assetJoin: Join<*, *>? = if (request.assetType != null || request.assetSymbol != null) {
+                criteriaBuilder.treat(root, AssetTransaction::class.java)
+                    .join<AssetTransaction, Any>("asset", JoinType.LEFT)
+            } else null
+
+            if (request.platform != null) {
+                predicate = criteriaBuilder.and(
+                    predicate,
+                    criteriaBuilder.equal(root.get<String>("platform"), request.platform)
+                )
+            }
+
+            if (request.transactionType != null) {
+                predicate = criteriaBuilder.and(
+                    predicate,
+                    criteriaBuilder.equal(root.get<String>("transactionType"), request.transactionType)
+                )
+            }
+
+            if (request.assetType != null) {
+                predicate = criteriaBuilder.and(
+                    predicate,
+                    criteriaBuilder.equal(assetJoin!!.get<String>("assetType"), request.assetType)
+                )
+            }
+
+            if (request.assetSymbol != null) {
+                predicate = criteriaBuilder.and(
+                    predicate,
+                    criteriaBuilder.like(
+                        criteriaBuilder.lower(assetJoin!!.get<String>("symbol")),
+                        "${request.assetSymbol!!.lowercase()}%"
+                    )
+                )
+            }
+
+            if (request.currency != null) {
+                predicate = criteriaBuilder.and(
+                    predicate,
+                    criteriaBuilder.equal(root.get<String>("code"), request.currency)
+                )
+            }
+
+            if (request.dateFrom != null) {
+                predicate = criteriaBuilder.and(
+                    predicate,
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("date"), request.dateFrom)
+                )
+            }
+
+            if (request.dateTo != null) {
+                predicate = criteriaBuilder.and(
+                    predicate,
+                    criteriaBuilder.lessThanOrEqualTo(root.get("date"), request.dateTo)
+                )
+            }
+
+            predicate
+        }
     }
 }
