@@ -706,6 +706,85 @@
         "operationId": "findAllTransactions",
         "parameters": [
           {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          },
+          {
+            "name": "transactionType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "BUY",
+                "FEE",
+                "SELL",
+                "DEPOSIT",
+                "WITHDRAWAL",
+                "DIVIDEND",
+                "DIVIDEND_ADJUSTMENT",
+                "UNKNOWN"
+              ]
+            }
+          },
+          {
+            "name": "assetType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "STOCK",
+                "ETF",
+                "INDEX"
+              ]
+            }
+          },
+          {
+            "name": "assetSymbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "description": "Zero-based page index (0..N)",
