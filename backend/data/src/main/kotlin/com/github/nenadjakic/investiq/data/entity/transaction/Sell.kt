@@ -19,30 +19,4 @@ import java.math.BigDecimal
 
 @Entity
 @DiscriminatorValue("SELL")
-class Sell: Transaction() {
-
-    /**
-     * Asset related to this transaction.
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "asset_id", nullable = false)
-    lateinit var asset: Asset
-
-    /**
-     * Quantity involved in this transaction.
-     */
-    @Column(precision = 20, scale = 12)
-    lateinit var quantity: BigDecimal
-
-    /**
-     * Price per unit for transactions where it makes sense (buy/sell).
-     */
-    @Column(precision = 20, scale = 8)
-    lateinit var price: BigDecimal
-
-    /**
-     * Total value of the sell transaction.
-     */
-    val amount: BigDecimal
-        get() = quantity * price
-}
+class Sell: TradingTransaction()

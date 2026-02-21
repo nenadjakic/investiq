@@ -18,14 +18,7 @@ import java.math.BigDecimal
 
 @Entity
 @DiscriminatorValue("DIVIDEND")
-class Dividend: Transaction() {
-
-    /**
-     * Asset related to this transaction.
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "asset_id", nullable = false)
-    lateinit var asset: Asset
+class Dividend: AssetTransaction() {
 
     /**
      * Total monetary amount related to this transaction.
