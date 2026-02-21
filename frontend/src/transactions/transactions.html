@@ -66,7 +66,7 @@
               <td class="px-5 py-3 text-start">
                 @if (transaction.asset){
                   <div class="text-sm font-semibold">{{ transaction.asset.symbol }} / {{ transaction.asset.exchange?.symbol }}</div>
-                  <div class="text-sm text-gray-600">{{ transaction.asset.company?.name }}</div>
+                  <div class="text-sm text-gray-600">{{ transaction.asset.name }}</div>
                 }
               </td>
               <td class="px-5 py-3 text-start text-sm">{{ transaction.quantity | number:'1.8-8' }}</td>
