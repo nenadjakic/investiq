@@ -123,7 +123,7 @@
               >
                 <option value="">-- Select Asset --</option>
                 @for (asset of assets(); track asset.id) {
-                  <option [value]="asset.id || ''">{{ asset.symbol }} - {{ asset.company?.name || 'N/A' }}</option>
+                  <option [value]="asset.id || ''">{{ asset.symbol }} - {{ asset.name || 'N/A' }}</option>
                 }
               </select>
               @if (formTouched()['assetId'] && formErrors()['assetId']) {

@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, inject, signal, computed, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  inject,
+  signal,
+  computed,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   TransactionControllerService,
@@ -100,7 +109,7 @@ export class AddTransactionModalComponent implements OnInit {
 
   isFormValid = computed(() => {
     const errors = this.formErrors();
-    
+
     // If there are any errors, form is invalid
     if (Object.keys(errors).length > 0) {
       return false;
@@ -118,11 +127,7 @@ export class AddTransactionModalComponent implements OnInit {
       case 'BUY':
       case 'SELL': {
         const data = type === 'BUY' ? this.buyFormData() : this.sellFormData();
-        return (
-          data.assetId?.trim() !== '' &&
-          data.quantity > 0 &&
-          data.price > 0
-        );
+        return data.assetId?.trim() !== '' && data.quantity > 0 && data.price > 0;
       }
       case 'DEPOSIT':
       case 'WITHDRAWAL': {
@@ -131,10 +136,7 @@ export class AddTransactionModalComponent implements OnInit {
       }
       case 'DIVIDEND': {
         const data = this.dividendFormData();
-        return (
-          data.assetId?.trim() !== '' &&
-          (data.grossAmount > 0 || data.netAmount > 0)
-        );
+        return data.assetId?.trim() !== '' && (data.grossAmount > 0 || data.netAmount > 0);
       }
       default:
         return false;
@@ -150,22 +152,18 @@ export class AddTransactionModalComponent implements OnInit {
 
     Promise.all([
       new Promise<void>((resolve) => {
-        this.assetControllerService.findAllAssets().subscribe({
-          next: (pageResponse) => {
-            const assets = pageResponse.content || [];
-            const sorted = [...assets].sort((a, b) => {
-              const nameA = a.symbol?.toLowerCase() || '';
-              const nameB = b.symbol?.toLowerCase() || '';
-              return nameA.localeCompare(nameB);
-            });
-            this.assets.set(sorted);
-            resolve();
-          },
-          error: (err) => {
-            console.error('Failed to load assets', err);
-            resolve();
-          },
-        });
+        this.assetControllerService
+          .findAllAssets(undefined, undefined, undefined, undefined, 0, 1000, ['symbol'])
+          .subscribe({
+            next: (pageResponse) => {
+              this.assets.set(pageResponse.content || []);
+              resolve();
+            },
+            error: (err) => {
+              console.error('Failed to load assets', err);
+              resolve();
+            },
+          });
       }),
       new Promise<void>((resolve) => {
         this.currencyControllerService.findAllCurrencies().subscribe({
@@ -204,20 +202,28 @@ export class AddTransactionModalComponent implements OnInit {
     this.baseFormData.set({
       transactionId: '',
       platform: 'TRADING212',
-      transactionDate: new Date().toISOString().split('T')[0],
+      transactionDate: new Date().toISOString(),
       currency: 'EUR',
     });
     this.buyFormData.set({ assetId: '', quantity: 0, price: 0, fee: 0 });
     this.sellFormData.set({ assetId: '', quantity: 0, price: 0, fee: 0 });
     this.depositFormData.set({ amount: 0, fee: 0 });
     this.withdrawalFormData.set({ amount: 0, fee: 0 });
-    this.dividendFormData.set({ assetId: '', grossAmount: 0, netAmount: 0, taxAmount: 0, taxPercentage: 0 });
+    this.dividendFormData.set({
+      assetId: '',
+      grossAmount: 0,
+      netAmount: 0,
+      taxAmount: 0,
+      taxPercentage: 0,
+    });
     this.formErrors.set({});
     this.formTouched.set({});
   }
 
   selectTransactionType(type: string): void {
     this.transactionType.set(type as TransactionType);
+    this.formErrors.set({});
+    this.formTouched.set({});
   }
 
   updateBaseField(field: string, value: any): void {
@@ -295,7 +301,13 @@ export class AddTransactionModalComponent implements OnInit {
   validateField(field: string, value: any): void {
     const errors = this.formErrors();
 
-    if (field === 'quantity' || field === 'price' || field === 'amount' || field === 'grossAmount' || field === 'netAmount') {
+    if (
+      field === 'quantity' ||
+      field === 'price' ||
+      field === 'amount' ||
+      field === 'grossAmount' ||
+      field === 'netAmount'
+    ) {
       if (value < 0) {
         errors[field] = 'Value cannot be negative';
       } else {
@@ -317,7 +329,7 @@ export class AddTransactionModalComponent implements OnInit {
     const touched = { ...this.formTouched() };
     touched[field] = true;
     this.formTouched.set(touched);
-    
+
     // Validate the specific field
     this.validateFieldOnBlur(field);
   }
@@ -353,10 +365,18 @@ export class AddTransactionModalComponent implements OnInit {
         break;
 
       case 'assetId': {
-        const assetId = type === 'BUY' ? this.buyFormData().assetId : 
-                       type === 'SELL' ? this.sellFormData().assetId :
-                       type === 'DIVIDEND' ? this.dividendFormData().assetId : '';
-        if ((type === 'BUY' || type === 'SELL' || type === 'DIVIDEND') && (!assetId || !assetId.trim())) {
+        const assetId =
+          type === 'BUY'
+            ? this.buyFormData().assetId
+            : type === 'SELL'
+              ? this.sellFormData().assetId
+              : type === 'DIVIDEND'
+                ? this.dividendFormData().assetId
+                : '';
+        if (
+          (type === 'BUY' || type === 'SELL' || type === 'DIVIDEND') &&
+          (!assetId || !assetId.trim())
+        ) {
           errors['assetId'] = 'Asset is required';
         } else {
           delete errors['assetId'];
@@ -365,7 +385,8 @@ export class AddTransactionModalComponent implements OnInit {
       }
 
       case 'quantity': {
-        const quantity = type === 'BUY' ? this.buyFormData().quantity : this.sellFormData().quantity;
+        const quantity =
+          type === 'BUY' ? this.buyFormData().quantity : this.sellFormData().quantity;
         if ((type === 'BUY' || type === 'SELL') && quantity <= 0) {
           errors['quantity'] = 'Quantity must be greater than 0';
         } else {
@@ -385,7 +406,8 @@ export class AddTransactionModalComponent implements OnInit {
       }
 
       case 'amount': {
-        const amount = type === 'DEPOSIT' ? this.depositFormData().amount : this.withdrawalFormData().amount;
+        const amount =
+          type === 'DEPOSIT' ? this.depositFormData().amount : this.withdrawalFormData().amount;
         if ((type === 'DEPOSIT' || type === 'WITHDRAWAL') && amount <= 0) {
           errors['amount'] = 'Amount must be greater than 0';
         } else {
@@ -468,7 +490,7 @@ export class AddTransactionModalComponent implements OnInit {
     const request: BuyRequest = {
       transactionId: base.transactionId || undefined,
       platform: base.platform,
-      transactionDate: base.transactionDate,
+      transactionDate: this.toOffsetDateTime(base.transactionDate),
       assetId: data.assetId,
       quantity: data.quantity,
       price: data.price,
@@ -498,7 +520,7 @@ export class AddTransactionModalComponent implements OnInit {
     const request: SellRequest = {
       transactionId: base.transactionId || undefined,
       platform: base.platform,
-      transactionDate: base.transactionDate,
+      transactionDate: this.toOffsetDateTime(base.transactionDate),
       assetId: data.assetId,
       quantity: data.quantity,
       price: data.price,
@@ -528,7 +550,7 @@ export class AddTransactionModalComponent implements OnInit {
     const request: DepositRequest = {
       transactionId: base.transactionId || undefined,
       platform: base.platform,
-      transactionDate: base.transactionDate,
+      transactionDate: this.toOffsetDateTime(base.transactionDate),
       amount: data.amount,
       currency: base.currency,
       fee: data.fee || undefined,
@@ -556,7 +578,7 @@ export class AddTransactionModalComponent implements OnInit {
     const request: WithdrawalRequest = {
       transactionId: base.transactionId || undefined,
       platform: base.platform,
-      transactionDate: base.transactionDate,
+      transactionDate: this.toOffsetDateTime(base.transactionDate),
       amount: data.amount,
       currency: base.currency,
       fee: data.fee || undefined,
@@ -584,7 +606,7 @@ export class AddTransactionModalComponent implements OnInit {
     const request: DividendRequest = {
       transactionId: base.transactionId || undefined,
       platform: base.platform,
-      transactionDate: base.transactionDate,
+      transactionDate: this.toOffsetDateTime(base.transactionDate),
       assetId: data.assetId,
       grossAmount: data.grossAmount || undefined,
       netAmount: data.netAmount || undefined,
@@ -624,5 +646,11 @@ export class AddTransactionModalComponent implements OnInit {
       default:
         return baseFields;
     }
+  }
+
+  private toOffsetDateTime(dateStr: string): string {
+    if (!dateStr) return '';
+    const datePart = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
+    return new Date(`${datePart}T00:00:00.000Z`).toISOString();
   }
 }
