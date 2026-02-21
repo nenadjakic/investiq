@@ -9,29 +9,17 @@
       </button>
     </div>
     <div class="flex flex-wrap gap-3">
-      <!-- Symbol search -->
-      <div class="flex flex-col gap-1">
-        <input
-          class="w-44 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          [ngModel]="filters().assetSymbol ?? ''"
-          (ngModelChange)="onFilterChange('assetSymbol', $event)"
-          placeholder="Search symbol..."
-        />
-      </div>
-
       <!-- Platform -->
       <div class="flex flex-col gap-1">
         <select
           [ngModel]="filters().platform ?? ''"
           (ngModelChange)="onFilterChange('platform', $event || null)"
-          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-400"
-          [class.text-gray-900]="filters().platform"
+          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
-          <option value="" disabled hidden>Platform...</option>
-          <option value="">All</option>
+          <option value="">Select Platform</option>
           <option value="TRADING212">Trading 212</option>
           <option value="ETORO">eToro</option>
-          <option value="IBKR">IBKR</option>
+          <option value="IBKR">Interactive Brokers</option>
           <option value="REVOLUT">Revolut</option>
         </select>
       </div>
@@ -41,11 +29,9 @@
         <select
           [ngModel]="filters().transactionType ?? ''"
           (ngModelChange)="onFilterChange('transactionType', $event || null)"
-          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-400"
-          [class.text-gray-900]="filters().transactionType"
+          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
-          <option value="" disabled hidden>Type...</option>
-          <option value="">All</option>
+          <option value="">Select Transaction type</option>
           <option value="BUY">Buy</option>
           <option value="SELL">Sell</option>
           <option value="DIVIDEND">Dividend</option>
@@ -62,16 +48,27 @@
         <select
           [ngModel]="filters().assetType ?? ''"
           (ngModelChange)="onFilterChange('assetType', $event || null)"
-          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-400"
-          [class.text-gray-900]="filters().assetType"
+          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          
         >
-          <option value="" disabled hidden>Asset type...</option>
-          <option value="">All</option>
+          <option value="">Select Asset type...</option>
           <option value="STOCK">Stock</option>
           <option value="ETF">ETF</option>
           <option value="INDEX">Index</option>
         </select>
       </div>
+
+      <!-- Symbol search -->
+      <div class="flex flex-col gap-1">
+        <input
+          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          [ngModel]="filters().assetSymbol ?? ''"
+          (ngModelChange)="onFilterChange('assetSymbol', $event)"
+          placeholder="Search symbol..."
+        />
+      </div>
+
+      
 
       <!-- Date From -->
       <div class="flex flex-col gap-1">
