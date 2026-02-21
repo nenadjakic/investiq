@@ -8,8 +8,10 @@ import com.github.nenadjakic.investiq.common.dto.industry.IndustryResponse
 import com.github.nenadjakic.investiq.data.entity.asset.Asset
 import com.github.nenadjakic.investiq.data.entity.asset.ListedAsset
 import com.github.nenadjakic.investiq.data.entity.asset.Stock
+import com.github.nenadjakic.investiq.data.entity.core.Exchange
 import com.github.nenadjakic.investiq.data.enum.AssetType
 import com.github.nenadjakic.investiq.data.enum.Platform
+import org.hibernate.Hibernate
 import java.util.UUID
 
 data class AssetResponse(
@@ -40,8 +42,10 @@ fun Asset.toAssetResponse(): AssetResponse {
     var companyResponse: CompanyResponse? = null
     var exchangeResponse: ExchangeResponse? = null
 
-    if (this is Stock) {
-        val company = this.company
+    val unproxiedAsset = Hibernate.unproxy(this) as Asset
+
+    if (unproxiedAsset is Stock) {
+        val company = unproxiedAsset.company
 
         companyResponse = CompanyResponse(
             company.id!!,
@@ -54,8 +58,8 @@ fun Asset.toAssetResponse(): AssetResponse {
             )
         )
     }
-    if (this is ListedAsset) {
-        val exchange = this.exchange
+    if (unproxiedAsset is ListedAsset) {
+        val exchange = unproxiedAsset.exchange
         exchangeResponse = ExchangeResponse(
             exchange.id!!,
             exchange.mic,
