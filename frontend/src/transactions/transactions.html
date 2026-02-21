@@ -1,14 +1,100 @@
 <div class="px-6 py-8 lg:px-10 space-y-8">
-  <!-- Add Transaction Button -->
-  <div class="flex justify-end">
-    <button
-      (click)="openAddModal()"
-      class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-    >
-      Add Transaction
-    </button>
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <button
+        (click)="openAddModal()"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold transition-colors"
+      >
+        Add Transaction
+      </button>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <!-- Symbol search -->
+      <div class="flex flex-col gap-1">
+        <input
+          class="w-44 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          [ngModel]="filters().assetSymbol ?? ''"
+          (ngModelChange)="onFilterChange('assetSymbol', $event)"
+          placeholder="Search symbol..."
+        />
+      </div>
+
+      <!-- Platform -->
+      <div class="flex flex-col gap-1">
+        <select
+          [ngModel]="filters().platform ?? ''"
+          (ngModelChange)="onFilterChange('platform', $event || null)"
+          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-400"
+          [class.text-gray-900]="filters().platform"
+        >
+          <option value="" disabled hidden>Platform...</option>
+          <option value="">All</option>
+          <option value="TRADING212">Trading 212</option>
+          <option value="ETORO">eToro</option>
+          <option value="IBKR">IBKR</option>
+          <option value="REVOLUT">Revolut</option>
+        </select>
+      </div>
+
+      <!-- Transaction Type -->
+      <div class="flex flex-col gap-1">
+        <select
+          [ngModel]="filters().transactionType ?? ''"
+          (ngModelChange)="onFilterChange('transactionType', $event || null)"
+          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-400"
+          [class.text-gray-900]="filters().transactionType"
+        >
+          <option value="" disabled hidden>Type...</option>
+          <option value="">All</option>
+          <option value="BUY">Buy</option>
+          <option value="SELL">Sell</option>
+          <option value="DIVIDEND">Dividend</option>
+          <option value="DIVIDEND_ADJUSTMENT">Dividend Adj.</option>
+          <option value="DEPOSIT">Deposit</option>
+          <option value="WITHDRAWAL">Withdrawal</option>
+          <option value="FEE">Fee</option>
+          <option value="UNKNOWN">Unknown</option>
+        </select>
+      </div>
+
+      <!-- Asset Type -->
+      <div class="flex flex-col gap-1">
+        <select
+          [ngModel]="filters().assetType ?? ''"
+          (ngModelChange)="onFilterChange('assetType', $event || null)"
+          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-400"
+          [class.text-gray-900]="filters().assetType"
+        >
+          <option value="" disabled hidden>Asset type...</option>
+          <option value="">All</option>
+          <option value="STOCK">Stock</option>
+          <option value="ETF">ETF</option>
+          <option value="INDEX">Index</option>
+        </select>
+      </div>
+
+      <!-- Date From -->
+      <div class="flex flex-col gap-1">
+        <input
+          type="date"
+          [ngModel]="filters().dateFrom ? filters().dateFrom!.substring(0, 10) : ''"
+          (change)="onDateFilterChange('dateFrom', $any($event.target).value)"
+          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+
+      <!-- Date To -->
+      <div class="flex flex-col gap-1">
+        <input
+          type="date"
+          [ngModel]="filters().dateTo ? filters().dateTo!.substring(0, 10) : ''"
+          (change)="onDateFilterChange('dateTo', $any($event.target).value)"
+          class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+    </div>
   </div>
-  
+
   <!-- Loading state -->
   @if (loading()) {
     <div class="bg-white rounded-lg shadow p-6">
@@ -17,14 +103,14 @@
       </div>
     </div>
   }
-  
+
   <!-- Error state -->
   @if (error()) {
     <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
       {{ error() }}
     </div>
   }
-  
+
   <!-- Table -->
   @if (!loading() && !error()) {
     <div class="bg-white rounded-lg shadow">
@@ -50,7 +136,9 @@
                   {{ transaction.platform }}
                 </span>
               </td>
-              <td class="px-5 py-3 text-start text-sm">{{ transaction.date | date:'dd.MM.yyyy, HH:mm' }}</td>
+              <td class="px-5 py-3 text-start text-sm">
+                {{ transaction.date | date: 'dd.MM.yyyy, HH:mm' }}
+              </td>
               <td class="px-5 py-3 text-start text-sm">
                 <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
                   {{ transaction.transactionType }}
@@ -64,14 +152,22 @@
                 }
               </td>
               <td class="px-5 py-3 text-start">
-                @if (transaction.asset){
-                  <div class="text-sm font-semibold">{{ transaction.asset.symbol }} / {{ transaction.asset.exchange?.symbol }}</div>
+                @if (transaction.asset) {
+                  <div class="text-sm font-semibold">
+                    {{ transaction.asset.symbol }} / {{ transaction.asset.exchange?.symbol }}
+                  </div>
                   <div class="text-sm text-gray-600">{{ transaction.asset.name }}</div>
                 }
               </td>
-              <td class="px-5 py-3 text-start text-sm">{{ transaction.quantity | number:'1.8-8' }}</td>
-              <td class="px-5 py-3 text-start text-sm">{{ transaction.price | number:'1.6-6' }}</td>
-              <td class="px-5 py-3 text-start text-sm">{{ transaction.amount | number:'1.4-4' }}</td>
+              <td class="px-5 py-3 text-start text-sm">
+                {{ transaction.quantity | number: '1.8-8' }}
+              </td>
+              <td class="px-5 py-3 text-start text-sm">
+                {{ transaction.price | number: '1.6-6' }}
+              </td>
+              <td class="px-5 py-3 text-start text-sm">
+                {{ transaction.amount | number: '1.4-4' }}
+              </td>
               <td class="px-5 py-3 text-start text-sm">
                 <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
                   {{ transaction.currency?.code }}
@@ -80,12 +176,14 @@
             </tr>
           } @empty {
             <tr>
-              <td class="px-5 py-4 text-center text-gray-500" colspan="9">No transactions found.</td>
+              <td class="px-5 py-4 text-center text-gray-500" colspan="9">
+                No transactions found.
+              </td>
             </tr>
           }
         </tbody>
       </table>
-      
+
       <!-- Pagination -->
       <div class="px-6 py-4 border-t border-gray-200">
         <div class="flex flex-col items-center gap-2">
@@ -104,13 +202,15 @@
             >
               <span class="text-sm leading-none">‹</span>
             </button>
-            
+
             <div class="flex items-center gap-1">
               @if (hasLeadingGap()) {
                 <button
                   (click)="goToPage(0)"
                   class="h-8 w-9 border border-gray-300 rounded-md text-xs text-gray-700 hover:bg-gray-50"
-                >1</button>
+                >
+                  1
+                </button>
                 <span class="px-1 text-xs text-gray-400">…</span>
               }
               @for (page of pageNumbers(); track page) {
@@ -118,7 +218,8 @@
                   (click)="goToPage(page)"
                   [ngClass]="{
                     'bg-blue-600 text-white border-blue-600': page === currentPage(),
-                    'bg-white text-gray-700 border-gray-300 hover:bg-gray-50': page !== currentPage()
+                    'bg-white text-gray-700 border-gray-300 hover:bg-gray-50':
+                      page !== currentPage(),
                   }"
                   class="h-8 w-9 border rounded-md text-xs transition-colors"
                 >
@@ -130,7 +231,9 @@
                 <button
                   (click)="goToPage(totalPages() - 1)"
                   class="h-8 w-9 border border-gray-300 rounded-md text-xs text-gray-700 hover:bg-gray-50"
-                >{{ totalPages() }}</button>
+                >
+                  {{ totalPages() }}
+                </button>
               }
             </div>
 

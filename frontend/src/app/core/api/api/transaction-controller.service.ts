@@ -427,18 +427,39 @@ export class TransactionControllerService extends BaseService {
      * Find all transactions
      * Returns a paginated list of transactions
      * @endpoint get /transaction
+     * @param platform 
+     * @param transactionType 
+     * @param assetType 
+     * @param assetSymbol 
+     * @param currency 
+     * @param dateFrom 
+     * @param dateTo 
      * @param page Zero-based page index (0..N)
      * @param size The size of the page to be returned
      * @param sort Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public findAllTransactions(page?: number, size?: number, sort?: Array<string>, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PageTransactionResponse>;
-    public findAllTransactions(page?: number, size?: number, sort?: Array<string>, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PageTransactionResponse>>;
-    public findAllTransactions(page?: number, size?: number, sort?: Array<string>, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PageTransactionResponse>>;
-    public findAllTransactions(page?: number, size?: number, sort?: Array<string>, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public findAllTransactions(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', transactionType?: 'BUY' | 'FEE' | 'SELL' | 'DEPOSIT' | 'WITHDRAWAL' | 'DIVIDEND' | 'DIVIDEND_ADJUSTMENT' | 'UNKNOWN', assetType?: 'STOCK' | 'ETF' | 'INDEX', assetSymbol?: string, currency?: string, dateFrom?: string, dateTo?: string, page?: number, size?: number, sort?: Array<string>, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PageTransactionResponse>;
+    public findAllTransactions(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', transactionType?: 'BUY' | 'FEE' | 'SELL' | 'DEPOSIT' | 'WITHDRAWAL' | 'DIVIDEND' | 'DIVIDEND_ADJUSTMENT' | 'UNKNOWN', assetType?: 'STOCK' | 'ETF' | 'INDEX', assetSymbol?: string, currency?: string, dateFrom?: string, dateTo?: string, page?: number, size?: number, sort?: Array<string>, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PageTransactionResponse>>;
+    public findAllTransactions(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', transactionType?: 'BUY' | 'FEE' | 'SELL' | 'DEPOSIT' | 'WITHDRAWAL' | 'DIVIDEND' | 'DIVIDEND_ADJUSTMENT' | 'UNKNOWN', assetType?: 'STOCK' | 'ETF' | 'INDEX', assetSymbol?: string, currency?: string, dateFrom?: string, dateTo?: string, page?: number, size?: number, sort?: Array<string>, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PageTransactionResponse>>;
+    public findAllTransactions(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', transactionType?: 'BUY' | 'FEE' | 'SELL' | 'DEPOSIT' | 'WITHDRAWAL' | 'DIVIDEND' | 'DIVIDEND_ADJUSTMENT' | 'UNKNOWN', assetType?: 'STOCK' | 'ETF' | 'INDEX', assetSymbol?: string, currency?: string, dateFrom?: string, dateTo?: string, page?: number, size?: number, sort?: Array<string>, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>transactionType, 'transactionType');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>assetType, 'assetType');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>assetSymbol, 'assetSymbol');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>currency, 'currency');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>dateFrom, 'dateFrom');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>dateTo, 'dateTo');
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>page, 'page');
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
