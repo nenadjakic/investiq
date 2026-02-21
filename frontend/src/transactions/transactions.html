@@ -31,10 +31,11 @@
       <table class="min-w-full">
         <thead class="border-b border-gray-100">
           <tr>
-            <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Date</th>
-            <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Asset</th>
-            <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Type</th>
             <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Platform</th>
+            <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Date</th>
+            <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Transaction Type</th>
+            <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Asset Type</th>
+            <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Asset</th>
             <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Quantity</th>
             <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Price</th>
             <th class="px-5 py-3 font-medium text-gray-500 text-start text-sm">Amount</th>
@@ -44,20 +45,29 @@
         <tbody class="divide-y divide-gray-100">
           @for (transaction of paginatedTransactions(); track transaction.id) {
             <tr class="hover:bg-gray-50">
-              <td class="px-5 py-3 text-start text-sm">{{ transaction.date | date:'dd.MM.yyyy, HH:mm' }}</td>
-              <td class="px-5 py-3 text-start">
-                <div class="text-sm">{{ transaction.asset?.symbol }}</div>
-                <div class="text-xs text-gray-500">{{ transaction.asset?.company?.name }}</div>                
+              <td class="px-5 py-3 text-start text-sm">
+                <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
+                  {{ transaction.platform }}
+                </span>
               </td>
+              <td class="px-5 py-3 text-start text-sm">{{ transaction.date | date:'dd.MM.yyyy, HH:mm' }}</td>
               <td class="px-5 py-3 text-start text-sm">
                 <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
                   {{ transaction.transactionType }}
                 </span>
               </td>
               <td class="px-5 py-3 text-start text-sm">
-                <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
-                  {{ transaction.platform }}
-                </span>
+                @if (transaction.asset?.type) {
+                  <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-medium">
+                    {{ transaction.asset?.type }}
+                  </span>
+                }
+              </td>
+              <td class="px-5 py-3 text-start">
+                @if (transaction.asset){
+                  <div class="text-sm font-semibold">{{ transaction.asset.symbol }} / {{ transaction.asset.exchange?.symbol }}</div>
+                  <div class="text-sm text-gray-600">{{ transaction.asset.company?.name }}</div>
+                }
               </td>
               <td class="px-5 py-3 text-start text-sm">{{ transaction.quantity | number:'1.8-8' }}</td>
               <td class="px-5 py-3 text-start text-sm">{{ transaction.price | number:'1.6-6' }}</td>
@@ -70,7 +80,7 @@
             </tr>
           } @empty {
             <tr>
-              <td class="px-5 py-4 text-center text-gray-500" colspan="8">No transactions found.</td>
+              <td class="px-5 py-4 text-center text-gray-500" colspan="9">No transactions found.</td>
             </tr>
           }
         </tbody>

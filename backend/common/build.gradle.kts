@@ -16,6 +16,7 @@ dependencies {
 
     implementation(libs.jakarta.validation.api)
     implementation(libs.springdoc.openapi.starter.common)
+    implementation(libs.hibernate.core)
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
