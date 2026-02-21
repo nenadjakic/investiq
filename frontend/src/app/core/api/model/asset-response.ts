@@ -16,6 +16,7 @@ export interface AssetResponse {
     id?: string;
     type?: AssetResponse.TypeEnum;
     symbol?: string;
+    name?: string;
     company?: CompanyResponse;
     currency?: string;
     exchange?: ExchangeResponse;
