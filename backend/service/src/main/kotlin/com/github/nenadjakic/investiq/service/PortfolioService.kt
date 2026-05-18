@@ -324,76 +324,73 @@ class PortfolioService(
     /**
      * Returns active positions summary with invested amount and market value contributions.
      */
-    fun getActivePositions(platform: Platform? = null): List<com.github.nenadjakic.investiq.common.dto.ActivePositionResponse> {
+    fun getActivePositions(platform: Platform? = null): List<ActivePositionResponse> {
         val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot(platform)
             ?: return emptyList()
 
         val assetSnapshots = portfolioRepository.getLatestAssetSnapshots(platform)
 
+        if (assetSnapshots.isEmpty()) return emptyList()
+
         val totalValue = portfolioSnapshot.totalValue
         val totalInvested = portfolioSnapshot.totalInvested
 
-        if (assetSnapshots.isEmpty()) return emptyList()
+        return assetSnapshots
+            .filter { it.quantity > BigDecimal.ZERO }
+            .map { snapshot ->
+                val shares = snapshot.quantity
+                val marketValue = snapshot.marketValueEur
+                    ?: ((snapshot.marketPriceEur ?: BigDecimal.ZERO) * shares)
 
-        return assetSnapshots.mapNotNull { snapshot ->
-            if (snapshot.quantity <= BigDecimal.ZERO) return@mapNotNull null
+                val costBasis = snapshot.costBasisEur ?: BigDecimal.ZERO
+                val avgPrice = snapshot.avgCostPerShareEur
+                    ?: if (shares > BigDecimal.ZERO) costBasis.divide(shares, 8, RoundingMode.HALF_UP)
+                    else BigDecimal.ZERO
 
-            val shares = snapshot.quantity
-            val currentPrice = snapshot.marketPriceEur
-            val marketValue = snapshot.marketValueEur ?: ((currentPrice ?: BigDecimal.ZERO) * shares)
+                val realizedPl = snapshot.realizedPlEur ?: BigDecimal.ZERO
+                val dividends = snapshot.totalDividendsEur ?: BigDecimal.ZERO
+                val fees = snapshot.totalFeesEur ?: BigDecimal.ZERO
 
-            // Determine average price per share
-            val avgPrice = when {
-                snapshot.avgCostPerShareEur != null && snapshot.avgCostPerShareEur!! > BigDecimal.ZERO -> snapshot.avgCostPerShareEur!!
-                snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO && shares > BigDecimal.ZERO -> snapshot.costBasisEur!!.divide(shares, 8, RoundingMode.HALF_UP)
-                else -> BigDecimal.ZERO
+                val unrealizedPl = (marketValue - costBasis).setScale(2, RoundingMode.HALF_UP)
+                val totalPl = (unrealizedPl + realizedPl + dividends - fees).setScale(2, RoundingMode.HALF_UP)
+
+                val unrealizedPlPct = pct(unrealizedPl, costBasis)
+                val realizedPlPct = pct(realizedPl, costBasis)
+                val totalPlPct = pct(totalPl, costBasis)
+                val investedPct = pct(costBasis, totalInvested)
+                val marketPct = pct(marketValue, totalValue)
+
+                ActivePositionResponse(
+                    // platform parametar se proslijeđuje umjesto hardkodiranog null
+                    platform = platform,
+                    type = AssetType.valueOf(snapshot.type!!),
+                    ticker = snapshot.ticker,
+                    name = snapshot.name,
+                    shares = shares,
+                    avgPriceEur = avgPrice.setScale(2, RoundingMode.HALF_UP),
+                    investedEur = costBasis.setScale(2, RoundingMode.HALF_UP),
+                    investedPercentage = investedPct,
+                    unrealizedProfitLossEur = unrealizedPl,
+                    unrealizedProfitLossPercentage = unrealizedPlPct,
+                    realizedProfitLossEur = realizedPl.setScale(2, RoundingMode.HALF_UP),
+                    realizedProfitLossPercentage = realizedPlPct,
+                    dividendsEur = dividends.setScale(2, RoundingMode.HALF_UP),
+                    feesEur = fees.setScale(2, RoundingMode.HALF_UP),
+                    totalProfitLossEur = totalPl,
+                    totalProfitLossPercentage = totalPlPct,
+                    marketValueEur = marketValue.setScale(2, RoundingMode.HALF_UP),
+                    marketValuePercentage = marketPct
+                )
             }
-
-            val invested = when {
-                snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO -> snapshot.costBasisEur!!.setScale(2, RoundingMode.HALF_UP)
-                else -> (avgPrice * shares).setScale(2, RoundingMode.HALF_UP)
-            }
-
-            // Use multiply-then-divide with explicit scale to preserve fractional percentages
-            val investedPct = if (totalInvested > BigDecimal.ZERO) {
-                invested
-                    .multiply(BigDecimal(100))
-                    .divide(totalInvested, 8, RoundingMode.HALF_UP)
-                    .setScale(2, RoundingMode.HALF_UP)
-            } else BigDecimal.ZERO
-
-            val plEur = (marketValue - invested).setScale(2, RoundingMode.HALF_UP)
-
-            val plPct = if (invested > BigDecimal.ZERO) {
-                plEur
-                    .multiply(BigDecimal(100))
-                    .divide(invested, 8, RoundingMode.HALF_UP)
-                    .setScale(2, RoundingMode.HALF_UP)
-            } else BigDecimal.ZERO
-
-            val marketPct = if (totalValue > BigDecimal.ZERO) {
-                marketValue
-                    .multiply(BigDecimal(100))
-                    .divide(totalValue, 8, RoundingMode.HALF_UP)
-                    .setScale(2, RoundingMode.HALF_UP)
-            } else BigDecimal.ZERO
-
-            ActivePositionResponse(
-                platform = null,
-                type = AssetType.valueOf(snapshot.type!!),
-                ticker = snapshot.ticker,
-                name = snapshot.name,
-                shares = shares,
-                avgPriceEur = avgPrice.setScale(2, RoundingMode.HALF_UP),
-                investedEur = invested,
-                investedPercentage = investedPct,
-                profitLossEur = plEur,
-                profitLossPercentage = plPct,
-                marketValueEur = marketValue.setScale(2, RoundingMode.HALF_UP),
-                marketValuePercentage = marketPct
-            )
-        }.sortedByDescending { it.marketValueEur }
+            .sortedByDescending { it.marketValueEur }
     }
+
+    private fun pct(value: BigDecimal, base: BigDecimal): BigDecimal =
+        if (base > BigDecimal.ZERO)
+            value.multiply(BigDecimal(100))
+                .divide(base, 8, RoundingMode.HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP)
+        else BigDecimal.ZERO
 
     private fun calculatePeriodChange(
         endDate: LocalDate,

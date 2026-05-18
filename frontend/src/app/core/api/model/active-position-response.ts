@@ -21,8 +21,14 @@ export interface ActivePositionResponse {
     avgPriceEur?: number;
     investedEur?: number;
     investedPercentage?: number;
-    profitLossEur?: number;
-    profitLossPercentage?: number;
+    unrealizedProfitLossEur?: number;
+    unrealizedProfitLossPercentage?: number;
+    realizedProfitLossEur?: number;
+    realizedProfitLossPercentage?: number;
+    dividendsEur?: number;
+    feesEur?: number;
+    totalProfitLossEur?: number;
+    totalProfitLossPercentage?: number;
     marketValueEur?: number;
     marketValuePercentage?: number;
 }

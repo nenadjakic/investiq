@@ -333,6 +333,9 @@ class PortfolioRepository(
                 market_price_eur,
                 market_value_eur,
                 unrealized_pl_eur,
+                realized_pl_eur,
+                total_dividends_eur,
+                total_fees_eur,
                 ticker,
                 name,
                 asset_type
@@ -513,6 +516,9 @@ class PortfolioRepository(
             marketPriceEur = rs.getBigDecimal("market_price_eur"),
             marketValueEur = rs.getBigDecimal("market_value_eur"),
             unrealizedPlEur = rs.getBigDecimal("unrealized_pl_eur"),
+            realizedPlEur = rs.getBigDecimal("realized_pl_eur"),
+            totalDividendsEur = rs.getBigDecimal("total_dividends_eur"),
+            totalFeesEur = rs.getBigDecimal("total_fees_eur"),
             ticker = rs.getString("ticker"),
             name = rs.getString("name"),
             type = rs.getString("asset_type")
@@ -616,6 +622,9 @@ class PortfolioRepository(
         val marketPriceEur: BigDecimal?,
         val marketValueEur: BigDecimal?,
         val unrealizedPlEur: BigDecimal?,
+        val realizedPlEur: BigDecimal?,
+        val totalDividendsEur: BigDecimal?,
+        val totalFeesEur: BigDecimal?,
         val ticker: String,
         val name: String,
         val type: String? = null

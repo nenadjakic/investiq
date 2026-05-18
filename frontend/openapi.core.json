@@ -2395,15 +2395,15 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
           },
           "empty": {
             "type": "boolean"
@@ -2556,15 +2556,15 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
           },
           "empty": {
             "type": "boolean"
@@ -2947,10 +2947,28 @@
           "investedPercentage": {
             "type": "number"
           },
-          "profitLossEur": {
+          "unrealizedProfitLossEur": {
             "type": "number"
           },
-          "profitLossPercentage": {
+          "unrealizedProfitLossPercentage": {
+            "type": "number"
+          },
+          "realizedProfitLossEur": {
+            "type": "number"
+          },
+          "realizedProfitLossPercentage": {
+            "type": "number"
+          },
+          "dividendsEur": {
+            "type": "number"
+          },
+          "feesEur": {
+            "type": "number"
+          },
+          "totalProfitLossEur": {
+            "type": "number"
+          },
+          "totalProfitLossPercentage": {
             "type": "number"
           },
           "marketValueEur": {
@@ -3191,15 +3209,15 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
           },
           "empty": {
             "type": "boolean"

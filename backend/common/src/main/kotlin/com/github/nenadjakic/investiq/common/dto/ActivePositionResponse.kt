@@ -33,10 +33,28 @@ data class ActivePositionResponse(
     val investedPercentage: BigDecimal,
 
     @param:Schema(description = "Unrealized profit/loss (EUR)", example = "1250.00")
-    val profitLossEur: BigDecimal,
+    val unrealizedProfitLossEur: BigDecimal,
 
     @param:Schema(description = "Unrealized profit/loss percentage (%%)", example = "16.67")
-    val profitLossPercentage: BigDecimal,
+    val unrealizedProfitLossPercentage: BigDecimal,
+
+    @param:Schema(description = "Realized profit/loss (EUR)", example = "300.00")
+    val realizedProfitLossEur: BigDecimal,
+
+    @param:Schema(description = "Realized profit/loss percentage (%%)", example = "4.00")
+    val realizedProfitLossPercentage: BigDecimal,
+
+    @param:Schema(description = "Total dividends (EUR)", example = "120.00")
+    val dividendsEur: BigDecimal,
+
+    @param:Schema(description = "Total fees (EUR)", example = "45.00")
+    val feesEur: BigDecimal,
+
+    @param:Schema(description = "Total profit/loss including unrealized + realized + dividends - fees (EUR)", example = "1625.00")
+    val totalProfitLossEur: BigDecimal,
+
+    @param:Schema(description = "Total profit/loss percentage (%%)", example = "21.67")
+    val totalProfitLossPercentage: BigDecimal,
 
     @param:Schema(description = "Market value (EUR)", example = "8750.00")
     val marketValueEur: BigDecimal,
