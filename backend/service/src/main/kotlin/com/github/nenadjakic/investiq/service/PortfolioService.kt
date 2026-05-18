@@ -216,7 +216,7 @@ class PortfolioService(
         val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot(platform)
             ?: return emptyList()
 
-        val assetSnapshots = portfolioRepository.getLatestAssetSnapshots(platform)
+        val assetSnapshots = portfolioRepository.getLatestAssetPositionSnapshots(platform)
 
         val totalValue = portfolioSnapshot.totalValue
         if (totalValue <= BigDecimal.ZERO) {
@@ -244,9 +244,12 @@ class PortfolioService(
 
 
             // Calculate P/L absolute and percentage
-            val plAbsolute = snapshot.unrealizedPlEur
-                ?.setScale(2, RoundingMode.HALF_UP)
-                ?: BigDecimal.ZERO
+            val plAbsolute = (
+                (snapshot.unrealizedPlEur ?: BigDecimal.ZERO) +
+                    (snapshot.realizedPlEur ?: BigDecimal.ZERO) +
+                    (snapshot.totalDividendsEur ?: BigDecimal.ZERO) -
+                    (snapshot.totalFeesEur ?: BigDecimal.ZERO)
+                ).setScale(2, RoundingMode.HALF_UP)
 
             val plPercentage =
                 if (snapshot.costBasisEur != null && snapshot.costBasisEur!! > BigDecimal.ZERO) {
@@ -328,7 +331,7 @@ class PortfolioService(
         val portfolioSnapshot = portfolioRepository.getLatestPortfolioSnapshot(platform)
             ?: return emptyList()
 
-        val assetSnapshots = portfolioRepository.getLatestAssetSnapshots(platform)
+        val assetSnapshots = portfolioRepository.getLatestAssetPositionSnapshots(platform)
 
         val totalValue = portfolioSnapshot.totalValue
         val totalInvested = portfolioSnapshot.totalInvested
@@ -363,9 +366,20 @@ class PortfolioService(
             } else BigDecimal.ZERO
 
             val plEur = (marketValue - invested).setScale(2, RoundingMode.HALF_UP)
+            val realizedPlEur = (snapshot.realizedPlEur ?: BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP)
+            val dividendsEur = (snapshot.totalDividendsEur ?: BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP)
+            val feesEur = (snapshot.totalFeesEur ?: BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP)
+            val totalPlEur = (plEur + realizedPlEur + dividendsEur - feesEur).setScale(2, RoundingMode.HALF_UP)
 
             val plPct = if (invested > BigDecimal.ZERO) {
                 plEur
+                    .multiply(BigDecimal(100))
+                    .divide(invested, 8, RoundingMode.HALF_UP)
+                    .setScale(2, RoundingMode.HALF_UP)
+            } else BigDecimal.ZERO
+
+            val totalPlPct = if (invested > BigDecimal.ZERO) {
+                totalPlEur
                     .multiply(BigDecimal(100))
                     .divide(invested, 8, RoundingMode.HALF_UP)
                     .setScale(2, RoundingMode.HALF_UP)
@@ -389,6 +403,11 @@ class PortfolioService(
                 investedPercentage = investedPct,
                 profitLossEur = plEur,
                 profitLossPercentage = plPct,
+                realizedProfitLossEur = realizedPlEur,
+                dividendsEur = dividendsEur,
+                feesEur = feesEur,
+                totalProfitLossEur = totalPlEur,
+                totalProfitLossPercentage = totalPlPct,
                 marketValueEur = marketValue.setScale(2, RoundingMode.HALF_UP),
                 marketValuePercentage = marketPct
             )

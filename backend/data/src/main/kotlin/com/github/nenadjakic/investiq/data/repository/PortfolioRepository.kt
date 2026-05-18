@@ -342,6 +342,23 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, assetSnapshotMapper, platform?.name)
     }
 
+    fun getLatestAssetPositionSnapshots(platform: Platform? = null): List<AssetPositionSnapshot> {
+        val sql = """
+            select
+                s.snapshot_date, s.asset_id, s.quantity, s.avg_cost_per_share_eur, s.cost_basis_eur,
+                s.market_price_eur, s.market_value_eur, s.unrealized_pl_eur, s.realized_pl_eur,
+                s.total_dividends_eur, s.total_fees_eur, a.ticker, a.name, a.asset_type
+            from asset_daily_snapshots s
+            join assets a on a.id = s.asset_id
+            where s.snapshot_date = (
+                select max(snapshot_date) from asset_daily_snapshots where (? is null or platform = ?)
+            )
+            and (? is null or s.platform = ?)
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, assetPositionSnapshotMapper, platform?.name, platform?.name, platform?.name, platform?.name)
+    }
+
     /**
      * Returns latest asset snapshots grouped by company (one row per company/ETF for the latest snapshot_date).
      * For ETFs, groups by ETF id and name; for stocks, groups by company id and name.
@@ -532,6 +549,25 @@ class PortfolioRepository(
         )
     }
 
+    private val assetPositionSnapshotMapper = RowMapper<AssetPositionSnapshot> { rs, _ ->
+        AssetPositionSnapshot(
+            snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
+            assetId = rs.getObject("asset_id", UUID::class.java),
+            quantity = rs.getBigDecimal("quantity"),
+            avgCostPerShareEur = rs.getBigDecimal("avg_cost_per_share_eur"),
+            costBasisEur = rs.getBigDecimal("cost_basis_eur"),
+            marketPriceEur = rs.getBigDecimal("market_price_eur"),
+            marketValueEur = rs.getBigDecimal("market_value_eur"),
+            unrealizedPlEur = rs.getBigDecimal("unrealized_pl_eur"),
+            realizedPlEur = rs.getBigDecimal("realized_pl_eur"),
+            totalDividendsEur = rs.getBigDecimal("total_dividends_eur"),
+            totalFeesEur = rs.getBigDecimal("total_fees_eur"),
+            ticker = rs.getString("ticker"),
+            name = rs.getString("name"),
+            type = rs.getString("asset_type")
+        )
+    }
+
     private val latestAssetPerformanceMapper = RowMapper<LatestAssetPerformance> { rs, _ ->
         LatestAssetPerformance(
             assetId = rs.getObject("asset_id", UUID::class.java),
@@ -628,6 +664,23 @@ class PortfolioRepository(
         val marketValueEur: BigDecimal?,
         val unrealizedPlEur: BigDecimal?,
         val tickers: List<String>
+    )
+
+    data class AssetPositionSnapshot(
+        val snapshotDate: LocalDate,
+        val assetId: UUID,
+        val quantity: BigDecimal,
+        val avgCostPerShareEur: BigDecimal?,
+        val costBasisEur: BigDecimal?,
+        val marketPriceEur: BigDecimal?,
+        val marketValueEur: BigDecimal?,
+        val unrealizedPlEur: BigDecimal?,
+        val realizedPlEur: BigDecimal?,
+        val totalDividendsEur: BigDecimal?,
+        val totalFeesEur: BigDecimal?,
+        val ticker: String,
+        val name: String,
+        val type: String? = null
     )
 
     data class MonthlyInvestedRow(

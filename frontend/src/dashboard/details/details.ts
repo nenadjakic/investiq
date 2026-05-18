@@ -49,9 +49,9 @@ export class Details implements OnInit {
         case 'investedPercentage':
           return (this.toNumber(a.investedPercentage) - this.toNumber(b.investedPercentage)) * dir;
         case 'profitLossEur':
-          return (this.toNumber(a.profitLossEur) - this.toNumber(b.profitLossEur)) * dir;
+          return (this.toNumber(a.totalProfitLossEur ?? a.profitLossEur) - this.toNumber(b.totalProfitLossEur ?? b.profitLossEur)) * dir;
         case 'profitLossPercentage':
-          return (this.toNumber(a.profitLossPercentage) - this.toNumber(b.profitLossPercentage)) * dir;
+          return (this.toNumber(a.totalProfitLossPercentage ?? a.profitLossPercentage) - this.toNumber(b.totalProfitLossPercentage ?? b.profitLossPercentage)) * dir;
         case 'marketValueEur':
           return (this.toNumber(a.marketValueEur) - this.toNumber(b.marketValueEur)) * dir;
         case 'marketValuePercentage':
@@ -71,7 +71,7 @@ export class Details implements OnInit {
 
     const investedEur = sum((p) => p.investedEur);
     const investedPercentage = sum((p) => p.investedPercentage);
-    const profitLossEur = sum((p) => p.profitLossEur);
+    const profitLossEur = sum((p) => p.totalProfitLossEur ?? p.profitLossEur);
     const marketValueEur = sum((p) => p.marketValueEur);
     const marketValuePercentage = sum((p) => p.marketValuePercentage);
 

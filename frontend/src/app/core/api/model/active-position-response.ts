@@ -23,6 +23,11 @@ export interface ActivePositionResponse {
     investedPercentage?: number;
     profitLossEur?: number;
     profitLossPercentage?: number;
+    realizedProfitLossEur?: number;
+    dividendsEur?: number;
+    feesEur?: number;
+    totalProfitLossEur?: number;
+    totalProfitLossPercentage?: number;
     marketValueEur?: number;
     marketValuePercentage?: number;
 }
@@ -41,5 +46,4 @@ export namespace ActivePositionResponse {
     } as const;
     export type TypeEnum = typeof TypeEnum[keyof typeof TypeEnum];
 }
-
 
