@@ -48,14 +48,16 @@ export class Details implements OnInit {
           return (this.toNumber(a.investedEur) - this.toNumber(b.investedEur)) * dir;
         case 'investedPercentage':
           return (this.toNumber(a.investedPercentage) - this.toNumber(b.investedPercentage)) * dir;
-        case 'profitLossEur':
-          return (this.toNumber(a.profitLossEur) - this.toNumber(b.profitLossEur)) * dir;
-        case 'profitLossPercentage':
-          return (this.toNumber(a.profitLossPercentage) - this.toNumber(b.profitLossPercentage)) * dir;
+        case 'unrealizedProfitLossEur':
+          return (this.toNumber(a.unrealizedProfitLossEur) - this.toNumber(b.unrealizedProfitLossEur)) * dir;
+        case 'unrealizedProfitLossPercentage':
+          return (this.toNumber(a.unrealizedProfitLossPercentage) - this.toNumber(b.unrealizedProfitLossPercentage)) * dir;
         case 'marketValueEur':
           return (this.toNumber(a.marketValueEur) - this.toNumber(b.marketValueEur)) * dir;
         case 'marketValuePercentage':
           return (this.toNumber(a.marketValuePercentage) - this.toNumber(b.marketValuePercentage)) * dir;
+        case 'totalProfitLossEur':
+          return (this.toNumber(a.totalProfitLossEur) - this.toNumber(b.totalProfitLossEur)) * dir;
         case 'delta':
           return (this.getDelta(a) - this.getDelta(b)) * dir;
         default:
@@ -71,22 +73,25 @@ export class Details implements OnInit {
 
     const investedEur = sum((p) => p.investedEur);
     const investedPercentage = sum((p) => p.investedPercentage);
-    const profitLossEur = sum((p) => p.profitLossEur);
+    const unrealizedProfitLossEur = sum((p) => p.unrealizedProfitLossEur);
     const marketValueEur = sum((p) => p.marketValueEur);
     const marketValuePercentage = sum((p) => p.marketValuePercentage);
 
-    const profitLossPercentage = investedEur !== 0
+    const unrealizedProfitLossPercentage = investedEur !== 0
       ? ((marketValueEur - investedEur) / investedEur) * 100
       : 0;
+
+    const totalProfitLossEur = sum((p) => p.totalProfitLossEur);
     const delta = marketValuePercentage - investedPercentage;
 
     return {
       investedEur,
       investedPercentage,
-      profitLossEur,
-      profitLossPercentage,
+      unrealizedProfitLossEur,
+      unrealizedProfitLossPercentage,
       marketValueEur,
       marketValuePercentage,
+      totalProfitLossEur,
       delta,
     };
   });
@@ -147,12 +152,15 @@ export class Details implements OnInit {
 
 type SortColumn =
   | 'ticker'
+  | 'shares'
+  | 'avgPriceEur'
   | 'investedEur'
   | 'investedPercentage'
-  | 'profitLossEur'
-  | 'profitLossPercentage'
+  | 'unrealizedProfitLossEur'
+  | 'unrealizedProfitLossPercentage'
   | 'marketValueEur'
   | 'marketValuePercentage'
+  | 'totalProfitLossEur'
   | 'delta';
 
 type SortDirection = 'asc' | 'desc';
