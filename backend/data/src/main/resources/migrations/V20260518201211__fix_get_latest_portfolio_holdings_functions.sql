@@ -1,5 +1,3 @@
-DROP FUNCTION IF EXISTS public.get_latest_portfolio_holdings(text);
-
 CREATE OR REPLACE FUNCTION public.get_latest_portfolio_holdings(
     p_platform text DEFAULT NULL
 )
