@@ -14,6 +14,7 @@ import com.github.nenadjakic.investiq.common.dto.MonthlyDividendResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioPerformanceResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioAllocationResponse
 import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
+import com.github.nenadjakic.investiq.common.dto.MonthlyPlResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
 import com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
@@ -86,6 +87,22 @@ class PortfolioController(
         @RequestParam(required = false) platform: Platform?
     ): ResponseEntity<PortfolioChartResponse> =
         ResponseEntity.ok(portfolioService.getPortfolioValueSeries(days, platform))
+
+    @Operation(
+        operationId = "getMonthlyPl",
+        summary = "Get monthly P&L per year",
+        description = "Returns monthly P&L percentage grouped by year, optionally filtered by platform"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successfully retrieved monthly P&L data")
+        ]
+    )
+    @GetMapping("/chart/monthly-pl", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getMonthlyPl(
+        @RequestParam(required = false) platform: Platform?
+    ): ResponseEntity<MonthlyPlResponse> =
+        ResponseEntity.ok(portfolioService.getMonthlyPlPerYear(platform))
 
     @Operation(
         operationId = "getIndustrySectorAllocation",

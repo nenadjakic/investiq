@@ -20,6 +20,8 @@ import com.github.nenadjakic.investiq.common.dto.AssetDividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.CompanyAssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.TotalDividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
+import com.github.nenadjakic.investiq.common.dto.MonthlyPlEntry
+import com.github.nenadjakic.investiq.common.dto.MonthlyPlResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
 import com.github.nenadjakic.investiq.data.enum.AssetType
 import com.github.nenadjakic.investiq.data.enum.Platform
@@ -187,6 +189,54 @@ class PortfolioService(
             plPercentage = plPercentage,
             indices = indicesData
         )
+    }
+
+    fun getMonthlyPlPerYear(platform: Platform? = null): MonthlyPlResponse {
+        val dailyData = portfolioRepository.findDailyValuesBetween(null, LocalDate.now(), platform)
+
+        if (dailyData.isEmpty()) {
+            return MonthlyPlResponse(series = emptyMap())
+        }
+
+        val rawPlPercentage = dailyData.associate { dv ->
+            val pl = if (dv.totalInvested > BigDecimal.ZERO) {
+                dv.totalValue
+                    .subtract(dv.totalInvested)
+                    .multiply(BigDecimal(100))
+                    .divide(dv.totalInvested, 6, RoundingMode.HALF_UP)
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .toDouble()
+            } else {
+                0.0
+            }
+            dv.snapshotDate to pl
+        }
+
+        val monthlyAbsolute = rawPlPercentage.entries
+            .groupBy { it.key.year }
+            .flatMap { (year, yearEntries) ->
+                yearEntries
+                    .groupBy { it.key.monthValue }
+                    .map { (month, monthEntries) ->
+                        val last = monthEntries.maxBy { it.key }
+                        Triple(year, month, last.value)
+                    }
+            }
+            .sortedWith(compareBy({ it.first }, { it.second }))
+
+        val result = monthlyAbsolute
+            .mapIndexed { index, (year, month, pl) ->
+                val prevPl = if (index == 0) 0.0 else monthlyAbsolute[index - 1].third
+                Triple(year, month, pl - prevPl)
+            }
+            .groupBy { it.first }
+            .mapValues { (_, entries) ->
+                entries.map { (_, month, delta) ->
+                    MonthlyPlEntry(month = month, plPercent = delta)
+                }
+            }
+
+        return MonthlyPlResponse(series = result)
     }
 
     fun getMonthlyInvested(months: Int?, platform: Platform? = null): MonthlyInvestedResponse {
