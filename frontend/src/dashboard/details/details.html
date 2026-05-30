@@ -1,4 +1,4 @@
-  <div class="space-y-8">
+<div class="space-y-8">
   <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <div></div>
     <div class="flex flex-wrap gap-3">
@@ -8,6 +8,26 @@
         class="w-48 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         (input)="onSearch($any($event.target).value)"
       />
+      <button
+        class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        (click)="exportPositions()"
+      >
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"
+          />
+        </svg>
+        Export
+      </button>
     </div>
   </div>
 
@@ -39,7 +59,9 @@
           <table class="w-full">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   <button class="flex items-center gap-1" (click)="toggleSort('ticker')">
                     Ticker
                     @if (sortState().column === 'ticker') {
@@ -49,24 +71,43 @@
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('shares')">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex w-full items-center justify-end gap-1"
+                    (click)="toggleSort('shares')"
+                  >
                     Shares
                     @if (sortState().column === 'shares') {
-                    <span class="text-[10px] text-gray-500">{{ sortState().direction === 'asc' ? '^' : 'v' }}</span>
+                      <span class="text-[10px] text-gray-500">{{
+                        sortState().direction === 'asc' ? '^' : 'v'
+                      }}</span>
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('avgPriceEur')">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex w-full items-center justify-end gap-1"
+                    (click)="toggleSort('avgPriceEur')"
+                  >
                     Avg Price
                     @if (sortState().column === 'avgPriceEur') {
-                    <span class="text-[10px] text-gray-500">{{ sortState().direction === 'asc' ? '^' : 'v' }}</span>
+                      <span class="text-[10px] text-gray-500">{{
+                        sortState().direction === 'asc' ? '^' : 'v'
+                      }}</span>
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('investedEur')">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex w-full items-center justify-end gap-1"
+                    (click)="toggleSort('investedEur')"
+                  >
                     Invested
                     @if (sortState().column === 'investedEur') {
                       <span class="text-[10px] text-gray-500">
@@ -75,8 +116,13 @@
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('investedPercentage')">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex w-full items-center justify-end gap-1"
+                    (click)="toggleSort('investedPercentage')"
+                  >
                     % Invested
                     @if (sortState().column === 'investedPercentage') {
                       <span class="text-[10px] text-gray-500">
@@ -85,8 +131,13 @@
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('unrealizedProfitLossEur')">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex w-full items-center justify-end gap-1"
+                    (click)="toggleSort('unrealizedProfitLossEur')"
+                  >
                     Unrealized P/L EUR
                     @if (sortState().column === 'unrealizedProfitLossEur') {
                       <span class="text-[10px] text-gray-500">
@@ -95,8 +146,13 @@
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('unrealizedProfitLossPercentage')">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex w-full items-center justify-end gap-1"
+                    (click)="toggleSort('unrealizedProfitLossPercentage')"
+                  >
                     Unrealized P/L %
                     @if (sortState().column === 'unrealizedProfitLossPercentage') {
                       <span class="text-[10px] text-gray-500">
@@ -105,8 +161,13 @@
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('marketValueEur')">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex w-full items-center justify-end gap-1"
+                    (click)="toggleSort('marketValueEur')"
+                  >
                     Market Value
                     @if (sortState().column === 'marketValueEur') {
                       <span class="text-[10px] text-gray-500">
@@ -115,8 +176,13 @@
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('marketValuePercentage')">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex w-full items-center justify-end gap-1"
+                    (click)="toggleSort('marketValuePercentage')"
+                  >
                     % Market Value
                     @if (sortState().column === 'marketValuePercentage') {
                       <span class="text-[10px] text-gray-500">
@@ -125,16 +191,28 @@
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex w-full items-center justify-end gap-1" (click)="toggleSort('totalProfitLossEur')">
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex w-full items-center justify-end gap-1"
+                    (click)="toggleSort('totalProfitLossEur')"
+                  >
                     Total P/L EUR
                     @if (sortState().column === 'totalProfitLossEur') {
-                    <span class="text-[10px] text-gray-500">{{ sortState().direction === 'asc' ? '^' : 'v' }}</span>
+                      <span class="text-[10px] text-gray-500">{{
+                        sortState().direction === 'asc' ? '^' : 'v'
+                      }}</span>
                     }
                   </button>
                 </th>
-                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <button class="flex items-center gap-1 justify-center w-full" (click)="toggleSort('delta')">
+                <th
+                  class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    class="flex items-center gap-1 justify-center w-full"
+                    (click)="toggleSort('delta')"
+                  >
                     Δ vs Invested
                     @if (sortState().column === 'delta') {
                       <span class="text-[10px] text-gray-500">
@@ -149,35 +227,69 @@
               @for (position of sortedPositions(); track $index) {
                 <tr class="hover:bg-gray-50">
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-semibold text-gray-900">{{ position.ticker || '-' }}</div>
+                    <div class="text-sm font-semibold text-gray-900">
+                      {{ position.ticker || '-' }}
+                    </div>
                     <div class="text-xs text-gray-500">{{ position.name || '-' }}</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    {{ (position.shares ?? 0) | number:'1.0-4' }}
+                    {{ position.shares ?? 0 | number: '1.0-4' }}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    € {{ (position.avgPriceEur ?? 0) | number:'1.2-2' }}
+                    € {{ position.avgPriceEur ?? 0 | number: '1.2-2' }}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">€ {{ (position.investedEur ?? 0) | number:'1.2-2' }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{{ (position.investedPercentage ?? 0) | number:'1.1-2' }}%</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-right" [ngClass]="(position.unrealizedProfitLossEur ?? 0) < 0 ? 'text-red-600' : 'text-green-600'">
-                    € {{ (position.unrealizedProfitLossEur ?? 0) | number:'1.2-2' }}
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                    € {{ position.investedEur ?? 0 | number: '1.2-2' }}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-right" [ngClass]="(position.unrealizedProfitLossPercentage ?? 0) < 0 ? 'text-red-600' : 'text-green-600'">
-                    {{ (position.unrealizedProfitLossPercentage ?? 0) | number:'1.1-2' }}%
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                    {{ position.investedPercentage ?? 0 | number: '1.1-2' }}%
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">€ {{ (position.marketValueEur ?? 0) | number:'1.2-2' }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{{ (position.marketValuePercentage ?? 0) | number:'1.1-2' }}%</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-right"
-                      [ngClass]="(position.totalProfitLossEur ?? 0) < 0 ? 'text-red-600' : 'text-green-600'">
-                    € {{ (position.totalProfitLossEur ?? 0) | number:'1.2-2' }}
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm text-right"
+                    [ngClass]="
+                      (position.unrealizedProfitLossEur ?? 0) < 0
+                        ? 'text-red-600'
+                        : 'text-green-600'
+                    "
+                  >
+                    € {{ position.unrealizedProfitLossEur ?? 0 | number: '1.2-2' }}
+                  </td>
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm text-right"
+                    [ngClass]="
+                      (position.unrealizedProfitLossPercentage ?? 0) < 0
+                        ? 'text-red-600'
+                        : 'text-green-600'
+                    "
+                  >
+                    {{ position.unrealizedProfitLossPercentage ?? 0 | number: '1.1-2' }}%
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                    € {{ position.marketValueEur ?? 0 | number: '1.2-2' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                    {{ position.marketValuePercentage ?? 0 | number: '1.1-2' }}%
+                  </td>
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm text-right"
+                    [ngClass]="
+                      (position.totalProfitLossEur ?? 0) < 0 ? 'text-red-600' : 'text-green-600'
+                    "
+                  >
+                    € {{ position.totalProfitLossEur ?? 0 | number: '1.2-2' }}
                   </td>
                   @let delta = getDelta(position);
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
                     <div class="flex items-center justify-center gap-2">
                       <span
                         class="inline-flex h-6 w-6 items-center justify-center rounded-full"
-                        [ngClass]="delta > 0 ? 'bg-green-50 text-green-600' : delta < 0 ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-500'"
+                        [ngClass]="
+                          delta > 0
+                            ? 'bg-green-50 text-green-600'
+                            : delta < 0
+                              ? 'bg-red-50 text-red-600'
+                              : 'bg-gray-100 text-gray-500'
+                        "
                       >
                         @if (delta === 0) {
                           <span class="text-xs font-semibold">–</span>
@@ -204,25 +316,47 @@
                 <td class="px-6 py-3 text-sm text-gray-900"></td>
                 <td class="px-6 py-3 text-sm text-gray-400 text-right">—</td>
                 <td class="px-6 py-3 text-sm text-gray-400 text-right">—</td>
-                <td class="px-6 py-3 text-sm text-gray-900 text-right">€ {{ totals().investedEur | number:'1.2-2' }}</td>
-                <td class="px-6 py-3 text-sm text-gray-400 text-right">—</td>
-                <td class="px-6 py-3 text-sm text-right" [ngClass]="totals().unrealizedProfitLossEur < 0 ? 'text-red-600' : 'text-green-600'">
-                  € {{ totals().unrealizedProfitLossEur | number:'1.2-2' }}
+                <td class="px-6 py-3 text-sm text-gray-900 text-right">
+                  € {{ totals().investedEur | number: '1.2-2' }}
                 </td>
-                <td class="px-6 py-3 text-sm text-right" [ngClass]="totals().unrealizedProfitLossPercentage < 0 ? 'text-red-600' : 'text-green-600'">
-                  {{ totals().unrealizedProfitLossPercentage | number:'1.1-2' }}%
-                </td>
-                <td class="px-6 py-3 text-sm text-gray-900 text-right">€ {{ totals().marketValueEur | number:'1.2-2' }}</td>
                 <td class="px-6 py-3 text-sm text-gray-400 text-right">—</td>
-                <td class="px-6 py-3 text-sm text-right"
-                    [ngClass]="totals().totalProfitLossEur < 0 ? 'text-red-600' : 'text-green-600'">
-                  € {{ totals().totalProfitLossEur | number:'1.2-2' }}
+                <td
+                  class="px-6 py-3 text-sm text-right"
+                  [ngClass]="
+                    totals().unrealizedProfitLossEur < 0 ? 'text-red-600' : 'text-green-600'
+                  "
+                >
+                  € {{ totals().unrealizedProfitLossEur | number: '1.2-2' }}
+                </td>
+                <td
+                  class="px-6 py-3 text-sm text-right"
+                  [ngClass]="
+                    totals().unrealizedProfitLossPercentage < 0 ? 'text-red-600' : 'text-green-600'
+                  "
+                >
+                  {{ totals().unrealizedProfitLossPercentage | number: '1.1-2' }}%
+                </td>
+                <td class="px-6 py-3 text-sm text-gray-900 text-right">
+                  € {{ totals().marketValueEur | number: '1.2-2' }}
+                </td>
+                <td class="px-6 py-3 text-sm text-gray-400 text-right">—</td>
+                <td
+                  class="px-6 py-3 text-sm text-right"
+                  [ngClass]="totals().totalProfitLossEur < 0 ? 'text-red-600' : 'text-green-600'"
+                >
+                  € {{ totals().totalProfitLossEur | number: '1.2-2' }}
                 </td>
                 <td class="px-6 py-3 text-sm text-center">
                   <div class="flex items-center justify-center gap-2">
                     <span
                       class="inline-flex h-6 w-6 items-center justify-center rounded-full"
-                      [ngClass]="totals().delta > 0 ? 'bg-green-50 text-green-600' : totals().delta < 0 ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-500'"
+                      [ngClass]="
+                        totals().delta > 0
+                          ? 'bg-green-50 text-green-600'
+                          : totals().delta < 0
+                            ? 'bg-red-50 text-red-600'
+                            : 'bg-gray-100 text-gray-500'
+                      "
                     >
                       @if (totals().delta === 0) {
                         <span class="text-xs font-semibold">–</span>
