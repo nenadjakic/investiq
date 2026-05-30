@@ -1456,6 +1456,44 @@
         }
       }
     },
+    "/portfolio/chart/monthly-pl": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get monthly P&L per year",
+        "description": "Returns monthly P&L percentage grouped by year, optionally filtered by platform",
+        "operationId": "getMonthlyPl",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved monthly P&L data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthlyPlResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/portfolio/allocation": {
       "get": {
         "tags": [
@@ -2395,15 +2433,15 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
           },
           "empty": {
             "type": "boolean"
@@ -2556,15 +2594,15 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
           },
           "empty": {
             "type": "boolean"
@@ -3102,6 +3140,33 @@
           }
         }
       },
+      "MonthlyPlEntry": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plPercent": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "MonthlyPlResponse": {
+        "type": "object",
+        "properties": {
+          "series": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/MonthlyPlEntry"
+              }
+            }
+          }
+        }
+      },
       "AssetTypeValueResponse": {
         "type": "object",
         "properties": {
@@ -3209,15 +3274,15 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
           },
           "empty": {
             "type": "boolean"

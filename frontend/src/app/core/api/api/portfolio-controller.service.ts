@@ -35,6 +35,8 @@ import { IndustrySectorValueResponse } from '../model/industry-sector-value-resp
 // @ts-ignore
 import { MonthlyInvestedResponse } from '../model/monthly-invested-response';
 // @ts-ignore
+import { MonthlyPlResponse } from '../model/monthly-pl-response';
+// @ts-ignore
 import { PortfolioAllocationResponse } from '../model/portfolio-allocation-response';
 // @ts-ignore
 import { PortfolioChartResponse } from '../model/portfolio-chart-response';
@@ -693,6 +695,64 @@ export class PortfolioControllerService extends BaseService {
         let localVarPath = `/portfolio/monthly-invested`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<MonthlyInvestedResponse>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                params: localVarQueryParameters,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Get monthly P&amp;L per year
+     * Returns monthly P&amp;L percentage grouped by year, optionally filtered by platform
+     * @endpoint get /portfolio/chart/monthly-pl
+     * @param platform 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getMonthlyPl(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<MonthlyPlResponse>;
+    public getMonthlyPl(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MonthlyPlResponse>>;
+    public getMonthlyPl(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MonthlyPlResponse>>;
+    public getMonthlyPl(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/portfolio/chart/monthly-pl`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<MonthlyPlResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters,

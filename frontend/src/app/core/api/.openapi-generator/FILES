@@ -46,6 +46,8 @@ model/industry-simple-response.ts
 model/models.ts
 model/monthly-invested-entry.ts
 model/monthly-invested-response.ts
+model/monthly-pl-entry.ts
+model/monthly-pl-response.ts
 model/page-asset-response.ts
 model/page-staging-transaction-response.ts
 model/page-transaction-response.ts

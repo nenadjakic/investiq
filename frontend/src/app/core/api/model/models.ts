@@ -26,6 +26,8 @@ export * from './industry-sector-value-response';
 export * from './industry-simple-response';
 export * from './monthly-invested-entry';
 export * from './monthly-invested-response';
+export * from './monthly-pl-entry';
+export * from './monthly-pl-response';
 export * from './page-asset-response';
 export * from './page-staging-transaction-response';
 export * from './page-transaction-response';
