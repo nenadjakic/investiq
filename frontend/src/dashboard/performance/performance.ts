@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { EChartsCoreOption } from 'echarts/core';
 import {
   MonthlyInvestedResponse,
+  MonthlyPlResponse,
   PortfolioChartResponse,
   PortfolioControllerService,
 } from '../../app/core/api';
@@ -14,7 +16,7 @@ import { ToastService } from '../../shared/toast.service';
   selector: 'app-performance',
   standalone: true,
   templateUrl: './performance.html',
-  imports: [CommonModule, NgxEchartsDirective],
+  imports: [CommonModule, FormsModule, NgxEchartsDirective],
 })
 export class Performance implements OnInit {
   private portfolioControllerService = inject(PortfolioControllerService);
@@ -24,15 +26,21 @@ export class Performance implements OnInit {
   chartData = signal<PortfolioChartResponse | null>(null);
   monthlyInvested = signal<MonthlyInvestedResponse | null>(null);
   monthlyDividends = signal<any | null>(null);
+  monthlyPl = signal<MonthlyPlResponse | null>(null);
   chartError = signal(false);
   monthlyError = signal(false);
   monthlyDividendsError = signal(false);
+  monthlyPlError = signal(false);
   chartOption = signal<EChartsCoreOption>({});
   monthlyOption = signal<EChartsCoreOption>({});
   monthlyDividendsOption = signal<EChartsCoreOption>({});
+  monthlyPlOption = signal<EChartsCoreOption>({});
   selectedPeriod = signal<'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'>('ALL');
   selectedMonths = signal<'6M' | '1Y' | '3Y' | 'ALL'>('ALL');
   selectedDividendsMonths = signal<'6M' | '1Y' | '3Y' | 'ALL'>('ALL');
+  selectedYear = signal<string>('');
+  availableYears = signal<string[]>([]);
+  hoveredYear = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -136,11 +144,16 @@ export class Performance implements OnInit {
           rawSeries = monthlyDivs.series as any[];
         } else if (typeof monthlyDivs === 'object') {
           // Possibly an object map { 'YYYY-MM': amount }
-          rawSeries = Object.entries(monthlyDivs).map(([k, v]) => ({ yearMonth: k, dividends: Number(v) || 0 }));
+          rawSeries = Object.entries(monthlyDivs).map(([k, v]) => ({
+            yearMonth: k,
+            dividends: Number(v) || 0,
+          }));
         }
 
         if (rawSeries && rawSeries.length > 0) {
-          const categories = rawSeries.map((item: any) => item.yearMonth ?? item.month ?? item.date ?? '');
+          const categories = rawSeries.map(
+            (item: any) => item.yearMonth ?? item.month ?? item.date ?? '',
+          );
           const values = rawSeries.map((item: any) => {
             const val = item.dividends ?? item.amount ?? item.value ?? item.invested ?? 0;
             return Number(val) || 0;
@@ -181,10 +194,84 @@ export class Performance implements OnInit {
         }
       }
     });
+
+    effect(() => {
+      const monthlyPlData = this.monthlyPl();
+      if (!this.monthlyPlError() && monthlyPlData?.series) {
+        const years = Object.keys(monthlyPlData.series).sort();
+        this.availableYears.set(years);
+
+        if (!this.selectedYear() && years.length > 0) {
+          const currentYear = new Date().getFullYear().toString();
+          const defaultYear = years.includes(currentYear) ? currentYear : years[years.length - 1];
+          this.selectedYear.set(defaultYear);
+        }
+      }
+    });
+
+    effect(() => {
+      const monthlyPlData = this.monthlyPl();
+      const selectedYr = this.selectedYear();
+      const hovered = this.hoveredYear();
+
+      if (!this.monthlyPlError() && monthlyPlData?.series && selectedYr) {
+        const monthNames = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ];
+
+        const filledMonths: (number | null)[] = new Array(12).fill(null);
+        const monthData = monthlyPlData.series[selectedYr] ?? [];
+        monthData.forEach((item: any) => {
+          const idx = (Number(item.month) || 1) - 1;
+          if (idx >= 0 && idx < 12) filledMonths[idx] = item.plPercent ?? 0;
+        });
+
+        this.monthlyPlOption.set({
+          xAxis: { type: 'category', data: monthNames },
+          yAxis: { type: 'value' },
+          series: [
+            {
+              name: 'Monthly P/L %',
+              data: filledMonths.map((val) => ({
+                value: val,
+                itemStyle: {
+                  color: val === null ? '#E5E7EB' : val >= 0 ? '#10B981' : '#EF4444',
+                  opacity: hovered && hovered !== selectedYr ? 0.3 : 1,
+                },
+              })),
+              type: 'bar',
+            },
+          ],
+          tooltip: {
+            trigger: 'axis',
+            formatter: (params: any) => {
+              const item = params[0];
+              if (item.value === null || item.value === undefined) return `${item.axisValue}: N/A`;
+              return `${item.axisValue}<br/>${item.marker} ${item.seriesName}: ${Number(item.value).toFixed(2)}%`;
+            },
+          },
+          grid: { left: '3%', right: '4%', containLabel: true },
+        });
+      }
+    });
+
     // reload when platform changes
     effect(() => {
       const p = this.platformService.platform();
-      try { console.debug('[Performance] platform effect ->', p); } catch (e) {}
+      try {
+        console.debug('[Performance] platform effect ->', p);
+      } catch (e) {}
       const days = this.mapPeriodToDays(this.selectedPeriod());
       this.loadChartData(days);
     });
@@ -200,45 +287,70 @@ export class Performance implements OnInit {
     this.loadPerformanceChart(days);
     this.loadMonthlyInvested(this.mapMonthsToNumber(this.selectedMonths()));
     this.loadMonthlyDividends(this.mapMonthsToNumber(this.selectedDividendsMonths()));
+    this.loadMonthlyPl();
   }
 
   private loadPerformanceChart(days: number | undefined): void {
-    this.portfolioControllerService.getPortfolioPerformanceChart(days, this.platformService.getPlatformValue()).subscribe({
-      next: (data) => this.chartData.set(data ?? null),
-      error: (err) => {
-        this.chartError.set(true);
-        this.toastService.error('Failed to load performance data', 'Error');
-        console.error('Error loading performance data:', err);
-      },
-    });
+    this.portfolioControllerService
+      .getPortfolioPerformanceChart(days, this.platformService.getPlatformValue())
+      .subscribe({
+        next: (data) => this.chartData.set(data ?? null),
+        error: (err) => {
+          this.chartError.set(true);
+          this.toastService.error('Failed to load performance data', 'Error');
+          console.error('Error loading performance data:', err);
+        },
+      });
   }
 
   private loadMonthlyInvested(months: number | undefined): void {
     this.monthlyError.set(false);
     this.monthlyInvested.set(null);
 
-    this.portfolioControllerService.getMonthlyInvested(months, this.platformService.getPlatformValue()).subscribe({
-      next: (data) => this.monthlyInvested.set(data ?? null),
-      error: (err) => {
-        this.monthlyError.set(true);
-        this.toastService.error('Failed to load monthly investments', 'Error');
-        console.error('Error loading monthly investments:', err);
-      },
-    });
+    this.portfolioControllerService
+      .getMonthlyInvested(months, this.platformService.getPlatformValue())
+      .subscribe({
+        next: (data) => this.monthlyInvested.set(data ?? null),
+        error: (err) => {
+          this.monthlyError.set(true);
+          this.toastService.error('Failed to load monthly investments', 'Error');
+          console.error('Error loading monthly investments:', err);
+        },
+      });
   }
 
   private loadMonthlyDividends(months: number | undefined): void {
     this.monthlyDividendsError.set(false);
     this.monthlyDividends.set(null);
 
-    this.portfolioControllerService.getMonthlyDividends(months, this.platformService.getPlatformValue()).subscribe({
-      next: (data) => this.monthlyDividends.set(data ?? null),
-      error: (err) => {
-        this.monthlyDividendsError.set(true);
-        this.toastService.error('Failed to load monthly dividends', 'Error');
-        console.error('Error loading monthly dividends:', err);
-      },
-    });
+    this.portfolioControllerService
+      .getMonthlyDividends(months, this.platformService.getPlatformValue())
+      .subscribe({
+        next: (data) => this.monthlyDividends.set(data ?? null),
+        error: (err) => {
+          this.monthlyDividendsError.set(true);
+          this.toastService.error('Failed to load monthly dividends', 'Error');
+          console.error('Error loading monthly dividends:', err);
+        },
+      });
+  }
+
+  private loadMonthlyPl(): void {
+    this.monthlyPlError.set(false);
+    this.monthlyPl.set(null);
+    this.selectedYear.set('');
+    this.availableYears.set([]);
+
+    this.portfolioControllerService
+      .getMonthlyPl(this.platformService.getPlatformValue())
+      .subscribe({
+        next: (data) => this.monthlyPl.set(data ?? null),
+        error: (err) => {
+          this.monthlyPlError.set(true);
+          this.toastService.error('Failed to load monthly P/L data', 'Error');
+          console.error('Error loading monthly P/L data:', err);
+        },
+      });
   }
 
   setPeriod(period: 'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y') {
@@ -259,7 +371,46 @@ export class Performance implements OnInit {
     this.loadMonthlyDividends(months);
   }
 
-  private mapPeriodToDays(period: 'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y'): number | undefined {
+  setYear(year: string) {
+    this.selectedYear.set(year);
+  }
+
+
+  getMonthlyPlByYearTableData(): Array<{
+    year: string;
+    months: (number | null)[];
+    total: number | null;
+  }> {
+    const monthlyPl = this.monthlyPl();
+    if (!monthlyPl?.series) return [];
+
+    const result = Object.keys(monthlyPl.series)
+      .sort((a, b) => Number(b) - Number(a))
+      .map((yearKey) => {
+        const arr = monthlyPl.series?.[yearKey];
+        const months: (number | null)[] = new Array(12).fill(null);
+
+        if (Array.isArray(arr)) {
+          arr.forEach((entry: any) => {
+            const idx = (Number(entry.month) || 1) - 1;
+            if (idx >= 0 && idx < 12) {
+              months[idx] = Number(entry.plPercent ?? 0);
+            }
+          });
+        }
+
+        const valid = months.filter((v): v is number => v !== null);
+        const total = valid.length ? valid.reduce((a, b) => a + b, 0) : null;
+
+        return { year: yearKey, months, total };
+      });
+
+    return result;
+  }
+
+  private mapPeriodToDays(
+    period: 'ALL' | 'MTD' | 'YTD' | '1M' | '3M' | '6M' | '1Y',
+  ): number | undefined {
     const today = new Date();
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const startOfYear = new Date(today.getFullYear(), 0, 1);

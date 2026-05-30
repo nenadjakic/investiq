@@ -86,6 +86,113 @@
     </div>
   </div>
 
+  <!-- Monthly P/L Chart -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Monthly P/L by Year (%)</h3>
+    </div>
+
+    <!-- Chart -->
+    <div class="h-96">
+      @if (monthlyPlError()) {
+        <div class="w-full h-full flex items-center justify-center bg-red-50 text-red-600 rounded">
+          Monthly P/L data not available.
+        </div>
+      } @else if (!monthlyPl()?.series || !selectedYear()) {
+        <div
+          class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-500 rounded"
+        >
+          No data available for monthly P/L.
+        </div>
+      } @else {
+        <div echarts [options]="monthlyPlOption()" class="w-full h-full"></div>
+      }
+    </div>
+
+    <!-- Table -->
+    @if (monthlyPl()?.series) {
+      <div class="mt-4 overflow-x-auto border border-gray-200 rounded-lg">
+        <table class="w-full text-xs" style="table-layout: fixed">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-3 py-2 text-left font-semibold text-gray-700 w-14">Year</th>
+              @for (
+                m of [
+                  'Jan',
+                  'Feb',
+                  'Mar',
+                  'Apr',
+                  'May',
+                  'Jun',
+                  'Jul',
+                  'Aug',
+                  'Sep',
+                  'Oct',
+                  'Nov',
+                  'Dec',
+                ];
+                track m
+              ) {
+                <th class="px-1 py-2 text-center font-semibold text-gray-700">{{ m }}</th>
+              }
+              <th
+                class="px-3 py-2 text-right font-semibold text-gray-700 border-l border-gray-200 w-16"
+              >
+                Total
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of getMonthlyPlByYearTableData(); track row.year) {
+              <tr
+                class="border-b border-gray-100 cursor-pointer transition-colors"
+                [ngClass]="{
+                  'bg-blue-50 hover:bg-blue-100': selectedYear() === row.year,
+                  'hover:bg-gray-50': selectedYear() !== row.year,
+                }"
+                (click)="setYear(row.year)"
+                (mouseenter)="hoveredYear.set(row.year)"
+                (mouseleave)="hoveredYear.set(null)"
+              >
+                <td class="px-3 py-2 font-semibold text-gray-800">{{ row.year }}</td>
+                @for (val of row.months; track $index) {
+                  <td
+                    class="px-1 py-2 text-center"
+                    [ngClass]="
+                      val === null ? 'text-gray-300' : val >= 0 ? 'text-green-600' : 'text-red-600'
+                    "
+                  >
+                    @if (val !== null) {
+                      {{ val >= 0 ? '+' : '' }}{{ val.toFixed(2) }}%
+                    } @else {
+                      —
+                    }
+                  </td>
+                }
+                <td
+                  class="px-3 py-2 text-right font-semibold border-l border-gray-200"
+                  [ngClass]="
+                    row.total === null
+                      ? 'text-gray-300'
+                      : row.total >= 0
+                        ? 'text-green-600'
+                        : 'text-red-600'
+                  "
+                >
+                  @if (row.total !== null) {
+                    {{ row.total >= 0 ? '+' : '' }}{{ row.total.toFixed(2) }}%
+                  } @else {
+                    —
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
   <div class="bg-white rounded-lg shadow p-6">
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-lg font-semibold text-gray-800">Monthly Investments (€)</h3>
