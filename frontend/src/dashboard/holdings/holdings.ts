@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
-import { AssetHoldingResponse, CompanyAssetHoldingResponse, PortfolioControllerService } from '../../app/core/api';
+import {
+  AssetHoldingResponse,
+  CompanyAssetHoldingResponse,
+  PortfolioControllerService,
+} from '../../app/core/api';
 import { PlatformService } from '../../app/core/platform.service';
 import { ToastService } from '../../shared/toast.service';
 
@@ -63,15 +67,22 @@ export class Holdings implements OnInit {
         case 'name':
           return (a.name ?? '').localeCompare(b.name ?? '') * dir;
         case 'tickers':
-          return ((a.tickers ?? []).join(', ') ?? '').localeCompare((b.tickers ?? []).join(', ') ?? '') * dir;
+          return (
+            ((a.tickers ?? []).join(', ') ?? '').localeCompare((b.tickers ?? []).join(', ') ?? '') *
+            dir
+          );
         case 'profitLoss':
           return (this.toNumber(a.profitLoss) - this.toNumber(b.profitLoss)) * dir;
         case 'profitLossPercentage':
-          return (this.toNumber(a.profitLossPercentage) - this.toNumber(b.profitLossPercentage)) * dir;
+          return (
+            (this.toNumber(a.profitLossPercentage) - this.toNumber(b.profitLossPercentage)) * dir
+          );
         case 'dividendCostYield':
           return (this.toNumber(a.dividendCostYield) - this.toNumber(b.dividendCostYield)) * dir;
         case 'portfolioPercentage':
-          return (this.toNumber(a.portfolioPercentage) - this.toNumber(b.portfolioPercentage)) * dir;
+          return (
+            (this.toNumber(a.portfolioPercentage) - this.toNumber(b.portfolioPercentage)) * dir
+          );
         default:
           return 0;
       }
@@ -117,8 +128,8 @@ export class Holdings implements OnInit {
           return (this.toNumber(a.dividendCostYield) - this.toNumber(b.dividendCostYield)) * dir;
         case 'portfolioPercentage':
           return (
-            this.toNumber(a.portfolioPercentage) - this.toNumber(b.portfolioPercentage)
-          ) * dir;
+            (this.toNumber(a.portfolioPercentage) - this.toNumber(b.portfolioPercentage)) * dir
+          );
         default:
           return 0;
       }
@@ -143,8 +154,7 @@ export class Holdings implements OnInit {
 
   toggleSort(column: SortColumn): void {
     const current = this.sortState();
-    const nextDirection =
-      current.column === column && current.direction === 'asc' ? 'desc' : 'asc';
+    const nextDirection = current.column === column && current.direction === 'asc' ? 'desc' : 'asc';
     this.sortState.set({ column, direction: nextDirection });
   }
 
@@ -199,6 +209,73 @@ export class Holdings implements OnInit {
     const nextDirection = current.column === column && current.direction === 'asc' ? 'desc' : 'asc';
     this.consolidatedSortState.set({ column, direction: nextDirection });
   }
+
+  exportHoldings(): void {
+    const escape = (val: string) => `"${String(val).replace(/"/g, '""')}"`;
+
+    const headers = [
+      'Ticker',
+      'Name',
+      'Shares',
+      'Avg Price',
+      'Current Price',
+      'P/L',
+      'P/L (%)',
+      'Div Yield (%)',
+      '% Portfolio',
+    ];
+
+    const rows = this.sortedHoldings().map((h) => [
+      h.ticker ?? '',
+      h.name ?? '',
+      this.toNumber(h.shares).toFixed(8),
+      this.toNumber(h.avgPrice).toFixed(2),
+      this.toNumber(h.currentPrice).toFixed(2),
+      this.toNumber(h.profitLoss).toFixed(2),
+      this.toNumber(h.profitLossPercentage).toFixed(2),
+      this.toNumber(h.dividendCostYield).toFixed(2),
+      this.toNumber(h.portfolioPercentage).toFixed(2),
+    ]);
+
+    const csv = [
+      headers.map(escape).join(','),
+      ...rows.map((r) => r.map((v) => escape(String(v))).join(',')),
+    ].join('\n');
+
+    this.downloadCsv(csv, `holdings_${new Date().toISOString().slice(0, 10)}.csv`);
+  }
+
+  exportConsolidated(): void {
+    const escape = (val: string) => `"${String(val).replace(/"/g, '""')}"`;
+
+    const headers = ['Name', 'Tickers', 'P/L', 'P/L (%)', 'Div Yield (%)', '% Portfolio'];
+
+    const rows = this.sortedConsolidatedHoldings().map((c) => [
+      c.name ?? '',
+      (c.tickers ?? []).join(', '),
+      this.toNumber(c.profitLoss).toFixed(2),
+      this.toNumber(c.profitLossPercentage).toFixed(2),
+      this.toNumber(c.dividendCostYield).toFixed(2),
+      this.toNumber(c.portfolioPercentage).toFixed(2),
+    ]);
+
+    const csv = [
+      headers.map(escape).join(','),
+      ...rows.map((r) => r.map((v) => escape(String(v))).join(',')),
+    ].join('\n');
+
+    this.downloadCsv(csv, `consolidated_${new Date().toISOString().slice(0, 10)}.csv`);
+  }
+
+  private downloadCsv(csv: string, filename: string): void {
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }
 
 type SortColumn =
@@ -219,4 +296,3 @@ type ConsolidatedSortColumn =
   | 'profitLossPercentage'
   | 'dividendCostYield'
   | 'portfolioPercentage';
-
