@@ -46,6 +46,7 @@ export class Performance implements OnInit {
   topHoldingsByMonthError = signal(false);
   topHoldingsOption = signal<EChartsCoreOption>({});
   private topHoldingsChart: any = null;
+  private topHoldingsTimeouts: any[] = [];
 
   onTopHoldingsChartInit(chart: any): void {
     this.topHoldingsChart = chart;
@@ -385,7 +386,6 @@ export class Performance implements OnInit {
     this.selectedYear.set(year);
   }
 
-
   getMonthlyPlByYearTableData(): Array<{
     year: string;
     months: (number | null)[];
@@ -418,6 +418,13 @@ export class Performance implements OnInit {
     return result;
   }
 
+  rerunTopHoldingsAnimation(): void {
+    this.topHoldingsTimeouts.forEach((t) => clearTimeout(t));
+    this.topHoldingsTimeouts = [];
+    const data = this.topHoldingsByMonth();
+    if (data) this.buildTopHoldingsChart(data);
+  }
+
   private loadTopHoldingsByMonth(): void {
     this.topHoldingsByMonthError.set(false);
     this.topHoldingsByMonth.set(null);
@@ -440,7 +447,7 @@ export class Performance implements OnInit {
   private buildTopHoldingsChart(data: PortfolioHoldingMonthlyResponse[]): void {
     if (!data?.length) return;
 
-    const updateFrequency = 1000;
+    const updateFrequency = 2000;
 
     const allNames: string[] = [
       ...new Set(
@@ -468,7 +475,9 @@ export class Performance implements OnInit {
       colorMap[name] = colorPalette[i % colorPalette.length];
     });
 
-    const months: string[] = data.map((d) => d.yearMonth ?? '');
+    const months: string[] = data
+      //.filter((_, i) => i % 3 === 0)
+      .map((d) => d.yearMonth ?? '');
 
     const getDataForMonth = (yearMonth: string) => {
       const month = data.find((d) => d.yearMonth === yearMonth);
@@ -544,7 +553,7 @@ export class Performance implements OnInit {
 
     months.forEach((ym, i) => {
       if (i === 0) return;
-      setTimeout(() => {
+      const t = setTimeout(() => {
         const monthData = getDataForMonth(ym);
         if (!this.topHoldingsChart) return;
 
@@ -576,6 +585,7 @@ export class Performance implements OnInit {
           },
         });
       }, i * updateFrequency);
+      this.topHoldingsTimeouts.push(t);
     });
   }
 
