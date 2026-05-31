@@ -450,6 +450,22 @@ class PortfolioRepository(
         return jdbcTemplate.query(sql, totalDividendCostYieldMapper, platform?.name).firstOrNull()
     }
 
+    fun getAssetSnapshotsGroupedByCompanyAndMonth(platform: Platform? = null): List<AssetSnapshotGroupedByCompanyMonthly> {
+        val sql = """
+            select
+                year,
+                month,
+                holding_name,
+                cost_basis_eur,
+                market_value_eur,
+                unrealized_pl_eur,
+                tickers
+            from public.get_portfolio_holdings_grouped_by_month(?)
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, assetSnapshotGroupedByCompanyMonthlyMapper, platform?.name)
+    }
+
     private val portfolioSnapshotMapper = RowMapper<PortfolioSnapshot> { rs, _ ->
         PortfolioSnapshot(
             snapshotDate = rs.getDate("snapshot_date").toLocalDate(),
@@ -591,6 +607,20 @@ class PortfolioRepository(
         MonthlyDividendRow(year, month, amount)
     }
 
+    private val assetSnapshotGroupedByCompanyMonthlyMapper = RowMapper<AssetSnapshotGroupedByCompanyMonthly> { rs, _ ->
+        AssetSnapshotGroupedByCompanyMonthly(
+            year = rs.getInt("year"),
+            month = rs.getInt("month"),
+            holdingName = rs.getString("holding_name"),
+            costBasisEur = rs.getBigDecimal("cost_basis_eur"),
+            marketValueEur = rs.getBigDecimal("market_value_eur"),
+            unrealizedPlEur = rs.getBigDecimal("unrealized_pl_eur"),
+            tickers = rs.getArray("tickers").array.let { sqlArray ->
+                (sqlArray as? Array<*>)?.map { it.toString() } ?: emptyList()
+            }
+        )
+    }
+
     data class PortfolioSnapshot(
         val snapshotDate: LocalDate,
         val totalValue: BigDecimal,
@@ -702,5 +732,15 @@ class PortfolioRepository(
         val totalCostBasisEur: BigDecimal,
         val daysHeld: Int,
         val dividendCostYield: BigDecimal
+    )
+
+    data class AssetSnapshotGroupedByCompanyMonthly(
+        val year: Int,
+        val month: Int,
+        val holdingName: String,
+        val costBasisEur: BigDecimal?,
+        val marketValueEur: BigDecimal?,
+        val unrealizedPlEur: BigDecimal?,
+        val tickers: List<String>
     )
 }

@@ -16,6 +16,7 @@ import com.github.nenadjakic.investiq.common.dto.PortfolioAllocationResponse
 import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.MonthlyPlResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
+import com.github.nenadjakic.investiq.common.dto.PortfolioHoldingMonthlyResponse
 import com.github.nenadjakic.investiq.common.dto.TopBottomPerformersResponse
 import com.github.nenadjakic.investiq.service.PortfolioService
 import io.swagger.v3.oas.annotations.Operation
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import com.github.nenadjakic.investiq.data.enum.Platform
+import io.swagger.v3.oas.annotations.media.ArraySchema
 
 @Tag(name = "Portfolio Controller", description = "Portfolio overview, holdings and performance analytics")
 @Validated
@@ -426,4 +428,33 @@ class PortfolioController(
         @RequestParam(required = false) platform: Platform?
     ): ResponseEntity<DividendCostYieldResponse> =
         ResponseEntity.ok(portfolioService.getDividendCostYield(platform))
+
+    @Operation(
+        summary = "Get top N consolidated holdings by month",
+        description = "Returns top N holdings by portfolio percentage grouped by year-month, with remaining grouped as 'Others'",
+        operationId = "getTopConsolidatedHoldingsByMonth"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successfully retrieved top N consolidated holdings by month",
+                content = [Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(schema = Schema(implementation = PortfolioHoldingMonthlyResponse::class))
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Internal server error",
+                content = [Content()]
+            )
+        ]
+    )
+    @GetMapping("/consolidated-holdings/top/monthly", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getTopConsolidatedHoldingsByMonth(
+        @RequestParam(required = false) platform: Platform?,
+        @RequestParam(required = false, defaultValue = "5") topN: Int
+    ): ResponseEntity<List<PortfolioHoldingMonthlyResponse>> =
+        ResponseEntity.ok(portfolioService.getTopNPortfolioHoldingsByMonth(platform, topN))
  }
