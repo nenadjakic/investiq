@@ -20,9 +20,11 @@ import com.github.nenadjakic.investiq.common.dto.AssetDividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.CompanyAssetHoldingResponse
 import com.github.nenadjakic.investiq.common.dto.TotalDividendCostYieldResponse
 import com.github.nenadjakic.investiq.common.dto.DividendCostYieldResponse
+import com.github.nenadjakic.investiq.common.dto.MonthlyHoldingEntry
 import com.github.nenadjakic.investiq.common.dto.MonthlyPlEntry
 import com.github.nenadjakic.investiq.common.dto.MonthlyPlResponse
 import com.github.nenadjakic.investiq.common.dto.PortfolioConcentrationResponse
+import com.github.nenadjakic.investiq.common.dto.PortfolioHoldingMonthlyResponse
 import com.github.nenadjakic.investiq.data.enum.AssetType
 import com.github.nenadjakic.investiq.data.enum.Platform
 import com.github.nenadjakic.investiq.data.repository.PortfolioRepository
@@ -685,5 +687,52 @@ class PortfolioService(
             top10 = top10.setScale(2, RoundingMode.HALF_UP),
             hhi = hhi
         )
+    }
+
+    fun getTopNPortfolioHoldingsByMonth(platform: Platform? = null, topN: Int = 5): List<PortfolioHoldingMonthlyResponse> {
+        val allSnapshots = portfolioRepository.getAssetSnapshotsGroupedByCompanyAndMonth(platform)
+
+        if (allSnapshots.isEmpty()) return emptyList()
+
+        return allSnapshots
+            .groupBy { YearMonth.of(it.year, it.month) }
+            .entries
+            .sortedBy { it.key }
+            .map { (yearMonth, snapshots) ->
+                val totalValue = snapshots
+                    .mapNotNull { it.marketValueEur }
+                    .fold(BigDecimal.ZERO, BigDecimal::add)
+
+                val holdings = snapshots.map { snapshot ->
+                    val marketValue = snapshot.marketValueEur ?: BigDecimal.ZERO
+                    val costBasis = snapshot.costBasisEur ?: BigDecimal.ZERO
+                    val unrealizedPl = snapshot.unrealizedPlEur?.setScale(2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO
+
+                    val unrealizedPlPercentage = if (costBasis > BigDecimal.ZERO) {
+                        (unrealizedPl / costBasis * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
+                    } else BigDecimal.ZERO
+
+                    val portfolioPercentage = if (totalValue > BigDecimal.ZERO) {
+                        (marketValue / totalValue * BigDecimal(100)).setScale(2, RoundingMode.HALF_UP)
+                    } else BigDecimal.ZERO
+
+                    MonthlyHoldingEntry(
+                        name = snapshot.holdingName,
+                        tickers = snapshot.tickers.sorted(),
+                        marketValueEur = marketValue.setScale(2, RoundingMode.HALF_UP),
+                        costBasisEur = costBasis.setScale(2, RoundingMode.HALF_UP),
+                        unrealizedPlEur = unrealizedPl,
+                        unrealizedPlPercentage = unrealizedPlPercentage,
+                        portfolioPercentage = portfolioPercentage
+                    )
+                }
+                    .sortedByDescending { it.portfolioPercentage }
+                    .take(topN)
+
+                PortfolioHoldingMonthlyResponse(
+                    yearMonth = yearMonth.toString(),
+                    holdings = holdings
+                )
+            }
     }
 }
