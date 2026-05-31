@@ -9,7 +9,8 @@ import {
   TooltipComponent,
   VisualMapComponent,
   ToolboxComponent,
-  TitleComponent
+  TitleComponent,
+  GraphicComponent
 } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 
@@ -32,7 +33,8 @@ echarts.use([
   SunburstChart,
   PieChart,
   TreemapChart,
-  TitleComponent
+  TitleComponent,
+  GraphicComponent
 ]);
 
 export const appConfig: ApplicationConfig = {

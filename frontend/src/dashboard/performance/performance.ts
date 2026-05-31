@@ -4,10 +4,11 @@ import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { EChartsCoreOption } from 'echarts/core';
 import {
+  MonthlyHoldingEntry,
   MonthlyInvestedResponse,
   MonthlyPlResponse,
   PortfolioChartResponse,
-  PortfolioControllerService,
+  PortfolioControllerService, PortfolioHoldingMonthlyResponse,
 } from '../../app/core/api';
 import { PlatformService } from '../../app/core/platform.service';
 import { ToastService } from '../../shared/toast.service';
@@ -41,6 +42,14 @@ export class Performance implements OnInit {
   selectedYear = signal<string>('');
   availableYears = signal<string[]>([]);
   hoveredYear = signal<string | null>(null);
+  topHoldingsByMonth = signal<PortfolioHoldingMonthlyResponse[] | null>(null);
+  topHoldingsByMonthError = signal(false);
+  topHoldingsOption = signal<EChartsCoreOption>({});
+  private topHoldingsChart: any = null;
+
+  onTopHoldingsChartInit(chart: any): void {
+    this.topHoldingsChart = chart;
+  }
 
   constructor() {
     effect(() => {
@@ -288,6 +297,7 @@ export class Performance implements OnInit {
     this.loadMonthlyInvested(this.mapMonthsToNumber(this.selectedMonths()));
     this.loadMonthlyDividends(this.mapMonthsToNumber(this.selectedDividendsMonths()));
     this.loadMonthlyPl();
+    this.loadTopHoldingsByMonth();
   }
 
   private loadPerformanceChart(days: number | undefined): void {
@@ -406,6 +416,167 @@ export class Performance implements OnInit {
       });
 
     return result;
+  }
+
+  private loadTopHoldingsByMonth(): void {
+    this.topHoldingsByMonthError.set(false);
+    this.topHoldingsByMonth.set(null);
+
+    this.portfolioControllerService
+      .getTopConsolidatedHoldingsByMonth(this.platformService.getPlatformValue(), 10)
+      .subscribe({
+        next: (data: PortfolioHoldingMonthlyResponse[]) => {
+          this.topHoldingsByMonth.set(data ?? null);
+          this.buildTopHoldingsChart(data);
+        },
+        error: (err) => {
+          this.topHoldingsByMonthError.set(true);
+          this.toastService.error('Failed to load top holdings data', 'Error');
+          console.error('Error loading top holdings by month:', err);
+        },
+      });
+  }
+
+  private buildTopHoldingsChart(data: PortfolioHoldingMonthlyResponse[]): void {
+    if (!data?.length) return;
+
+    const updateFrequency = 1000;
+
+    const allNames: string[] = [
+      ...new Set(
+        data.flatMap((d: PortfolioHoldingMonthlyResponse) =>
+          d.holdings?.map((h: MonthlyHoldingEntry) => h.name ?? '') ?? []
+        )
+      ),
+    ];
+
+    const colorPalette = [
+      '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6',
+      '#06B6D4', '#F97316', '#84CC16', '#EC4899', '#6B7280',
+    ];
+
+    const maxValue = Math.ceil(
+      Math.max(
+        ...data.flatMap((d) =>
+          d.holdings?.map((h) => Number(h.portfolioPercentage ?? 0)) ?? []
+        )
+      ) * 1.15
+    );
+
+    const colorMap: Record<string, string> = {};
+    allNames.forEach((name, i) => {
+      colorMap[name] = colorPalette[i % colorPalette.length];
+    });
+
+    const months: string[] = data.map((d) => d.yearMonth ?? '');
+
+    const getDataForMonth = (yearMonth: string) => {
+      const month = data.find((d) => d.yearMonth === yearMonth);
+      return (month?.holdings ?? [])
+        .map((h: MonthlyHoldingEntry) => ({
+          name: h.name ?? '',
+          value: Number(h.portfolioPercentage ?? 0),
+        }))
+        .sort((a, b) => a.value - b.value);
+    };
+
+    const initialData = getDataForMonth(months[0]);
+
+    const option: any = {
+      grid: { top: 10, bottom: 30, left: 160, right: 100 },
+      xAxis: {
+        max: maxValue,
+        axisLabel: { formatter: (val: number) => `${val}%` },
+      },
+      yAxis: {
+        type: 'category',
+        animationDuration: 300,
+        animationDurationUpdate: updateFrequency,
+        data: initialData.map((d) => d.name),
+      },
+      series: [
+        {
+          realtimeSort: true,
+          type: 'bar',
+          data: initialData.map((d) => ({
+            value: d.value,
+            itemStyle: { color: colorMap[d.name] ?? '#5470c6' },
+          })),
+          label: {
+            show: true,
+            position: 'right',
+            valueAnimation: true,
+            formatter: (params: any) => `${Number(params.value).toFixed(1)}%`,
+            fontFamily: 'monospace',
+          },
+        },
+      ],
+      animationDuration: 0,
+      animationDurationUpdate: updateFrequency,
+      animationEasing: 'linear',
+      animationEasingUpdate: 'linear',
+      graphic: {
+        elements: [
+          {
+            type: 'text',
+            right: 60,
+            bottom: 60,
+            style: {
+              text: months[0],
+              font: 'bolder 36px monospace',
+              fill: 'rgba(100, 100, 100, 0.25)',
+            },
+            z: 100,
+          },
+        ],
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        formatter: (params: any) => {
+          const item = params[0];
+          return `${item.name}<br/>${item.marker} <strong>${Number(item.value).toFixed(2)}%</strong>`;
+        },
+      },
+    };
+
+    this.topHoldingsOption.set(option);
+
+    months.forEach((ym, i) => {
+      if (i === 0) return;
+      setTimeout(() => {
+        const monthData = getDataForMonth(ym);
+        if (!this.topHoldingsChart) return;
+
+        this.topHoldingsChart.setOption({
+          xAxis: { max: maxValue },
+          yAxis: { data: monthData.map((d) => d.name) },
+          series: [
+            {
+              data: monthData.map((d) => ({
+                value: d.value,
+                itemStyle: { color: colorMap[d.name] ?? '#5470c6' },
+              })),
+            },
+          ],
+          graphic: {
+            elements: [
+              {
+                type: 'text',
+                right: 60,
+                bottom: 60,
+                style: {
+                  text: ym,
+                  font: 'bolder 36px monospace',
+                  fill: 'rgba(100, 100, 100, 0.25)',
+                },
+                z: 100,
+              },
+            ],
+          },
+        });
+      }, i * updateFrequency);
+    });
   }
 
   private mapPeriodToDays(

@@ -44,6 +44,7 @@ model/industry-response.ts
 model/industry-sector-value-response.ts
 model/industry-simple-response.ts
 model/models.ts
+model/monthly-holding-entry.ts
 model/monthly-invested-entry.ts
 model/monthly-invested-response.ts
 model/monthly-pl-entry.ts
@@ -57,6 +58,7 @@ model/period-change-response.ts
 model/portfolio-allocation-response.ts
 model/portfolio-chart-response.ts
 model/portfolio-concentration-response.ts
+model/portfolio-holding-monthly-response.ts
 model/portfolio-performance-response.ts
 model/portfolio-summary-response.ts
 model/sector-response.ts

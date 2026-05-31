@@ -43,6 +43,8 @@ import { PortfolioChartResponse } from '../model/portfolio-chart-response';
 // @ts-ignore
 import { PortfolioConcentrationResponse } from '../model/portfolio-concentration-response';
 // @ts-ignore
+import { PortfolioHoldingMonthlyResponse } from '../model/portfolio-holding-monthly-response';
+// @ts-ignore
 import { PortfolioPerformanceResponse } from '../model/portfolio-performance-response';
 // @ts-ignore
 import { PortfolioSummaryResponse } from '../model/portfolio-summary-response';
@@ -1055,6 +1057,67 @@ export class PortfolioControllerService extends BaseService {
         let localVarPath = `/portfolio/performers`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<TopBottomPerformersResponse>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                params: localVarQueryParameters,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Get top N consolidated holdings by month
+     * Returns top N holdings by portfolio percentage grouped by year-month, with remaining grouped as \&#39;Others\&#39;
+     * @endpoint get /portfolio/consolidated-holdings/top/monthly
+     * @param platform 
+     * @param topN 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getTopConsolidatedHoldingsByMonth(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', topN?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<PortfolioHoldingMonthlyResponse>>;
+    public getTopConsolidatedHoldingsByMonth(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', topN?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<PortfolioHoldingMonthlyResponse>>>;
+    public getTopConsolidatedHoldingsByMonth(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', topN?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<PortfolioHoldingMonthlyResponse>>>;
+    public getTopConsolidatedHoldingsByMonth(platform?: 'TRADING212' | 'ETORO' | 'IBKR' | 'REVOLUT', topN?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>platform, 'platform');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>topN, 'topN');
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/portfolio/consolidated-holdings/top/monthly`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<PortfolioHoldingMonthlyResponse>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters,

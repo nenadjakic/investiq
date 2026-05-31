@@ -1358,6 +1358,60 @@
         }
       }
     },
+    "/portfolio/consolidated-holdings/top/monthly": {
+      "get": {
+        "tags": [
+          "Portfolio Controller"
+        ],
+        "summary": "Get top N consolidated holdings by month",
+        "description": "Returns top N holdings by portfolio percentage grouped by year-month, with remaining grouped as 'Others'",
+        "operationId": "getTopConsolidatedHoldingsByMonth",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "TRADING212",
+                "ETORO",
+                "IBKR",
+                "REVOLUT"
+              ]
+            }
+          },
+          {
+            "name": "topN",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved top N consolidated holdings by month",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortfolioHoldingMonthlyResponse"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/portfolio/concentration": {
       "get": {
         "tags": [
@@ -2433,15 +2487,15 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
           },
           "empty": {
             "type": "boolean"
@@ -2594,15 +2648,15 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
           },
           "empty": {
             "type": "boolean"
@@ -3119,6 +3173,49 @@
           }
         }
       },
+      "MonthlyHoldingEntry": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "tickers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "marketValueEur": {
+            "type": "number"
+          },
+          "costBasisEur": {
+            "type": "number"
+          },
+          "unrealizedPlEur": {
+            "type": "number"
+          },
+          "unrealizedPlPercentage": {
+            "type": "number"
+          },
+          "portfolioPercentage": {
+            "type": "number"
+          }
+        }
+      },
+      "PortfolioHoldingMonthlyResponse": {
+        "type": "object",
+        "properties": {
+          "yearMonth": {
+            "type": "string"
+          },
+          "holdings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonthlyHoldingEntry"
+            }
+          }
+        }
+      },
       "PortfolioConcentrationResponse": {
         "type": "object",
         "description": "Portfolio concentration metrics and HHI",
@@ -3274,15 +3371,15 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
           "first": {
             "type": "boolean"
           },
           "last": {
             "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
           },
           "empty": {
             "type": "boolean"
