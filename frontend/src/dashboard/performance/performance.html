@@ -318,4 +318,23 @@
       }
     </div>
   </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Top Holdings Over Time (%)</h3>
+    </div>
+    <div class="h-96">
+      @if (topHoldingsByMonthError()) {
+      <div class="w-full h-full flex items-center justify-center bg-red-50 text-red-600 rounded">
+        Top holdings data not available.
+      </div>
+      } @else if (!topHoldingsByMonth()?.length) {
+      <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-500 rounded">
+        No data available for top holdings.
+      </div>
+      } @else {
+      <div echarts [options]="topHoldingsOption()" (chartInit)="onTopHoldingsChartInit($event)" class="w-full h-full"></div>
+      }
+    </div>
+  </div>
 </div>
