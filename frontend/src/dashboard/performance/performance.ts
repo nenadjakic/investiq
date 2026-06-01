@@ -419,7 +419,7 @@ export class Performance implements OnInit {
   }
 
   rerunTopHoldingsAnimation(): void {
-    this.topHoldingsTimeouts.forEach((t) => clearTimeout(t));
+    this.topHoldingsTimeouts.forEach((t) => clearInterval(t));
     this.topHoldingsTimeouts = [];
     const data = this.topHoldingsByMonth();
     if (data) this.buildTopHoldingsChart(data);
@@ -448,6 +448,7 @@ export class Performance implements OnInit {
     if (!data?.length) return;
 
     const updateFrequency = 2000;
+    const n = 10;
 
     const allNames: string[] = [
       ...new Set(
@@ -462,22 +463,12 @@ export class Performance implements OnInit {
       '#06B6D4', '#F97316', '#84CC16', '#EC4899', '#6B7280',
     ];
 
-    const maxValue = Math.ceil(
-      Math.max(
-        ...data.flatMap((d) =>
-          d.holdings?.map((h) => Number(h.portfolioPercentage ?? 0)) ?? []
-        )
-      ) * 1.15
-    );
-
     const colorMap: Record<string, string> = {};
     allNames.forEach((name, i) => {
       colorMap[name] = colorPalette[i % colorPalette.length];
     });
 
-    const months: string[] = data
-      //.filter((_, i) => i % 3 === 0)
-      .map((d) => d.yearMonth ?? '');
+    const months: string[] = data.map((d) => d.yearMonth ?? '');
 
     const getDataForMonth = (yearMonth: string) => {
       const month = data.find((d) => d.yearMonth === yearMonth);
@@ -494,13 +485,15 @@ export class Performance implements OnInit {
     const option: any = {
       grid: { top: 10, bottom: 30, left: 160, right: 100 },
       xAxis: {
-        max: maxValue,
+        max: 'dataMax',
         axisLabel: { formatter: (val: number) => `${val}%` },
       },
       yAxis: {
         type: 'category',
+        inverse: true,
+        max: n - 1,
         animationDuration: 300,
-        animationDurationUpdate: updateFrequency,
+        animationDurationUpdate: 300,
         data: initialData.map((d) => d.name),
       },
       series: [
@@ -551,42 +544,53 @@ export class Performance implements OnInit {
 
     this.topHoldingsOption.set(option);
 
-    months.forEach((ym, i) => {
-      if (i === 0) return;
-      const t = setTimeout(() => {
-        const monthData = getDataForMonth(ym);
-        if (!this.topHoldingsChart) return;
+    let currentIndex = 1;
+    const interval = setInterval(() => {
+      if (currentIndex >= months.length) {
+        clearInterval(interval);
+        return;
+      }
 
-        this.topHoldingsChart.setOption({
-          xAxis: { max: maxValue },
-          yAxis: { data: monthData.map((d) => d.name) },
-          series: [
+      const ym = months[currentIndex];
+      const monthData = getDataForMonth(ym);
+
+      if (!this.topHoldingsChart) {
+        clearInterval(interval);
+        return;
+      }
+
+      this.topHoldingsChart.setOption({
+        xAxis: { max: 'dataMax' },
+        yAxis: { data: monthData.map((d) => d.name) },
+        series: [
+          {
+            data: monthData.map((d) => ({
+              value: d.value,
+              itemStyle: { color: colorMap[d.name] ?? '#5470c6' },
+            })),
+          },
+        ],
+        graphic: {
+          elements: [
             {
-              data: monthData.map((d) => ({
-                value: d.value,
-                itemStyle: { color: colorMap[d.name] ?? '#5470c6' },
-              })),
+              type: 'text',
+              right: 60,
+              bottom: 60,
+              style: {
+                text: ym,
+                font: 'bolder 36px monospace',
+                fill: 'rgba(100, 100, 100, 0.25)',
+              },
+              z: 100,
             },
           ],
-          graphic: {
-            elements: [
-              {
-                type: 'text',
-                right: 60,
-                bottom: 60,
-                style: {
-                  text: ym,
-                  font: 'bolder 36px monospace',
-                  fill: 'rgba(100, 100, 100, 0.25)',
-                },
-                z: 100,
-              },
-            ],
-          },
-        });
-      }, i * updateFrequency);
-      this.topHoldingsTimeouts.push(t);
-    });
+        },
+      });
+
+      currentIndex++;
+    }, updateFrequency);
+
+    this.topHoldingsTimeouts.push(interval as any);
   }
 
   private mapPeriodToDays(
